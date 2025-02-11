@@ -87,6 +87,11 @@ def lead_generation():
 def content_calendar():
     return render_template('content_calendar.html')
 
+@app.route('/profile')
+@login_required
+def profile():
+    return render_template('profile.html')
+
 @app.route('/logout')
 @login_required
 def logout():
