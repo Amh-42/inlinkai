@@ -37,52 +37,51 @@
 		<div class="card-body">
 		 <div class="card-content p-2">
 		 	<div class="text-center">
-		 		<img src="assets/images/logo-icon.png" alt="logo icon">
+		 		<img src="{{ url_for('static', filename='assets/images/logo-icon.png') }}" alt="logo icon">
 		 	</div>
 		  <div class="card-title text-uppercase text-center py-3">Sign In</div>
-		    <form>
+		    <form action="{{ url_for('login') }}" method="POST">
+		      {{ form.hidden_tag() }}
 			  <div class="form-group">
-			  <label for="exampleInputUsername" class="sr-only">Username</label>
-			   <div class="position-relative has-icon-right">
-				  <input type="text" id="exampleInputUsername" class="form-control input-shadow" placeholder="Enter Username">
-				  <div class="form-control-position">
-					  <i class="icon-user"></i>
-				  </div>
-			   </div>
+			    <label for="exampleInputUsername" class="sr-only">Username</label>
+			    <div class="position-relative has-icon-right">
+			      <input type="text" name="username" id="exampleInputUsername" class="form-control input-shadow" placeholder="Enter Username" required>
+			      <div class="form-control-position">
+			        <i class="icon-user"></i>
+			      </div>
+			    </div>
 			  </div>
 			  <div class="form-group">
-			  <label for="exampleInputPassword" class="sr-only">Password</label>
-			   <div class="position-relative has-icon-right">
-				  <input type="password" id="exampleInputPassword" class="form-control input-shadow" placeholder="Enter Password">
-				  <div class="form-control-position">
-					  <i class="icon-lock"></i>
-				  </div>
-			   </div>
+			    <label for="exampleInputPassword" class="sr-only">Password</label>
+			    <div class="position-relative has-icon-right">
+			      <input type="password" name="password" id="exampleInputPassword" class="form-control input-shadow" placeholder="Enter Password" required>
+			      <div class="form-control-position">
+			        <i class="icon-lock"></i>
+			      </div>
+			    </div>
 			  </div>
-			<div class="form-row">
-			 <div class="form-group col-6">
-			   <div class="icheck-material-white">
-                <input type="checkbox" id="user-checkbox" checked="" />
-                <label for="user-checkbox">Remember me</label>
+			  <div class="form-row">
+			    <div class="form-group col-6">
+			      <div class="icheck-material-white">
+			        <input type="checkbox" name="remember" id="user-checkbox" checked>
+			        <label for="user-checkbox">Remember me</label>
+			      </div>
+			    </div>
+			    <div class="form-group col-6 text-right">
+			      <a href="{{ url_for('reset_password') }}">Reset Password</a>
+			    </div>
 			  </div>
-			 </div>
-			 <div class="form-group col-6 text-right">
-			  <a href="reset-password.html">Reset Password</a>
-			 </div>
-			</div>
-			 <button type="button" class="btn btn-light btn-block">Sign In</button>
+			  <button type="submit" class="btn btn-light btn-block">Sign In</button>
 			  <div class="text-center mt-3">Sign In With</div>
-			  
-			 <div class="form-row mt-4">
-			  <div class="form-group mb-0 col-6">
-			   <button type="button" class="btn btn-light btn-block"><i class="fa fa-linkedin"></i> LinkedIn</button>
-			 </div>
-			 <div class="form-group mb-0 col-6 text-right">
-			  <button type="button" class="btn btn-light btn-block"><i class="fa fa-google"></i> Google</button>
-			 </div>
-			</div>
-			 
-			 </form>
+			  <div class="form-row mt-4">
+			    <div class="form-group mb-0 col-6">
+			      <button type="button" class="btn btn-light btn-block"><i class="fa fa-linkedin"></i> LinkedIn</button>
+			    </div>
+			    <div class="form-group mb-0 col-6 text-right">
+			      <button type="button" class="btn btn-light btn-block"><i class="fa fa-google"></i> Google</button>
+			    </div>
+			  </div>
+		    </form>
 		   </div>
 		  </div>
 		  <div class="card-footer text-center py-3">

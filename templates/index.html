@@ -9,25 +9,26 @@
   <meta name="author" content="" />
   <title>InLinkAI - Boost your Linkedin Visibility</title>
   <!-- loader-->
-  <link href="assets/css/pace.min.css" rel="stylesheet" />
-  <script src="assets/js/pace.min.js"></script>
+  <link href="{{ url_for('static', filename='assets/css/pace.min.css') }}" rel="stylesheet" />
+  <script src="{{ url_for('static', filename='assets/js/pace.min.js') }}"></script>
   <!--favicon-->
-  <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="{{ url_for('static', filename='assets/images/favicon.ico') }}" type="image/x-icon">
   <!-- Vector CSS -->
-  <link href="assets/plugins/vectormap/jquery-jvectormap-2.0.2.css" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='assets/plugins/vectormap/jquery-jvectormap-2.0.2.css') }}"
+    rel="stylesheet" />
   <!-- simplebar CSS-->
-  <link href="assets/plugins/simplebar/css/simplebar.css" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='assets/plugins/simplebar/css/simplebar.css') }}" rel="stylesheet" />
   <!-- Bootstrap core CSS-->
-  <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='assets/css/bootstrap.min.css') }}" rel="stylesheet" />
   <!-- animate CSS-->
-  <link href="assets/css/animate.css" rel="stylesheet" type="text/css" />
+  <link href="{{ url_for('static', filename='assets/css/animate.css') }}" rel="stylesheet" type="text/css" />
   <!-- Icons CSS-->
-  <link href="assets/css/icons.css" rel="stylesheet" type="text/css" />
+  <link href="{{ url_for('static', filename='assets/css/icons.css') }}" rel="stylesheet" type="text/css" />
   <!-- Sidebar CSS-->
-  <link href="assets/css/sidebar-menu.css" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='assets/css/sidebar-menu.css') }}" rel="stylesheet" />
   <!-- Custom Style-->
-  <link href="assets/css/app-style.css" rel="stylesheet" />
-  <link href="assets/css/custom.css" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='assets/css/app-style.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='assets/css/custom.css') }}" rel="stylesheet" />
 </head>
 
 <body class="bg-theme bg-theme1">
@@ -39,7 +40,7 @@
     <div id="sidebar-wrapper" data-simplebar="" data-simplebar-auto-hide="true">
       <div class="brand-logo">
         <a href="index.html">
-          <img src="assets/images/logo-icon.png" class="logo-icon" alt="logo icon">
+          <img src="{{ url_for('static', filename='assets/images/logo-icon.png') }}" class="logo-icon" alt="logo icon">
           <h5 class="logo-text">InLinkAI</h5>
         </a>
       </div>
@@ -98,15 +99,15 @@
 
           <li class="nav-item">
             <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" data-toggle="dropdown" href="#">
-              <span class="user-profile"><img src="assets/images/user_avatar.png" class="img-circle"
-                  alt="user avatar"></span>
+              <span class="user-profile"><img src="{{ url_for('static', filename='assets/images/user_avatar.png') }}"
+                  class="img-circle" alt="user avatar"></span>
             </a>
             <ul class="dropdown-menu dropdown-menu-right">
               <li class="dropdown-item user-details">
                 <a href="javaScript:void();">
                   <div class="media">
-                    <div class="avatar"><img class="align-self-start mr-3" src="assets/images/user_avatar.png"
-                        alt="user avatar"></div>
+                    <div class="avatar"><img class="align-self-start mr-3"
+                        src="{{ url_for('static', filename='assets/images/user_avatar.png') }}" alt="user avatar"></div>
                     <div class="media-body">
                       <a href="profile.html">
                         <h6 class="mt-2 user-title">Sarajhon Mccoy</h6>
@@ -209,8 +210,8 @@
               </div>
               <div class="card-body">
                 <div class="text-center">
-                  <img src="assets/images/photo_2025-02-10_15-27-05.jpg" alt="Content Suggestion" class="img-fluid"
-                    style="max-height: 200px;">
+                  <img src="{{ url_for('static', filename='assets/images/photo_2025-02-10_15-27-05.jpg') }}"
+                    alt="Content Suggestion" class="img-fluid" style="max-height: 200px;">
                 </div>
                 <div class="text-center">
                   <h6 class="text-white">Suggested Title:</h6>
@@ -362,7 +363,8 @@
                   <tbody>
                     <tr>
                       <td>Sarah Johnson</td>
-                      <td><img src="assets/images/user_avatar.png" class="product-img" alt="profile img"></td>
+                      <td><img src="{{ url_for('static', filename='assets/images/user_avatar.png') }} "
+                          class="product-img" alt="profile img"></td>
                       <td>Marketing Director</td>
                       <td>Tech Solutions Inc</td>
                       <td>Aug 15, 2023</td>
@@ -374,7 +376,8 @@
                     </tr>
                     <tr>
                       <td>Sarah Johnson</td>
-                      <td><img src="assets/images/user_avatar.png" class="product-img" alt="profile img"></td>
+                      <td><img src="{{ url_for('static', filename='assets/images/user_avatar.png') }} "
+                          class="product-img" alt="profile img"></td>
                       <td>Marketing Director</td>
                       <td>Tech Solutions Inc</td>
                       <td>Aug 15, 2023</td>
@@ -386,7 +389,8 @@
                     </tr>
                     <tr>
                       <td>Sarah Johnson</td>
-                      <td><img src="assets/images/user_avatar.png" class="product-img" alt="profile img"></td>
+                      <td><img src="{{ url_for('static', filename='assets/images/user_avatar.png') }} "
+                          class="product-img" alt="profile img"></td>
                       <td>Marketing Director</td>
                       <td>Tech Solutions Inc</td>
                       <td>Aug 15, 2023</td>
@@ -399,8 +403,9 @@
 
                     <tr>
                       <td class="premium-suggestion blurred">Michael Chen</td>
-                      <td class="premium-suggestion blurred"><img src="assets/images/user_avatar.png"
-                          class="product-img" alt="profile img"></td>
+                      <td class="premium-suggestion blurred"><img
+                          src="{{ url_for('static', filename='assets/images/user_avatar.png') }} " class="product-img"
+                          alt="profile img"></td>
                       <td class="premium-suggestion blurred">Software Engineer</td>
                       <td class="premium-suggestion blurred">Cloud Systems</td>
                       <td class="premium-suggestion blurred">Aug 14, 2023</td>
@@ -413,8 +418,9 @@
 
                     <tr>
                       <td class="premium-suggestion blurred">Emma Wilson</td>
-                      <td class="premium-suggestion blurred"><img src="assets/images/user_avatar.png"
-                          class="product-img" alt="profile img"></td>
+                      <td class="premium-suggestion blurred"><img
+                          src="{{ url_for('static', filename='assets/images/user_avatar.png') }} " class="product-img"
+                          alt="profile img"></td>
                       <td class="premium-suggestion blurred">Product Manager</td>
                       <td class="premium-suggestion blurred">Innovate Corp</td>
                       <td class="premium-suggestion blurred">Aug 13, 2023</td>
@@ -427,8 +433,9 @@
 
                     <tr class="premium-suggestion">
                       <td class="premium-suggestion blurred">James Smith</td>
-                      <td class="premium-suggestion blurred"><img src="assets/images/user_avatar.png"
-                          class="product-img" alt="profile img"></td>
+                      <td class="premium-suggestion blurred"><img
+                          src="{{ url_for('static', filename='assets/images/user_avatar.png') }} " class="product-img"
+                          alt="profile img"></td>
                       <td class="premium-suggestion blurred">Sales Director</td>
                       <td class="premium-suggestion blurred">Global Sales Ltd</td>
                       <td class="premium-suggestion blurred">Aug 12, 2023</td>
@@ -441,8 +448,9 @@
 
                     <tr class="premium-suggestion">
                       <td class="premium-suggestion blurred">Lisa Anderson</td>
-                      <td class="premium-suggestion blurred"><img src="assets/images/user_avatar.png"
-                          class="product-img" alt="profile img"></td>
+                      <td class="premium-suggestion blurred"><img
+                          src="{{ url_for('static', filename='assets/images/user_avatar.png') }} " class="product-img"
+                          alt="profile img"></td>
                       <td class="premium-suggestion blurred">HR Manager</td>
                       <td class="premium-suggestion blurred">People First Co</td>
                       <td class="premium-suggestion blurred">Aug 11, 2023</td>
@@ -455,8 +463,9 @@
 
                     <tr class="premium-suggestion">
                       <td class="premium-suggestion blurred">David Miller</td>
-                      <td class="premium-suggestion blurred"><img src="assets/images/user_avatar.png"
-                          class="product-img" alt="profile img"></td>
+                      <td class="premium-suggestion blurred"><img
+                          src="{{ url_for('static', filename='assets/images/user_avatar.png') }} " class="product-img"
+                          alt="profile img"></td>
                       <td class="premium-suggestion blurred">Business Analyst</td>
                       <td class="premium-suggestion blurred">Data Insights Inc</td>
                       <td class="premium-suggestion blurred">Aug 10, 2023</td>
@@ -526,24 +535,24 @@
   </div><!--End wrapper-->
 
   <!-- Bootstrap core JavaScript-->
-  <script src="assets/js/jquery.min.js"></script>
-  <script src="assets/js/popper.min.js"></script>
-  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="{{ url_for('static', filename='assets/js/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/js/popper.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/js/bootstrap.min.js') }}"></script>
 
   <!-- simplebar js -->
-  <script src="assets/plugins/simplebar/js/simplebar.js"></script>
+  <script src="{{ url_for('static', filename='assets/plugins/simplebar/js/simplebar.js') }}"></script>
   <!-- sidebar-menu js -->
-  <script src="assets/js/sidebar-menu.js"></script>
+  <script src="{{ url_for('static', filename='assets/js/sidebar-menu.js') }}"></script>
   <!-- loader scripts -->
-  <script src="assets/js/jquery.loading-indicator.js"></script>
+  <script src="{{ url_for('static', filename='assets/js/jquery.loading-indicator.js') }}"></script>
   <!-- Custom scripts -->
-  <script src="assets/js/app-script.js"></script>
+  <script src="{{ url_for('static', filename='assets/js/app-script.js') }}"></script>
   <!-- Chart js -->
 
-  <script src="assets/plugins/Chart.js/Chart.min.js"></script>
+  <script src="{{ url_for('static', filename='assets/plugins/Chart.js/Chart.min.js') }}"></script>
 
   <!-- Index js -->
-  <script src="assets/js/index.js"></script>
+  <script src="{{ url_for('static', filename='assets/js/index.js') }}"></script>
 
 
 </body>
