@@ -14,7 +14,8 @@
   <!--favicon-->
   <link rel="icon" href="{{ url_for('static', filename='assets/images/favicon.ico') }}" type="image/x-icon">
   <!-- Vector CSS -->
-  <link href="{{ url_for('static', filename='assets/plugins/vectormap/jquery-jvectormap-2.0.2.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='assets/plugins/vectormap/jquery-jvectormap-2.0.2.css') }}"
+    rel="stylesheet" />
   <!-- simplebar CSS-->
   <link href="{{ url_for('static', filename='assets/plugins/simplebar/css/simplebar.css') }}" rel="stylesheet" />
   <!-- Bootstrap core CSS-->
@@ -39,7 +40,7 @@
     <div id="sidebar-wrapper" data-simplebar="" data-simplebar-auto-hide="true">
       <div class="brand-logo">
         <a href="{{ url_for('dashboard') }}">
-          <img src="{{ url_for('static', filename='images/logo-icon.png') }}" class="logo-icon" alt="logo icon">
+          <img src="{{ url_for('static', filename='assets/images/logo-icon.png') }}" class="logo-icon" alt="logo icon">
           <h5 class="logo-text">InLinkAI</h5>
         </a>
       </div>
@@ -98,7 +99,7 @@
 
           <li class="nav-item">
             <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" data-toggle="dropdown" href="#">
-              <span class="user-profile"><img src="{{ url_for('static', filename='images/user_avatar.png') }}"
+              <span class="user-profile"><img src="{{ url_for('static', filename='assets/images/user_avatar.png') }}"
                   class="img-circle" alt="user avatar"></span>
             </a>
             <ul class="dropdown-menu dropdown-menu-right">
@@ -106,7 +107,7 @@
                 <a href="javaScript:void();">
                   <div class="media">
                     <div class="avatar"><img class="align-self-start mr-3"
-                        src="{{ url_for('static', filename='images/user_avatar.png') }}" alt="user avatar"></div>
+                        src="{{ url_for('static', filename='assets/images/user_avatar.png') }}" alt="user avatar"></div>
                     <div class="media-body">
                       <a href="{{ url_for('profile') }}">
                         <h6 class="mt-2 user-title">Sarajhon Mccoy</h6>
