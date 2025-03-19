@@ -1,11 +1,10 @@
 import sys
 import os
 
-# Add the app directory to the Python path
-INTERP = os.path.join(os.getcwd(), 'venv', 'bin', 'python3')
+INTERP = "/home/inlinkff/virtualenv/home/3.11/bin/python"
 if sys.executable != INTERP:
     os.execl(INTERP, INTERP, *sys.argv)
 
-sys.path.append(os.getcwd())
+sys.path.insert(0, '/home/inlinkff/home')
 
-from app import app as application 
+from app import app as application
