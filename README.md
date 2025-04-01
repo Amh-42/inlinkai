@@ -37,3 +37,7 @@
    - Run: `pip install -r requirements.txt`
 
 4. Restart the application in cPanel. 
+
+
+
+
