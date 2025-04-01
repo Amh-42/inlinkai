@@ -168,9 +168,17 @@
             form.addEventListener('submit', function (e) {
                 e.preventDefault();
 
+                // Show loading state
+                const submitButton = form.querySelector('button[type="submit"]');
+                const originalButtonText = submitButton.innerHTML;
+                submitButton.innerHTML = '<p class="banner-button-content white">Sending...</p>';
+                submitButton.disabled = true;
+
                 // Get form data
                 const formData = new FormData(form);
                 const data = Object.fromEntries(formData);
+
+                console.log('Submitting form data:', data);
 
                 // Submit form via fetch API
                 fetch('/submit-lead-magnet', {
@@ -180,8 +188,16 @@
                     },
                     body: JSON.stringify(data)
                 })
-                    .then(response => response.json())
+                    .then(response => {
+                        console.log('Response status:', response.status);
+                        return response.json().catch(error => {
+                            console.error('Error parsing JSON:', error);
+                            throw new Error('Invalid JSON response');
+                        });
+                    })
                     .then(data => {
+                        console.log('Response data:', data);
+
                         if (data.success) {
                             // Show success message
                             const formContainer = document.querySelector('.lead-magnet-form-container');
@@ -200,11 +216,21 @@
                                 document.body.style.overflow = ''; // Restore scrolling
                             });
                         } else {
-                            alert('There was an error submitting your request. Please try again.');
+                            // Restore button state
+                            submitButton.innerHTML = originalButtonText;
+                            submitButton.disabled = false;
+
+                            // Show error message
+                            alert('There was an error submitting your request: ' + (data.message || 'Please try again.'));
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
+
+                        // Restore button state
+                        submitButton.innerHTML = originalButtonText;
+                        submitButton.disabled = false;
+
                         alert('There was an error submitting your request. Please try again.');
                     });
             });

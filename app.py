@@ -200,6 +200,142 @@ def save_lead_to_db(full_name, email, company, linkedin_url, consent, ip_address
         logger.error(traceback.format_exc())
         return None
 
+def get_professional_email_template(name):
+    """Returns a professional HTML email template with the recipient's name."""
+    return f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Your LinkedIn Profile Audit Checklist</title>
+    </head>
+    <body style="margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; background-color: #f4f4f4; color: #333333;">
+        <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
+            <tr>
+                <td style="padding: 0;">
+                    <table align="center" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse; background-color: #ffffff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                        <!-- Header -->
+                        <tr>
+                            <td style="background-color: #2563eb; text-align: center; padding: 20px 0;">
+                                <img src="https://via.placeholder.com/150x50/2563eb/ffffff?text=InlinkAI" alt="InlinkAI Logo" width="150" style="display: block; margin: 0 auto;">
+                            </td>
+                        </tr>
+                        
+                        <!-- Main Content -->
+                        <tr>
+                            <td style="padding: 30px 30px 20px 30px;">
+                                <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
+                                    <tr>
+                                        <td style="padding-bottom: 20px;">
+                                            <h1 style="margin: 0; color: #2563eb; font-size: 24px; font-weight: bold;">Hello {name},</h1>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding-bottom: 20px;">
+                                            <p style="margin: 0; line-height: 1.5; font-size: 16px;">Thank you for requesting our <strong>LinkedIn Profile Audit Checklist</strong>. We're excited to help you optimize your profile to attract high-quality leads tailored for financial advisors.</p>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Featured Image -->
+                                    <tr>
+                                        <td style="padding-bottom: 20px;">
+                                            <img src="https://via.placeholder.com/540x200/f3f4f6/2563eb?text=LinkedIn+Profile+Optimization" alt="LinkedIn Profile Optimization" width="100%" style="display: block; border-radius: 4px;">
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <td style="padding-bottom: 20px;">
+                                            <h2 style="margin: 0 0 15px 0; color: #333333; font-size: 20px;">What's Inside Your Checklist:</h2>
+                                            <table cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
+                                                <tr>
+                                                    <td width="30" style="vertical-align: top; padding-right: 10px;">
+                                                        <span style="display: inline-block; width: 22px; height: 22px; background-color: #2563eb; border-radius: 50%; text-align: center; color: white; font-weight: bold; line-height: 22px; font-size: 14px;">✓</span>
+                                                    </td>
+                                                    <td style="vertical-align: top; padding-bottom: 10px;">
+                                                        <p style="margin: 0; line-height: 1.5; font-size: 16px;">Profile optimization strategies to attract your ideal clients</p>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="30" style="vertical-align: top; padding-right: 10px;">
+                                                        <span style="display: inline-block; width: 22px; height: 22px; background-color: #2563eb; border-radius: 50%; text-align: center; color: white; font-weight: bold; line-height: 22px; font-size: 14px;">✓</span>
+                                                    </td>
+                                                    <td style="vertical-align: top; padding-bottom: 10px;">
+                                                        <p style="margin: 0; line-height: 1.5; font-size: 16px;">Step-by-step sections covering all elements from your profile photo to engagement</p>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="30" style="vertical-align: top; padding-right: 10px;">
+                                                        <span style="display: inline-block; width: 22px; height: 22px; background-color: #2563eb; border-radius: 50%; text-align: center; color: white; font-weight: bold; line-height: 22px; font-size: 14px;">✓</span>
+                                                    </td>
+                                                    <td style="vertical-align: top; padding-bottom: 10px;">
+                                                        <p style="margin: 0; line-height: 1.5; font-size: 16px;">Industry-specific tips tailored for financial advisors</p>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <td style="padding-bottom: 20px;">
+                                            <p style="margin: 0; line-height: 1.5; font-size: 16px;">We've attached the checklist to this email. Simply download the PDF and follow the steps to optimize your LinkedIn profile.</p>
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <td style="padding-bottom: 20px;">
+                                            <p style="margin: 0; line-height: 1.5; font-size: 16px;">If you have any questions or need personalized assistance with your LinkedIn profile, feel free to reply to this email.</p>
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <td style="padding-bottom: 20px;">
+                                            <table cellpadding="0" cellspacing="0" align="center" style="border-collapse: collapse;">
+                                                <tr>
+                                                    <td style="background-color: #2563eb; border-radius: 4px; text-align: center; padding: 12px 24px;">
+                                                        <a href="https://inlinkai.com/resources" style="color: #ffffff; text-decoration: none; display: inline-block; font-size: 16px; font-weight: bold;">Explore More Resources</a>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        
+                        <!-- Footer -->
+                        <tr>
+                            <td style="background-color: #f8f9fa; padding: 20px 30px;">
+                                <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
+                                    <tr>
+                                        <td style="text-align: center; padding-bottom: 10px;">
+                                            <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #6c757d;">Best regards,<br>The InlinkAI Team</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: center; padding-bottom: 10px;">
+                                            <a href="https://linkedin.com/" style="display: inline-block; margin: 0 5px;"><img src="https://via.placeholder.com/30x30/2563eb/ffffff?text=in" alt="LinkedIn" width="30" height="30" style="display: inline-block;"></a>
+                                            <a href="https://twitter.com/" style="display: inline-block; margin: 0 5px;"><img src="https://via.placeholder.com/30x30/2563eb/ffffff?text=tw" alt="Twitter" width="30" height="30" style="display: inline-block;"></a>
+                                            <a href="https://facebook.com/" style="display: inline-block; margin: 0 5px;"><img src="https://via.placeholder.com/30x30/2563eb/ffffff?text=fb" alt="Facebook" width="30" height="30" style="display: inline-block;"></a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: center; font-size: 12px; color: #6c757d;">
+                                            <p style="margin: 0; line-height: 1.5;">© 2023 InlinkAI. All rights reserved.<br>
+                                            <a href="https://inlinkai.com" style="color: #2563eb; text-decoration: none;">inlinkai.com</a></p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+    </html>
+    """
+
 def send_checklist_email(lead_id, name, email):
     """Send the LinkedIn Profile Audit Checklist to the user's email."""
     try:
@@ -218,21 +354,9 @@ def send_checklist_email(lead_id, name, email):
         msg['To'] = email
         msg['Subject'] = 'Your LinkedIn Profile Audit Checklist'
         
-        # Email body
-        body = f"""
-        <html>
-        <body>
-            <h2>Hello {name},</h2>
-            <p>Thank you for requesting our LinkedIn Profile Audit Checklist.</p>
-            <p>Attached to this email, you'll find your checklist to help optimize your LinkedIn profile for attracting high-quality leads.</p>
-            <p>If you have any questions or need further assistance, feel free to reply to this email.</p>
-            <br>
-            <p>Best regards,</p>
-            <p>InlinkAI Team</p>
-        </body>
-        </html>
-        """
-        msg.attach(MIMEText(body, 'html'))
+        # Get professional HTML email template
+        html_body = get_professional_email_template(name)
+        msg.attach(MIMEText(html_body, 'html'))
         
         # Attach the checklist PDF
         with open(CHECKLIST_PDF_PATH, 'rb') as file:
