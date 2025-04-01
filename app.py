@@ -5,12 +5,12 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 import logging
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
 import pymysql
+import datetime
+from dotenv import load_dotenv
 
-# Use PyMySQL to connect to MySQL
-pymysql.install_as_MySQLdb()
+# Load environment variables from .env file if it exists
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -26,30 +26,69 @@ EMAIL_HOST_PASSWORD = '@Yourface21'
 EMAIL_FROM = 'InlinkAI Support <support@inlinkai.com>'
 CHECKLIST_PDF_PATH = 'static/resources/01_LinkedIn_Profile_Audit_Checklist.pdf'  # Path to your checklist PDF
 
-# Database Configuration
-DB_USER = os.environ.get('DB_USER', 'inlinkff_leadman')  # Default value, replace with your cPanel DB username
-DB_PASSWORD = os.environ.get('DB_PASSWORD', '@Yourface21')  # Replace with your actual DB password
-DB_HOST = os.environ.get('DB_HOST', 'localhost')
-DB_NAME = os.environ.get('DB_NAME', 'inlinkff_leads')  # Default name, adjust as needed
+# Database configuration - Update these with your cPanel MySQL credentials
+DB_HOST = os.getenv('DB_HOST', 'localhost')
+DB_USER = os.getenv('DB_USER', 'inlinkff_admin')  # Replace with your cPanel database username
+DB_PASSWORD = os.getenv('DB_PASSWORD', '@Yourface21')  # Replace with your cPanel database password
+DB_NAME = os.getenv('DB_NAME', 'inlinkff_leads')  # Replace with your cPanel database name
 
-# Configure SQLAlchemy with PyMySQL
-app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
+def get_db_connection():
+    """Create a connection to the MySQL database."""
+    try:
+        connection = pymysql.connect(
+            host=DB_HOST,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            database=DB_NAME,
+            charset='utf8mb4',
+            cursorclass=pymysql.cursors.DictCursor,
+            autocommit=True
+        )
+        return connection
+    except Exception as e:
+        logger.error(f"Database connection error: {str(e)}")
+        return None
 
-# Define Lead model for database storage
-class Lead(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), nullable=False, unique=True)
-    company = db.Column(db.String(100))
-    linkedin_url = db.Column(db.String(255))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    resource_requested = db.Column(db.String(100), default="LinkedIn Profile Audit Checklist")
-    consent = db.Column(db.Boolean, default=True)
-    
-    def __repr__(self):
-        return f'<Lead {self.email}>'
+def setup_database():
+    """Set up the database tables if they don't exist."""
+    try:
+        conn = get_db_connection()
+        if conn:
+            with conn.cursor() as cursor:
+                # Create leads table
+                cursor.execute("""
+                CREATE TABLE IF NOT EXISTS leads (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    full_name VARCHAR(255) NOT NULL,
+                    email VARCHAR(255) NOT NULL,
+                    company VARCHAR(255),
+                    linkedin_url VARCHAR(255),
+                    consent BOOLEAN DEFAULT TRUE,
+                    lead_source VARCHAR(100) DEFAULT 'LinkedIn Audit Checklist',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    ip_address VARCHAR(45),
+                    user_agent TEXT
+                )
+                """)
+                
+                # Create email_logs table to track emails sent
+                cursor.execute("""
+                CREATE TABLE IF NOT EXISTS email_logs (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    lead_id INT,
+                    email_to VARCHAR(255) NOT NULL,
+                    email_subject VARCHAR(255),
+                    sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    status VARCHAR(50),
+                    error_message TEXT,
+                    FOREIGN KEY (lead_id) REFERENCES leads(id)
+                )
+                """)
+                
+                logger.info("Database tables set up successfully")
+            conn.close()
+    except Exception as e:
+        logger.error(f"Database setup error: {str(e)}")
 
 @app.route('/')
 def index():
@@ -78,18 +117,29 @@ def submit_lead_magnet():
         linkedin_url = data.get('linkedinUrl', '')
         consent = data.get('consent', False)
         
+        # Get additional info
+        ip_address = request.remote_addr
+        user_agent = request.headers.get('User-Agent', '')
+        
         logger.info(f"Lead magnet form submitted for: {email}")
         
         # Validate required fields
         if not full_name or not email:
             logger.warning("Missing required fields in lead magnet submission")
             return jsonify({'success': False, 'message': 'Name and email are required'}), 400
+        
+        # Save lead to database
+        lead_id = save_lead_to_db(full_name, email, company, linkedin_url, consent, ip_address, user_agent)
+        
+        if not lead_id:
+            logger.error("Failed to save lead to database")
+            return jsonify({'success': False, 'message': 'Failed to process your request'}), 500
             
         # Send the checklist via email
-        success = send_checklist_email(full_name, email)
+        success, error_message = send_checklist_email(lead_id, full_name, email)
         
-        # Log new lead for your CRM or marketing purposes
-        log_new_lead(full_name, email, company, linkedin_url, consent)
+        # Still log to CSV as backup
+        log_new_lead(full_name, email, company, linkedin_url)
         
         if success:
             return jsonify({'success': True, 'message': 'Checklist sent successfully'})
@@ -100,7 +150,30 @@ def submit_lead_magnet():
         logger.error(f"Error in lead magnet submission: {str(e)}")
         return jsonify({'success': False, 'message': str(e)}), 500
 
-def send_checklist_email(name, email):
+def save_lead_to_db(full_name, email, company, linkedin_url, consent, ip_address, user_agent):
+    """Save lead information to the database."""
+    try:
+        conn = get_db_connection()
+        if not conn:
+            return None
+            
+        with conn.cursor() as cursor:
+            sql = """
+            INSERT INTO leads (full_name, email, company, linkedin_url, consent, ip_address, user_agent)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """
+            cursor.execute(sql, (full_name, email, company, linkedin_url, consent, ip_address, user_agent))
+            lead_id = cursor.lastrowid
+            
+        conn.close()
+        logger.info(f"Lead saved to database with ID: {lead_id}")
+        return lead_id
+        
+    except Exception as e:
+        logger.error(f"Error saving lead to database: {str(e)}")
+        return None
+
+def send_checklist_email(lead_id, name, email):
     """Send the LinkedIn Profile Audit Checklist to the user's email."""
     try:
         # Create the email message
@@ -132,8 +205,10 @@ def send_checklist_email(name, email):
                 attachment.add_header('Content-Disposition', 'attachment', filename='LinkedIn_Profile_Audit_Checklist.pdf')
                 msg.attach(attachment)
         else:
-            logger.error(f"Checklist file not found at: {CHECKLIST_PDF_PATH}")
-            return False
+            error_msg = f"Checklist file not found at: {CHECKLIST_PDF_PATH}"
+            logger.error(error_msg)
+            log_email_status(lead_id, email, 'Failed', error_msg)
+            return False, error_msg
         
         # Connect to SMTP server and send email
         with smtplib.SMTP(EMAIL_HOST, EMAIL_PORT) as server:
@@ -142,81 +217,65 @@ def send_checklist_email(name, email):
             server.send_message(msg)
             
         logger.info(f"Checklist sent successfully to: {email}")
-        return True
+        log_email_status(lead_id, email, 'Sent')
+        return True, None
         
     except Exception as e:
-        logger.error(f"Error sending checklist email: {str(e)}")
-        return False
+        error_msg = str(e)
+        logger.error(f"Error sending checklist email: {error_msg}")
+        log_email_status(lead_id, email, 'Failed', error_msg)
+        return False, error_msg
 
-def log_new_lead(name, email, company, linkedin_url, consent=True):
-    """Log new lead information to the database and backup to CSV."""
+def log_email_status(lead_id, email, status, error_message=None):
+    """Log email sending status to database."""
     try:
-        # Save to database
-        try:
-            # Check if lead with this email already exists
-            existing_lead = Lead.query.filter_by(email=email).first()
+        conn = get_db_connection()
+        if not conn:
+            return
             
-            if existing_lead:
-                # Update existing lead information
-                existing_lead.name = name
-                existing_lead.company = company
-                existing_lead.linkedin_url = linkedin_url
-                existing_lead.consent = consent
-                existing_lead.created_at = datetime.utcnow()  # Update timestamp
-                
-                logger.info(f"Updated existing lead: {email}")
-            else:
-                # Create new lead
-                new_lead = Lead(
-                    name=name,
-                    email=email,
-                    company=company,
-                    linkedin_url=linkedin_url,
-                    consent=consent
-                )
-                db.session.add(new_lead)
-                
-                logger.info(f"Added new lead to database: {email}")
+        with conn.cursor() as cursor:
+            sql = """
+            INSERT INTO email_logs (lead_id, email_to, email_subject, status, error_message)
+            VALUES (%s, %s, %s, %s, %s)
+            """
+            cursor.execute(sql, (lead_id, email, 'Your LinkedIn Profile Audit Checklist', status, error_message))
             
-            # Commit the changes
-            db.session.commit()
-            
-        except Exception as db_error:
-            db.session.rollback()
-            logger.error(f"Database error: {str(db_error)}")
-            
-            # Fallback to CSV if database fails
-            lead_info = {
-                'name': name,
-                'email': email,
-                'company': company,
-                'linkedin_url': linkedin_url,
-                'consent': consent,
-                'date': datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
-            }
-            
-            # Save to CSV file as backup
-            import csv
-            with open('leads.csv', 'a', newline='') as file:
-                writer = csv.DictWriter(file, fieldnames=lead_info.keys())
-                # Write header if file is empty
-                if file.tell() == 0:
-                    writer.writeheader()
-                writer.writerow(lead_info)
-            
-            logger.info(f"Saved lead to CSV file (database failed): {email}")
+        conn.close()
         
     except Exception as e:
-        logger.error(f"Error logging lead: {str(e)}")
+        logger.error(f"Error logging email status: {str(e)}")
+
+def log_new_lead(name, email, company, linkedin_url):
+    """Log new lead information to CSV as backup."""
+    try:
+        lead_info = {
+            'name': name,
+            'email': email,
+            'company': company,
+            'linkedin_url': linkedin_url,
+            'timestamp': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        
+        logger.info(f"New lead logged to CSV: {lead_info}")
+        
+        # Save to a CSV file
+        import csv
+        with open('leads.csv', 'a', newline='') as file:
+            writer = csv.DictWriter(file, fieldnames=lead_info.keys())
+            # Write header if file is empty
+            if file.tell() == 0:
+                writer.writeheader()
+            writer.writerow(lead_info)
+        
+    except Exception as e:
+        logger.error(f"Error logging lead to CSV: {str(e)}")
 
 if __name__ == '__main__':
-    # Create the database tables
-    with app.app_context():
-        db.create_all()
-        logger.info("Database tables created (if they didn't exist)")
-    
     # Check if checklist file exists
     if not os.path.exists(CHECKLIST_PDF_PATH):
         logger.warning(f"Checklist PDF not found at {CHECKLIST_PDF_PATH}. Please add the file.")
+    
+    # Set up database tables
+    setup_database()
     
     app.run(debug=True) 
