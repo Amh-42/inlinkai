@@ -110,7 +110,7 @@ def dashboard():
 
 @app.route('/contact')
 def contact():
-    return render_template('base.html')
+    return render_template('contact.html')
 
 @app.route('/resources')
 def resources():
