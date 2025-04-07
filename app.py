@@ -206,7 +206,7 @@ def get_professional_email_template(name):
     recipient_name = name # Replace with the actual recipient's name
     checklist_link = 'https://inlinkai.com/resources' # Replace with the actual link
 
-    # Create a modern HTML template with InlinkAI branding
+    # Create a minimal HTML template with centered text and bold name
     html_template = f"""
     <!DOCTYPE html>
     <html lang="en">
@@ -214,182 +214,33 @@ def get_professional_email_template(name):
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Your LinkedIn Profile Audit Checklist</title>
-        <link href="https://fonts.googleapis.com" rel="preconnect">
-        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin="anonymous">
         <style>
-            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
-            
-            body, html {{
-                margin: 0;
-                padding: 0;
-                font-family: 'Inter', sans-serif;
-                color: #333;
-                background-color: #f9f9f9;
-                line-height: 1.6;
-            }}
-            
-            .email-container {{
-                max-width: 600px;
-                margin: 0 auto;
-                background-color: #171920;
-                color: #EFEFEF;
-            }}
-            
-            .header {{
-                background-color: #171920;
-                padding: 20px;
+            body {{
                 text-align: center;
-            }}
-            
-            .header img {{
-                max-width: 200px;
-                height: auto;
-            }}
-            
-            .content-section {{
-                padding: 30px;
-                background-color: #171920;
-            }}
-            
-            .hero-section {{
-                text-align: center;
-                margin-bottom: 30px;
-            }}
-            
-            h1 {{
-                color: #03AA6F;
-                font-family: 'Montserrat', sans-serif;
-                font-weight: 700;
-                font-size: 28px;
-                margin-bottom: 20px;
-            }}
-            
-            p {{
-                margin-bottom: 20px;
-                font-size: 16px;
-                line-height: 1.6;
-            }}
-            
-            .cta-button {{
-                display: inline-block;
-                background-color: #03AA6F;
-                color: #FFFFFF !important;
-                text-decoration: none;
-                padding: 12px 25px;
-                border-radius: 5px;
-                font-weight: 600;
-                margin: 20px 0;
-                text-align: center;
-                font-family: 'Montserrat', sans-serif;
-            }}
-            
-            .cta-button:hover {{
-                background-color: #028658;
-            }}
-            
-            .content-block {{
-                margin-bottom: 30px;
-            }}
-            
-            .benefits-list {{
-                padding-left: 20px;
-            }}
-            
-            .benefits-list li {{
-                margin-bottom: 10px;
-            }}
-            
-            .footer {{
-                background-color: #111318;
-                padding: 20px;
-                text-align: center;
-                font-size: 12px;
-                color: #999;
-            }}
-            
-            .footer img {{
-                max-width: 120px;
-                margin-bottom: 15px;
-            }}
-            
-            .footer a {{
-                color: #03AA6F;
-                text-decoration: none;
-            }}
-            
-            .divider {{
-                height: 1px;
-                background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(139, 92, 246, 0.15), rgba(255, 255, 255, 0));
-                max-width: 85%;
-                margin: 20px auto;
-                position: relative;
-            }}
-            
-            .divider:after {{
-                content: "";
-                position: absolute;
-                width: 8px;
-                height: 8px;
-                background: rgba(139, 92, 246, 0.2);
-                border-radius: 50%;
-                top: -3.5px;
-                left: 50%;
-                transform: translateX(-50%);
-            }}
-            
-            @media only screen and (max-width: 600px) {{
-                .content-section {{
-                    padding: 20px;
-                }}
-                
-                h1 {{
-                    font-size: 24px;
-                }}
             }}
         </style>
     </head>
     <body>
-        <div class="email-container">
-            <div class="header">
-                <img src="https://raw.githubusercontent.com/Amh-42/assets/refs/heads/main/inlinkai-main-logo.png" alt="InlinkAI Logo">
-            </div>
-            
-            <div class="content-section">
-                <div class="hero-section">
-                    <h1>Hi {recipient_name},</h1>
-                    <p>Thank you for your interest in optimizing your LinkedIn profile! As promised, here's your free LinkedIn Profile Audit Checklist to help you generate more leads through LinkedIn.</p>
-                    
-                    <a href="{checklist_link}" class="cta-button">DOWNLOAD YOUR CHECKLIST</a>
-                </div>
-                
-                <div class="divider"></div>
-                
-                <div class="content-block">
-                    <p>This checklist will help you optimize your LinkedIn profile to attract and generate inbound leads, specifically tailored for financial advisors.</p>
-                    
-                    <p><strong>Here's what you'll get:</strong></p>
-                    <ul class="benefits-list">
-                        <li><strong>Comprehensive Audit Framework:</strong> A step-by-step checklist covering all critical elements of your LinkedIn profile, from your photo to engagement strategies.</li>
-                        <li><strong>Industry-Specific Guidance:</strong> Tailored specifically for financial advisors looking to attract high-quality leads through LinkedIn.</li>
-                        <li><strong>Actionable Tips & Best Practices:</strong> Practical advice you can implement immediately to enhance your profile's effectiveness.</li>
-                    </ul>
-                </div>
-                
-                <div class="content-block">
-                    <p>We're confident this checklist will be a valuable resource for transforming your LinkedIn profile into a 24/7 lead generation engine.</p>
-                    
-                    <p>If you have any questions, please don't hesitate to reach out to our support team.</p>
-                    
-                    <p>Best regards,<br>The InlinkAI Team</p>
-                </div>
-            </div>
-            
-            <div class="footer">
-                <img src="https://raw.githubusercontent.com/Amh-42/assets/refs/heads/main/64759087eb7bfed069761445_flozy-logo-white.png" alt="Flozy Logo">
-                <p>You are receiving this email because you requested this resource or interacted with our content.</p>
-                <p>InlinkAI | 123 Business Ave, Suite 100 | <a href="#">Privacy Policy</a> | <a href="#">Unsubscribe</a></p>
-            </div>
-        </div>
+        <p>Hi <strong>{recipient_name}</strong>,</p>
+        
+        <p>Thank you for your interest in optimizing your LinkedIn profile! As promised, here's your free LinkedIn Profile Audit Checklist to help you generate more leads through LinkedIn.</p>
+        
+        <p><a href="{checklist_link}">DOWNLOAD YOUR CHECKLIST</a></p>
+        
+        <p>This checklist will help you optimize your LinkedIn profile to attract and generate inbound leads, specifically tailored for financial advisors.</p>
+        
+        <p>Here's what you'll get:</p>
+        <p>- Comprehensive Audit Framework: A step-by-step checklist covering all critical elements of your LinkedIn profile, from your photo to engagement strategies.</p>
+        <p>- Industry-Specific Guidance: Tailored specifically for financial advisors looking to attract high-quality leads through LinkedIn.</p>
+        <p>- Actionable Tips & Best Practices: Practical advice you can implement immediately to enhance your profile's effectiveness.</p>
+        
+        <p>We're confident this checklist will be a valuable resource for transforming your LinkedIn profile into a 24/7 lead generation engine.</p>
+        
+        <p>If you have any questions, please don't hesitate to reach out to our support team.</p>
+        
+        <p>Best regards,<br>The InlinkAI Team</p>
+        
+        <p>You are receiving this email because you requested this resource or interacted with our content.</p>
     </body>
     </html>
     """
