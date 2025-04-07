@@ -225,7 +225,7 @@ def get_professional_email_template(name):
         
         <p>Thank you for your interest in optimizing your LinkedIn profile! As promised, here's your free LinkedIn Profile Audit Checklist to help you generate more leads through LinkedIn.</p>
         
-        <p><a href="{checklist_link}">DOWNLOAD YOUR CHECKLIST</a></p>
+        <p><a href="{checklist_link}">Get more resources</a></p>
         
         <p>This checklist will help you optimize your LinkedIn profile to attract and generate inbound leads, specifically tailored for financial advisors.</p>
         
