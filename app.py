@@ -25,9 +25,9 @@ logger = logging.getLogger(__name__)
 # Email configuration - cPanel email settings
 EMAIL_HOST = 'mail.inlinkai.com'  # cPanel mail server (may need adjustment)
 EMAIL_PORT = 587  # Common TLS port (or 465 for SSL)
-EMAIL_HOST_USER = 'support@inlinkai.com'
+EMAIL_HOST_USER = 'anwar@inlinkai.com'
 EMAIL_HOST_PASSWORD = '@Yourface21'
-EMAIL_FROM = 'InlinkAI Support <support@inlinkai.com>'
+EMAIL_FROM = 'Anwar Misbah <anwar@inlinkai.com>'
 CHECKLIST_PDF_PATH = 'static/resources/01_LinkedIn_Profile_Audit_Checklist.pdf'  # Path to your checklist PDF
 
 # Database configuration - Update these with your cPanel MySQL credentials
