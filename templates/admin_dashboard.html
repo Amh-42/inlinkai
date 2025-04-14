@@ -270,8 +270,11 @@
                             <a href="#" class="btn btn-outline-primary">
                                 <i class="bi bi-envelope me-2"></i> Send Newsletter
                             </a>
-                            <a href="#" class="btn btn-outline-primary">
+                            <a href="{{ url_for('admin_users') }}" class="btn btn-outline-primary">
                                 <i class="bi bi-people me-2"></i> Manage Users
+                            </a>
+                            <a href="{{ url_for('admin_audit_requests') }}" class="btn btn-outline-primary">
+                                <i class="bi bi-camera-video me-2"></i> Profile Audit Requests
                             </a>
                         </div>
                     </div>

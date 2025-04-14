@@ -955,6 +955,58 @@ def admin_audit_requests():
         
     return render_template('admin_audit_requests.html', audit_requests=[])
 
+@app.route('/admin/audit-requests/update-status/<int:request_id>', methods=['POST'])
+def update_audit_status(request_id):
+    if not session.get('is_admin'):
+        flash('Access denied. Admin privileges required.', 'danger')
+        return redirect(url_for('dashboard'))
+    
+    try:
+        status = request.form.get('status')
+        notes = request.form.get('notes', '')
+        
+        if not status:
+            flash('Status is required', 'danger')
+            return redirect(url_for('admin_audit_requests'))
+        
+        conn = get_db_connection()
+        if conn:
+            with conn.cursor() as cursor:
+                # First, check if request exists
+                cursor.execute("SELECT * FROM profile_audit_requests WHERE id = %s", (request_id,))
+                audit_request = cursor.fetchone()
+                
+                if not audit_request:
+                    flash('Profile audit request not found', 'danger')
+                    return redirect(url_for('admin_audit_requests'))
+                
+                # Update the status
+                cursor.execute(
+                    "UPDATE profile_audit_requests SET status = %s WHERE id = %s",
+                    (status, request_id)
+                )
+                conn.commit()
+                
+                flash(f'Status updated successfully to {status}', 'success')
+            conn.close()
+            
+            # If status is changed to completed, you could send a notification email here
+            if status == 'Completed':
+                # Get the audit request details
+                with conn.cursor() as cursor:
+                    cursor.execute("SELECT * FROM profile_audit_requests WHERE id = %s", (request_id,))
+                    updated_request = cursor.fetchone()
+                
+                # Here you could send a notification email that the audit is complete
+                # This would require creating a new email template and function
+                
+    except Exception as e:
+        logger.error(f"Error updating profile audit status: {str(e)}")
+        logger.error(traceback.format_exc())
+        flash('Error updating status', 'danger')
+    
+    return redirect(url_for('admin_audit_requests'))
+
 if __name__ == '__main__':
     # Check if checklist file exists
     if not os.path.exists(CHECKLIST_PDF_PATH):
