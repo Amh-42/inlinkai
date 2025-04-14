@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session, flash
 import os
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -9,11 +9,15 @@ import pymysql
 import datetime
 import traceback
 from dotenv import load_dotenv
+import hashlib
+import uuid
+from functools import wraps
 
 # Load environment variables from .env file if it exists
 load_dotenv()
 
 app = Flask(__name__)
+app.secret_key = os.getenv('SECRET_KEY', 'inlinkai-secret-key-change-in-production')
 
 # Configure logging - more detailed for debugging
 logging.basicConfig(
@@ -32,9 +36,9 @@ CHECKLIST_PDF_PATH = 'static/resources/01_LinkedIn_Profile_Audit_Checklist.pdf' 
 
 # Database configuration - Update these with your cPanel MySQL credentials
 DB_HOST = os.getenv('DB_HOST', 'localhost')
-DB_USER = os.getenv('DB_USER', 'inlinkff_leadman')  # Match .env file
-DB_PASSWORD = os.getenv('DB_PASSWORD', '@Yourface21')
-DB_NAME = os.getenv('DB_NAME', 'inlinkff_leads')  # Match .env file
+DB_USER = os.getenv('DB_USER', 'root')  # Match .env file
+DB_PASSWORD = os.getenv('DB_PASSWORD', '')
+DB_NAME = os.getenv('DB_NAME', 'inlinkai_db')  # Match .env file
 
 def get_db_connection():
     """Create a connection to the MySQL database."""
@@ -59,54 +63,270 @@ def get_db_connection():
         return None
 
 def setup_database():
-    """Set up the database tables if they don't exist."""
+    """Set up the database and tables if they don't exist."""
     try:
-        conn = get_db_connection()
-        if conn:
-            with conn.cursor() as cursor:
-                # Create leads table
-                cursor.execute("""
-                CREATE TABLE IF NOT EXISTS leads (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    full_name VARCHAR(255) NOT NULL,
-                    email VARCHAR(255) NOT NULL,
-                    company VARCHAR(255),
-                    linkedin_url VARCHAR(255),
-                    consent BOOLEAN DEFAULT TRUE,
-                    lead_source VARCHAR(100) DEFAULT 'LinkedIn Audit Checklist',
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    ip_address VARCHAR(45),
-                    user_agent TEXT
-                )
-                """)
-                
-                # Create email_logs table to track emails sent
-                cursor.execute("""
-                CREATE TABLE IF NOT EXISTS email_logs (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    lead_id INT,
-                    email_to VARCHAR(255) NOT NULL,
-                    email_subject VARCHAR(255),
-                    sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    status VARCHAR(50),
-                    error_message TEXT,
-                    FOREIGN KEY (lead_id) REFERENCES leads(id)
-                )
-                """)
-                
-                logger.info("Database tables set up successfully")
-            conn.close()
+        # First, connect without specifying a database to create it if needed
+        connection = pymysql.connect(
+            host=DB_HOST,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            charset='utf8mb4',
+            cursorclass=pymysql.cursors.DictCursor,
+            autocommit=True
+        )
+        
+        with connection.cursor() as cursor:
+            # Create database if it doesn't exist
+            cursor.execute(f"CREATE DATABASE IF NOT EXISTS {DB_NAME}")
+            cursor.execute(f"USE {DB_NAME}")
+            logger.info(f"Database {DB_NAME} created or selected successfully")
+            
+            # Create leads table
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS leads (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                full_name VARCHAR(255) NOT NULL,
+                email VARCHAR(255) NOT NULL,
+                company VARCHAR(255),
+                linkedin_url VARCHAR(255),
+                consent BOOLEAN DEFAULT TRUE,
+                lead_source VARCHAR(100) DEFAULT 'LinkedIn Audit Checklist',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                ip_address VARCHAR(45),
+                user_agent TEXT
+            )
+            """)
+            
+            # Create email_logs table to track emails sent
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS email_logs (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                lead_id INT,
+                email_to VARCHAR(255) NOT NULL,
+                email_subject VARCHAR(255),
+                sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                status VARCHAR(50),
+                error_message TEXT,
+                FOREIGN KEY (lead_id) REFERENCES leads(id)
+            )
+            """)
+            
+            # Create users table for authentication
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                email VARCHAR(255) NOT NULL UNIQUE,
+                password_hash VARCHAR(255) NOT NULL,
+                full_name VARCHAR(255) NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                last_login TIMESTAMP NULL,
+                is_admin BOOLEAN DEFAULT FALSE
+            )
+            """)
+            
+            logger.info("Database tables set up successfully")
+        connection.close()
     except Exception as e:
         logger.error(f"Database setup error: {str(e)}")
         logger.error(traceback.format_exc())
 
+# Authentication helper functions
+def hash_password(password):
+    """Create password hash"""
+    salt = uuid.uuid4().hex
+    return hashlib.sha256(salt.encode() + password.encode()).hexdigest() + ':' + salt
+
+def check_password(hashed_password, user_password):
+    """Verify password against hash"""
+    password, salt = hashed_password.split(':')
+    return password == hashlib.sha256(salt.encode() + user_password.encode()).hexdigest()
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            return redirect(url_for('login', next=request.url))
+        return f(*args, **kwargs)
+    return decorated_function
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            return redirect(url_for('login', next=request.url))
+        
+        # Check if user is admin
+        try:
+            conn = get_db_connection()
+            if conn:
+                with conn.cursor() as cursor:
+                    cursor.execute("SELECT is_admin FROM users WHERE id = %s", (session['user_id'],))
+                    user = cursor.fetchone()
+                    conn.close()
+                    
+                    if not user or not user['is_admin']:
+                        flash('You do not have permission to access this page', 'danger')
+                        return redirect(url_for('dashboard'))
+            else:
+                flash('Database connection error', 'danger')
+                return redirect(url_for('login'))
+        except Exception as e:
+            logger.error(f"Admin check error: {str(e)}")
+            flash('An error occurred', 'danger')
+            return redirect(url_for('login'))
+            
+        return f(*args, **kwargs)
+    return decorated_function
+
+# Routes
 @app.route('/')
 def index():
     return render_template('index.html')
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        
+        if not email or not password:
+            flash('Please provide both email and password', 'danger')
+            return render_template('login.html')
+        
+        try:
+            conn = get_db_connection()
+            if conn:
+                with conn.cursor() as cursor:
+                    cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
+                    user = cursor.fetchone()
+                    
+                    if user and check_password(user['password_hash'], password):
+                        # Update last login time
+                        cursor.execute("UPDATE users SET last_login = NOW() WHERE id = %s", (user['id'],))
+                        
+                        # Set session
+                        session['user_id'] = user['id']
+                        session['email'] = user['email']
+                        session['full_name'] = user['full_name']
+                        session['is_admin'] = user['is_admin']
+                        
+                        flash('Login successful', 'success')
+                        next_page = request.args.get('next')
+                        if next_page:
+                            return redirect(next_page)
+                        return redirect(url_for('dashboard'))
+                    else:
+                        flash('Invalid email or password', 'danger')
+                
+                conn.close()
+            else:
+                flash('Database connection error', 'danger')
+        except Exception as e:
+            logger.error(f"Login error: {str(e)}")
+            flash('An error occurred during login', 'danger')
+        
+    return render_template('login.html')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+        full_name = request.form.get('full_name')
+        
+        if not email or not password or not confirm_password or not full_name:
+            flash('Please fill in all fields', 'danger')
+            return render_template('register.html')
+            
+        if password != confirm_password:
+            flash('Passwords do not match', 'danger')
+            return render_template('register.html')
+        
+        try:
+            conn = get_db_connection()
+            if conn:
+                with conn.cursor() as cursor:
+                    # Check if user already exists
+                    cursor.execute("SELECT id FROM users WHERE email = %s", (email,))
+                    existing_user = cursor.fetchone()
+                    
+                    if existing_user:
+                        flash('Email already in use', 'danger')
+                        return render_template('register.html')
+                    
+                    # Create new user
+                    hashed_password = hash_password(password)
+                    cursor.execute(
+                        "INSERT INTO users (email, password_hash, full_name) VALUES (%s, %s, %s)",
+                        (email, hashed_password, full_name)
+                    )
+                    
+                    flash('Registration successful! You can now log in.', 'success')
+                    return redirect(url_for('login'))
+                
+                conn.close()
+            else:
+                flash('Database connection error', 'danger')
+        except Exception as e:
+            logger.error(f"Registration error: {str(e)}")
+            flash('An error occurred during registration', 'danger')
+            
+    return render_template('register.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash('You have been logged out', 'info')
+    return redirect(url_for('login'))
+
 @app.route('/dashboard')
+@login_required
 def dashboard():
     return render_template('dashboard.html')
+
+@app.route('/admin')
+@login_required
+@admin_required
+def admin_dashboard():
+    leads = []
+    try:
+        conn = get_db_connection()
+        if conn:
+            with conn.cursor() as cursor:
+                cursor.execute("SELECT * FROM leads ORDER BY created_at DESC")
+                leads = cursor.fetchall()
+            conn.close()
+            
+            # Add datetime calculations for dashboard stats
+            now = datetime.datetime.now()
+            day_delta = datetime.timedelta(days=1)
+            
+            return render_template('admin_dashboard.html', leads=leads, now=now, day_delta=day_delta)
+    except Exception as e:
+        logger.error(f"Admin dashboard error: {str(e)}")
+        logger.error(traceback.format_exc())
+        flash('Error fetching leads data', 'danger')
+        
+    return render_template('admin_dashboard.html', leads=leads, now=datetime.datetime.now(), day_delta=datetime.timedelta(days=1))
+
+@app.route('/profile')
+@login_required
+def profile():
+    user = None
+    try:
+        conn = get_db_connection()
+        if conn:
+            with conn.cursor() as cursor:
+                cursor.execute("SELECT id, email, full_name, created_at, last_login FROM users WHERE id = %s", 
+                              (session['user_id'],))
+                user = cursor.fetchone()
+            conn.close()
+    except Exception as e:
+        logger.error(f"Profile error: {str(e)}")
+        flash('Error fetching user data', 'danger')
+        
+    return render_template('profile.html', user=user)
 
 @app.route('/contact')
 def contact():
@@ -218,7 +438,7 @@ def get_professional_email_template(name):
             body {{
                 text-align: center;
             }}
-        </style>
+    </style>
     </head>
     <body>
         <p>Hi <strong>{recipient_name}</strong>,</p>
@@ -351,6 +571,122 @@ def log_new_lead(name, email, company, linkedin_url):
         logger.error(f"Error logging lead to CSV: {str(e)}")
         logger.error(traceback.format_exc())
 
+def create_default_admin():
+    """Create a default admin user if none exists."""
+    try:
+        conn = get_db_connection()
+        if conn:
+            with conn.cursor() as cursor:
+                # Check if any admin user exists
+                cursor.execute("SELECT COUNT(*) as count FROM users WHERE is_admin = TRUE")
+                result = cursor.fetchone()
+                
+                if result and result['count'] == 0:
+                    # Create default admin user
+                    admin_email = 'admin@inlinkai.com'
+                    admin_password = 'admin123'  # Change this in production
+                    admin_name = 'Admin User'
+                    
+                    # Check if this email already exists
+                    cursor.execute("SELECT id FROM users WHERE email = %s", (admin_email,))
+                    existing_user = cursor.fetchone()
+                    
+                    if not existing_user:
+                        hashed_password = hash_password(admin_password)
+                        cursor.execute(
+                            "INSERT INTO users (email, password_hash, full_name, is_admin) VALUES (%s, %s, %s, TRUE)",
+                            (admin_email, hashed_password, admin_name)
+                        )
+                        logger.info(f"Default admin user created with email: {admin_email}")
+                        logger.info(f"Default admin password: {admin_password} (CHANGE THIS IN PRODUCTION)")
+                    else:
+                        # Make existing user an admin
+                        cursor.execute("UPDATE users SET is_admin = TRUE WHERE email = %s", (admin_email,))
+                        logger.info(f"User {admin_email} set as admin")
+                else:
+                    logger.info("Admin user already exists")
+            
+            conn.close()
+    except Exception as e:
+        logger.error(f"Error creating admin user: {str(e)}")
+        logger.error(traceback.format_exc())
+
+# Admin user management routes
+@app.route('/admin/users')
+def admin_users():
+    if not session.get('is_admin'):
+        flash('Access denied. Admin privileges required.', 'danger')
+        return redirect(url_for('dashboard'))
+    
+    try:
+        cursor = get_db_connection()
+        with cursor.cursor() as cursor:
+            cursor.execute('SELECT * FROM users ORDER BY id DESC')
+            users = cursor.fetchall()
+        cursor.close()
+        return render_template('admin_users.html', users=users)
+    except Exception as e:
+        logger.error(f"Error fetching users: {e}")
+        flash('An error occurred while fetching users.', 'danger')
+        return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/users/toggle_admin/<int:user_id>', methods=['POST'])
+def toggle_admin(user_id):
+    if not session.get('is_admin'):
+        flash('Access denied. Admin privileges required.', 'danger')
+        return redirect(url_for('dashboard'))
+    
+    try:
+        cursor = get_db_connection()
+        with cursor.cursor() as cursor:
+            # Get current admin status
+            cursor.execute('SELECT is_admin FROM users WHERE id = %s', (user_id,))
+            user = cursor.fetchone()
+            
+            if not user:
+                flash('User not found.', 'danger')
+                return redirect(url_for('admin_users'))
+            
+            # Toggle admin status
+            new_status = 0 if user['is_admin'] else 1
+            cursor.execute('UPDATE users SET is_admin = %s WHERE id = %s', (new_status, user_id))
+            cursor.execute('COMMIT')
+            
+            status_text = "granted" if new_status else "revoked"
+            flash(f'Admin privileges {status_text} successfully.', 'success')
+    except Exception as e:
+        logger.error(f"Error toggling admin status: {e}")
+        flash('An error occurred while updating admin status.', 'danger')
+    
+    return redirect(url_for('admin_users'))
+
+@app.route('/admin/users/delete/<int:user_id>', methods=['POST'])
+def delete_user(user_id):
+    if not session.get('is_admin'):
+        flash('Access denied. Admin privileges required.', 'danger')
+        return redirect(url_for('dashboard'))
+    
+    # Prevent deleting own account
+    if user_id == session.get('user_id'):
+        flash('You cannot delete your own account.', 'danger')
+        return redirect(url_for('admin_users'))
+    
+    try:
+        cursor = get_db_connection()
+        with cursor.cursor() as cursor:
+            cursor.execute('DELETE FROM users WHERE id = %s', (user_id,))
+            cursor.execute('COMMIT')
+            
+            if cursor.rowcount > 0:
+                flash('User deleted successfully.', 'success')
+            else:
+                flash('User not found.', 'danger')
+    except Exception as e:
+        logger.error(f"Error deleting user: {e}")
+        flash('An error occurred while deleting the user.', 'danger')
+    
+    return redirect(url_for('admin_users'))
+
 if __name__ == '__main__':
     # Check if checklist file exists
     if not os.path.exists(CHECKLIST_PDF_PATH):
@@ -361,5 +697,8 @@ if __name__ == '__main__':
     
     # Set up database tables
     setup_database()
+    
+    # Create default admin user
+    create_default_admin()
     
     app.run(debug=True) 

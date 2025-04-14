@@ -8,9 +8,9 @@ load_dotenv()
 
 # Database configuration
 DB_HOST = os.getenv('DB_HOST', 'localhost')
-DB_USER = os.getenv('DB_USER', 'inlinkff_leadman')
-DB_PASSWORD = os.getenv('DB_PASSWORD', '@Yourface21')
-DB_NAME = os.getenv('DB_NAME', 'inlinkff_leads')
+DB_USER = os.getenv('DB_USER', 'root')
+DB_PASSWORD = os.getenv('DB_PASSWORD', '')
+DB_NAME = os.getenv('DB_NAME', 'inlinkai_db')
 
 def test_connection():
     """Test connection to MySQL database."""
