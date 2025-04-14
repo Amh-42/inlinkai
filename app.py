@@ -124,6 +124,26 @@ def setup_database():
             )
             """)
             
+            # Create profile audit requests table
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS profile_audit_requests (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                full_name VARCHAR(255) NOT NULL,
+                email VARCHAR(255) NOT NULL,
+                linkedin_url VARCHAR(255) NOT NULL,
+                target_audience TEXT NOT NULL,
+                linkedin_goal VARCHAR(100) NOT NULL,
+                linkedin_challenge TEXT,
+                company VARCHAR(255),
+                consent BOOLEAN DEFAULT TRUE,
+                lead_source VARCHAR(100) DEFAULT 'Profile Audit Video',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                status VARCHAR(50) DEFAULT 'Pending',
+                ip_address VARCHAR(45),
+                user_agent TEXT
+            )
+            """)
+            
             logger.info("Database tables set up successfully")
         connection.close()
     except Exception as e:
@@ -424,6 +444,40 @@ def save_lead_to_db(full_name, email, company, linkedin_url, consent, ip_address
         logger.error(traceback.format_exc())
         return None
 
+def save_profile_audit_request(full_name, email, linkedin_url, target_audience, linkedin_goal, 
+                             linkedin_challenge, company, consent, ip_address, user_agent):
+    """Save profile audit request to the database."""
+    try:
+        logger.debug(f"Attempting to save profile audit request for: {email}")
+        
+        conn = get_db_connection()
+        if not conn:
+            logger.error("Database connection failed when saving profile audit request")
+            return None
+            
+        with conn.cursor() as cursor:
+            sql = """
+            INSERT INTO profile_audit_requests (
+                full_name, email, linkedin_url, target_audience, linkedin_goal, 
+                linkedin_challenge, company, consent, ip_address, user_agent
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """
+            cursor.execute(sql, (
+                full_name, email, linkedin_url, target_audience, linkedin_goal,
+                linkedin_challenge, company, consent, ip_address, user_agent
+            ))
+            request_id = cursor.lastrowid
+            
+        conn.close()
+        logger.info(f"Profile audit request saved to database with ID: {request_id}")
+        return request_id
+        
+    except Exception as e:
+        logger.error(f"Error saving profile audit request to database: {str(e)}")
+        logger.error(traceback.format_exc())
+        return None
+
 def get_professional_email_template(name):
     """Returns a professional HTML email template with the recipient's name."""
     # Placeholders for the dynamic content
@@ -465,6 +519,87 @@ def get_professional_email_template(name):
         <p>Best regards,<br>The InlinkAI Team</p>
         
         <p>You are receiving this email because you requested this resource or interacted with our content.</p>
+    </body>
+    </html>
+    """
+
+    return html_template
+
+def get_profile_audit_email_template(name, linkedin_url):
+    """Returns a professional HTML email template for profile audit confirmation."""
+    recipient_name = name
+    
+    html_template = f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Your LinkedIn Profile Audit Video Request</title>
+        <style>
+            body {{
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                color: #333;
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 20px;
+            }}
+            .header {{
+                text-align: center;
+                margin-bottom: 30px;
+            }}
+            .content {{
+                margin-bottom: 30px;
+            }}
+            .footer {{
+                font-size: 12px;
+                color: #666;
+                text-align: center;
+                margin-top: 40px;
+                padding-top: 20px;
+                border-top: 1px solid #eee;
+            }}
+            .highlight {{
+                background-color: #f7f9fc;
+                border-left: 4px solid #0077b5;
+                padding: 15px;
+                margin: 20px 0;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <h2>Your LinkedIn Profile Audit Request Received</h2>
+        </div>
+        
+        <div class="content">
+            <p>Hi <strong>{recipient_name}</strong>,</p>
+            
+            <p>Thank you for requesting a personalized LinkedIn Profile Audit video. We're excited to help you optimize your professional presence on LinkedIn!</p>
+            
+            <div class="highlight">
+                <p><strong>Profile being reviewed:</strong> {linkedin_url}</p>
+                <p><strong>Estimated delivery:</strong> Within 48 business hours</p>
+            </div>
+            
+            <p>Our team of LinkedIn experts will carefully review your profile and create a custom 5-minute video that focuses specifically on your headline and banner, highlighting key opportunities for improvement.</p>
+            
+            <p>You'll receive actionable feedback tailored to your profile and goals as a financial advisor, with specific suggestions you can implement right away to improve your profile's effectiveness.</p>
+            
+            <p>Keep an eye on your inbox – we'll deliver your personalized audit video to this email address as soon as it's ready.</p>
+            
+            <p>In the meantime, if you have any questions, feel free to reply to this email.</p>
+            
+            <p>We look forward to helping you maximize your LinkedIn presence!</p>
+            
+            <p>Best regards,<br>The InlinkAI Team</p>
+        </div>
+        
+        <div class="footer">
+            <p>© InlinkAI. All rights reserved.</p>
+            <p>You're receiving this email because you requested a LinkedIn Profile Audit from our website.</p>
+        </div>
     </body>
     </html>
     """
@@ -548,6 +683,50 @@ def log_email_status(lead_id, email, status, error_message=None):
     except Exception as e:
         logger.error(f"Error logging email status: {str(e)}")
         logger.error(traceback.format_exc())
+
+def send_profile_audit_confirmation_email(request_id, name, email, linkedin_url):
+    """Send confirmation email for profile audit request."""
+    try:
+        logger.debug(f"Preparing to send profile audit confirmation email to: {email}")
+        
+        # Create the email message
+        msg = MIMEMultipart()
+        msg['From'] = EMAIL_FROM
+        msg['To'] = email
+        msg['Subject'] = 'Your LinkedIn Profile Audit Video Request'
+        
+        # Get email template for profile audit
+        html_body = get_profile_audit_email_template(name, linkedin_url)
+        msg.attach(MIMEText(html_body, 'html'))
+        
+        logger.debug(f"Connecting to email server: {EMAIL_HOST}:{EMAIL_PORT}")
+        
+        # Connect to SMTP server and send email
+        try:
+            with smtplib.SMTP(EMAIL_HOST, EMAIL_PORT) as server:
+                server.set_debuglevel(1)  # Enable debug output
+                server.starttls()
+                logger.debug(f"Logging into email server as: {EMAIL_HOST_USER}")
+                server.login(EMAIL_HOST_USER, EMAIL_HOST_PASSWORD)
+                logger.debug(f"Sending confirmation email to: {email}")
+                server.send_message(msg)
+                
+            logger.info(f"Profile audit confirmation sent successfully to: {email}")
+            # Log the email status - Using a different table/function could be considered in the future
+            log_email_status(request_id, email, 'Sent')
+            return True, None
+        except smtplib.SMTPException as smtp_error:
+            error_msg = f"SMTP error: {str(smtp_error)}"
+            logger.error(error_msg)
+            log_email_status(request_id, email, 'Failed', error_msg)
+            return False, error_msg
+        
+    except Exception as e:
+        error_msg = str(e)
+        logger.error(f"Error sending profile audit confirmation email: {error_msg}")
+        logger.error(traceback.format_exc())
+        log_email_status(request_id, email, 'Failed', error_msg)
+        return False, error_msg
 
 def log_new_lead(name, email, company, linkedin_url):
     """Log new lead information to CSV as backup."""
