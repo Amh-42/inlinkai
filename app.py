@@ -336,6 +336,10 @@ def contact():
 def resources():
     return render_template('leadmagnet.html')
 
+@app.route('/profile-audit')
+def profile_audit():
+    return render_template('audit_video.html')
+
 @app.route('/submit-lead-magnet', methods=['POST'])
 def submit_lead_magnet():
     try:

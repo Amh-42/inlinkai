@@ -1,0 +1,281 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="lead-magnet-section section-bg-subtle" style="padding-top: 100px; padding-bottom: 100px;">
+    <div class="w-layout-blockcontainer new-container w-container">
+        <div class="center-alignment">
+            <div class="section-sub-title-wrap">
+                <p class="section-sub-title">
+                    <span class="sub-title-sub-text">FREE OFFER</span>
+                </p>
+            </div>
+            <h2 class="new-section-title">
+                Free 5-Minute LinkedIn <b class="text-gradient">Profile Audit Video</b>
+            </h2>
+            <div class="agency-title-content-wrap">
+                <p class="new-section-content">
+                    Get personalized, actionable feedback on your LinkedIn profile (focusing on Headline & Banner) in a
+                    quick 5-minute video review, specifically for financial advisors.
+                </p>
+            </div>
+            <!-- Button to open popup -->
+            <div style="margin-top: 30px;">
+                <button id="open-form-popup" class="new-banner-button gradient-bg w-inline-block"
+                    style="border: none; cursor: pointer;">
+                    <p class="banner-button-content white">
+                        Request Your Free Audit
+                    </p>
+                    <div class="banner-button-arrow-wrap white-bg">
+                        <img loading="lazy"
+                            src="https://cdn.prod.website-files.com/61461a5621e91a9346dd631e/64757d1b8ab9ea3bafaf0fdc_banner-button-arrow.svg"
+                            alt="" class="banner-button-arrow" />
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Benefits Section -->
+        <div class="lead-magnet-benefits" style="margin-top: 60px;">
+            <div class="center-alignment" style="margin-bottom: 40px;">
+                <h3 style="font-size: 24px; font-weight: 600;">What You'll Get:</h3>
+            </div>
+
+            <div class="benefits-grid"
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; max-width: 1000px; margin: 0 auto;">
+                <div class="benefit-card"
+                    style="background-color: white; padding: 25px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
+                    <div style="font-weight: 600; font-size: 18px; margin-bottom: 12px; color: rgb(37, 99, 235);">
+                        Personalized Video Review</div>
+                    <p style="color: #4b5563; line-height: 1.6;">A custom 5-minute video focusing on *your* profile's
+                        headline and banner, highlighting key opportunities.</p>
+                </div>
+
+                <div class="benefit-card"
+                    style="background-color: white; padding: 25px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
+                    <div style="font-weight: 600; font-size: 18px; margin-bottom: 12px; color: rgb(37, 99, 235);">
+                        High-Impact Quick Wins</div>
+                    <p style="color: #4b5563; line-height: 1.6;">Identify 1-2 specific, actionable changes you can make
+                        immediately to improve your profile's first impression.</p>
+                </div>
+
+                <div class="benefit-card"
+                    style="background-color: white; padding: 25px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
+                    <div style="font-weight: 600; font-size: 18px; margin-bottom: 12px; color: rgb(37, 99, 235);">
+                        Advisor-Specific Context</div>
+                    <p style="color: #4b5563; line-height: 1.6;">Feedback tailored to the unique needs and goals of
+                        financial advisors using LinkedIn for growth.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form popup overlay -->
+    <div id="form-popup-overlay"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center; overflow-y: auto; padding: 20px;">
+        <!-- Lead Magnet Form Popup -->
+        <div class="lead-magnet-form-container"
+            style="max-width: 600px; width: 100%; margin: 20px auto; padding: 30px; background-color: white; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); position: relative;">
+            <!-- Close button -->
+            <button id="close-form-popup"
+                style="position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 20px; cursor: pointer; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; color: #6b7280;">✕</button>
+
+            <!-- Form title -->
+            <div style="text-align: center; margin-bottom: 25px;">
+                <h3 style="font-size: 22px; margin-bottom: 10px;">Request Your Free 5-Min Profile Audit</h3>
+                <p style="color: #4b5563;">Fill out the details below so we can provide the best feedback.</p>
+            </div>
+
+            <!-- NOTE: Update the form action if you change your backend endpoint -->
+            <form action="/submit-lead-magnet" method="POST" id="lead-magnet-form">
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="fullName" style="display: block; margin-bottom: 8px; font-weight: 500;">Full
+                        Name*</label>
+                    <input type="text" id="fullName" name="fullName" required
+                        style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 16px;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="email" style="display: block; margin-bottom: 8px; font-weight: 500;">Email
+                        Address* (Where we'll send the video)</label>
+                    <input type="email" id="email" name="email" required
+                        style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 16px;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="linkedinUrl" style="display: block; margin-bottom: 8px; font-weight: 500;">Your LinkedIn
+                        Profile URL*</label>
+                    <input type="url" id="linkedinUrl" name="linkedinUrl" required
+                        placeholder="https://www.linkedin.com/in/yourprofile/"
+                        style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 16px;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="targetAudience" style="display: block; margin-bottom: 8px; font-weight: 500;">Who is
+                        your ideal client or target audience?*</label>
+                    <textarea id="targetAudience" name="targetAudience" rows="3" required
+                        placeholder="e.g., Tech professionals nearing retirement, Small business owners, Young families..."
+                        style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 16px; resize: vertical;"></textarea>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="linkedinGoal" style="display: block; margin-bottom: 8px; font-weight: 500;">What is your
+                        primary goal for using LinkedIn?*</label>
+                    <select id="linkedinGoal" name="linkedinGoal" required
+                        style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 16px; background-color: white;">
+                        <option value="" disabled selected>Select your main goal...</option>
+                        <option value="Generate Inbound Leads">Generate Inbound Leads</option>
+                        <option value="Build Brand Awareness">Build Brand Awareness</option>
+                        <option value="Network with Peers/COIs">Network with Peers/COIs</option>
+                        <option value="Share Content/Thought Leadership">Share Content/Thought Leadership</option>
+                        <option value="Recruiting/Hiring">Recruiting/Hiring</option>
+                        <option value="I dont know yet">I don't know yet</option>
+                        <option value="Other">Other (Please specify below)</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="linkedinChallenge" style="display: block; margin-bottom: 8px; font-weight: 500;">What's
+                        your biggest challenge or question about using LinkedIn effectively?</label>
+                    <textarea id="linkedinChallenge" name="linkedinChallenge" rows="3"
+                        placeholder="e.g., Getting profile views, converting connections to leads, knowing what content to post, using AI tools..."
+                        style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 16px; resize: vertical;"></textarea>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="company" style="display: block; margin-bottom: 8px; font-weight: 500;">Company Name
+                        (Optional)</label>
+                    <input type="text" id="company" name="company"
+                        style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 16px;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <label style="display: flex; align-items: flex-start; cursor: pointer;">
+                        <input type="checkbox" name="consent" required
+                            style="margin-right: 10px; margin-top: 3px; flex-shrink: 0;">
+                        <span style="font-size: 14px;">I agree to receive my free LinkedIn Profile Audit video and
+                            occasional emails with valuable content related to LinkedIn growth for advisors. You can
+                            unsubscribe at any time.*</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="new-banner-button gradient-bg w-inline-block"
+                    style="width: 100%; border: none; cursor: pointer;">
+                    <p class="banner-button-content white">
+                        Request My Free Audit Video
+                    </p>
+                    <div class="banner-button-arrow-wrap white-bg">
+                        <img loading="lazy"
+                            src="https://cdn.prod.website-files.com/61461a5621e91a9346dd631e/64757d1b8ab9ea3bafaf0fdc_banner-button-arrow.svg"
+                            alt="" class="banner-button-arrow" />
+                    </div>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Form submission handling script (Updated Success Message) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('lead-magnet-form');
+            const formPopup = document.getElementById('form-popup-overlay');
+            const openFormButton = document.getElementById('open-form-popup');
+            const closeFormButton = document.getElementById('close-form-popup');
+
+            // Open popup when button is clicked
+            openFormButton.addEventListener('click', function () {
+                formPopup.style.display = 'flex';
+                document.body.style.overflow = 'hidden'; // Prevent scrolling when popup is open
+            });
+
+            // Close popup when close button is clicked
+            closeFormButton.addEventListener('click', function () {
+                formPopup.style.display = 'none';
+                document.body.style.overflow = ''; // Restore scrolling
+            });
+
+            // Close popup when clicking outside the form
+            formPopup.addEventListener('click', function (e) {
+                // Ensure the click is directly on the overlay, not on the form container itself
+                if (e.target === formPopup) {
+                    formPopup.style.display = 'none';
+                    document.body.style.overflow = ''; // Restore scrolling
+                }
+            });
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                // Show loading state
+                const submitButton = form.querySelector('button[type="submit"]');
+                const originalButtonHTML = submitButton.innerHTML; // Store original HTML
+                submitButton.innerHTML = '<p class="banner-button-content white">Submitting Request...</p>';
+                submitButton.disabled = true;
+
+                // Get form data
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData);
+
+                console.log('Submitting audit request data:', data);
+
+                // Submit form via fetch API (using your existing endpoint)
+                fetch('/submit-lead-magnet', { // Keep endpoint or change if backend updated
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                })
+                    .then(response => {
+                        console.log('Response status:', response.status);
+                        // Try to parse JSON regardless of status for potential error messages
+                        return response.json().then(jsonData => ({ ok: response.ok, status: response.status, data: jsonData }))
+                            .catch(error => {
+                                console.error('Error parsing JSON response:', error);
+                                // If JSON parsing fails, create a standard error object
+                                return { ok: false, status: response.status, data: { message: 'Server returned non-JSON response' } };
+                            });
+                    })
+                    .then(result => {
+                        console.log('Response result:', result);
+
+                        if (result.ok) {
+                            // Show success message
+                            const formContainer = document.querySelector('.lead-magnet-form-container');
+                            formContainer.innerHTML = `
+                            <div style="text-align: center; padding: 30px 20px;">
+                              <div style="font-size: 60px; margin-bottom: 20px;">✅</div>
+                              <h3 style="margin-bottom: 15px; font-size: 24px;">Request Received!</h3>
+                              <p style="margin-bottom: 20px; color: #4b5563;">Thank you for requesting your free audit. We'll review your profile and aim to send your personalized 5-minute video audit to your email within <strong>48 business hours</strong>. Please check your inbox (and spam folder).</p>
+                              <button id="close-success" style="background-color: #f3f4f6; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 500;">Close</button>
+                            </div>
+                          `;
+
+                            // Add event listener to the new close button
+                            document.getElementById('close-success').addEventListener('click', function () {
+                                formPopup.style.display = 'none';
+                                document.body.style.overflow = ''; // Restore scrolling
+                            });
+                        } else {
+                            // Restore button state on error
+                            submitButton.innerHTML = originalButtonHTML;
+                            submitButton.disabled = false;
+
+                            // Show specific error message from server if available, otherwise generic
+                            const errorMessage = result.data?.message || `Request failed with status ${result.status}. Please try again.`;
+                            alert('There was an error submitting your request: ' + errorMessage);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Fetch Error:', error);
+
+                        // Restore button state on network/fetch error
+                        submitButton.innerHTML = originalButtonHTML;
+                        submitButton.disabled = false;
+
+                        alert('There was a network error submitting your request. Please check your connection and try again.');
+                    });
+            });
+        });
+    </script>
+</section>
+{% endblock %}
