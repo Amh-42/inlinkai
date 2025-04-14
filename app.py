@@ -417,6 +417,69 @@ def submit_lead_magnet():
         logger.error(traceback.format_exc())
         return jsonify({'success': False, 'message': str(e)}), 500
 
+@app.route('/submit-profile-audit', methods=['POST'])
+def submit_profile_audit():
+    try:
+        # Log the raw request for debugging
+        logger.debug(f"Received profile audit submission: Method={request.method}, ContentType={request.content_type}")
+        
+        # Get form data - handle both JSON and form data
+        if request.is_json:
+            logger.debug("Processing JSON data")
+            data = request.get_json()
+        else:
+            logger.debug("Processing form data")
+            data = request.form.to_dict()
+        
+        logger.debug(f"Profile audit form data: {data}")
+        
+        full_name = data.get('fullName', '')
+        email = data.get('email', '')
+        linkedin_url = data.get('linkedinUrl', '')
+        target_audience = data.get('targetAudience', '')
+        linkedin_goal = data.get('linkedinGoal', '')
+        linkedin_challenge = data.get('linkedinChallenge', '')
+        company = data.get('company', '')
+        consent = True  # Default to True since checkbox is required in form
+        
+        # Get additional info
+        ip_address = request.remote_addr
+        user_agent = request.headers.get('User-Agent', '')
+        
+        logger.info(f"Profile audit form submitted for: {email}")
+        
+        # Validate required fields
+        if not full_name or not email or not linkedin_url or not target_audience or not linkedin_goal:
+            logger.warning("Missing required fields in profile audit submission")
+            return jsonify({'success': False, 'message': 'Please fill in all required fields'}), 400
+        
+        # Save profile audit request to database
+        request_id = save_profile_audit_request(
+            full_name, email, linkedin_url, target_audience, linkedin_goal,
+            linkedin_challenge, company, consent, ip_address, user_agent
+        )
+        
+        if not request_id:
+            logger.error("Failed to save profile audit request to database")
+            return jsonify({'success': False, 'message': 'Failed to process your request'}), 500
+            
+        # Send confirmation email
+        success, error_message = send_profile_audit_confirmation_email(request_id, full_name, email, linkedin_url)
+        
+        # Still log to CSV as backup like regular leads
+        log_new_lead(full_name, email, company, linkedin_url)
+        
+        if success:
+            return jsonify({'success': True, 'message': 'Profile audit request received successfully'})
+        else:
+            logger.error(f"Email sending failed: {error_message}")
+            return jsonify({'success': False, 'message': 'Request saved but failed to send confirmation email: ' + error_message}), 500
+            
+    except Exception as e:
+        logger.error(f"Error in profile audit submission: {str(e)}")
+        logger.error(traceback.format_exc())
+        return jsonify({'success': False, 'message': str(e)}), 500
+
 def save_lead_to_db(full_name, email, company, linkedin_url, consent, ip_address, user_agent):
     """Save lead information to the database."""
     try:
@@ -869,6 +932,28 @@ def delete_user(user_id):
         flash('An error occurred while deleting the user.', 'danger')
     
     return redirect(url_for('admin_users'))
+
+@app.route('/admin/audit-requests')
+def admin_audit_requests():
+    if not session.get('is_admin'):
+        flash('Access denied. Admin privileges required.', 'danger')
+        return redirect(url_for('dashboard'))
+    
+    try:
+        conn = get_db_connection()
+        if conn:
+            with conn.cursor() as cursor:
+                cursor.execute("SELECT * FROM profile_audit_requests ORDER BY created_at DESC")
+                audit_requests = cursor.fetchall()
+            conn.close()
+            
+            return render_template('admin_audit_requests.html', audit_requests=audit_requests)
+    except Exception as e:
+        logger.error(f"Error fetching profile audit requests: {str(e)}")
+        logger.error(traceback.format_exc())
+        flash('Error fetching profile audit request data', 'danger')
+        
+    return render_template('admin_audit_requests.html', audit_requests=[])
 
 if __name__ == '__main__':
     # Check if checklist file exists

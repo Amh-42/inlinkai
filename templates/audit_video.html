@@ -86,7 +86,7 @@
             </div>
 
             <!-- NOTE: Update the form action if you change your backend endpoint -->
-            <form action="/submit-lead-magnet" method="POST" id="lead-magnet-form">
+            <form action="/submit-profile-audit" method="POST" id="lead-magnet-form">
                 <div class="form-group" style="margin-bottom: 20px;">
                     <label for="fullName" style="display: block; margin-bottom: 8px; font-weight: 500;">Full
                         Name*</label>
@@ -218,7 +218,7 @@
                 console.log('Submitting audit request data:', data);
 
                 // Submit form via fetch API (using your existing endpoint)
-                fetch('/submit-lead-magnet', { // Keep endpoint or change if backend updated
+                fetch('/submit-profile-audit', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
