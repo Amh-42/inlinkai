@@ -217,7 +217,7 @@
 
                 console.log('Submitting audit request data:', data);
 
-                // Submit form via fetch API (using your existing endpoint)
+                // Submit form via fetch API
                 fetch('/submit-profile-audit', {
                     method: 'POST',
                     headers: {
@@ -262,7 +262,30 @@
 
                             // Show specific error message from server if available, otherwise generic
                             const errorMessage = result.data?.message || `Request failed with status ${result.status}. Please try again.`;
-                            alert('There was an error submitting your request: ' + errorMessage);
+
+                            // Create an error alert in the form instead of using window.alert
+                            const errorAlert = document.createElement('div');
+                            errorAlert.className = 'alert alert-danger';
+                            errorAlert.style.marginBottom = '20px';
+                            errorAlert.innerHTML = `
+                                <strong>Error:</strong> ${errorMessage}
+                                <br><br>
+                                <strong>Additional Details:</strong>
+                                <br>
+                                - Status Code: ${result.status}
+                                <br>
+                                - Please contact support if this problem persists.
+                                <button type="button" class="btn-close" style="position: absolute; right: 10px; top: 10px;"
+                                    onclick="this.parentElement.remove();"></button>
+                            `;
+
+                            // Insert at the top of the form
+                            form.insertBefore(errorAlert, form.firstChild);
+
+                            // Scroll to top of form to show error
+                            errorAlert.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                            console.error('Form submission error:', errorMessage);
                         }
                     })
                     .catch(error => {
@@ -272,7 +295,28 @@
                         submitButton.innerHTML = originalButtonHTML;
                         submitButton.disabled = false;
 
-                        alert('There was a network error submitting your request. Please check your connection and try again.');
+                        // Create an error alert for network errors
+                        const networkErrorAlert = document.createElement('div');
+                        networkErrorAlert.className = 'alert alert-danger';
+                        networkErrorAlert.style.marginBottom = '20px';
+                        networkErrorAlert.innerHTML = `
+                            <strong>Network Error:</strong> There was a problem connecting to the server.
+                            <br><br>
+                            <strong>Troubleshooting Steps:</strong>
+                            <ul>
+                                <li>Check your internet connection</li>
+                                <li>Try refreshing the page</li>
+                                <li>If the problem persists, please try again later</li>
+                            </ul>
+                            <button type="button" class="btn-close" style="position: absolute; right: 10px; top: 10px;"
+                                onclick="this.parentElement.remove();"></button>
+                        `;
+
+                        // Insert at the top of the form
+                        form.insertBefore(networkErrorAlert, form.firstChild);
+
+                        // Scroll to top of form to show error
+                        networkErrorAlert.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     });
             });
         });

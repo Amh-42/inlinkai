@@ -450,35 +450,62 @@ def submit_profile_audit():
         
         # Validate required fields
         if not full_name or not email or not linkedin_url or not target_audience or not linkedin_goal:
-            logger.warning("Missing required fields in profile audit submission")
-            return jsonify({'success': False, 'message': 'Please fill in all required fields'}), 400
+            missing_fields = []
+            if not full_name: missing_fields.append("Full Name")
+            if not email: missing_fields.append("Email")
+            if not linkedin_url: missing_fields.append("LinkedIn URL")
+            if not target_audience: missing_fields.append("Target Audience")
+            if not linkedin_goal: missing_fields.append("LinkedIn Goal")
+            
+            error_msg = f"Missing required fields: {', '.join(missing_fields)}"
+            logger.warning(error_msg)
+            return jsonify({'success': False, 'message': error_msg}), 400
         
         # Save profile audit request to database
-        request_id = save_profile_audit_request(
-            full_name, email, linkedin_url, target_audience, linkedin_goal,
-            linkedin_challenge, company, consent, ip_address, user_agent
-        )
-        
-        if not request_id:
-            logger.error("Failed to save profile audit request to database")
-            return jsonify({'success': False, 'message': 'Failed to process your request'}), 500
+        try:
+            request_id = save_profile_audit_request(
+                full_name, email, linkedin_url, target_audience, linkedin_goal,
+                linkedin_challenge, company, consent, ip_address, user_agent
+            )
+            
+            if not request_id:
+                db_error = "Failed to save to database. Check database connection and permissions."
+                logger.error(db_error)
+                return jsonify({'success': False, 'message': db_error}), 500
+                
+        except Exception as db_err:
+            db_error = f"Database error: {str(db_err)}"
+            logger.error(db_error)
+            logger.error(traceback.format_exc())
+            return jsonify({'success': False, 'message': db_error}), 500
             
         # Send confirmation email
-        success, error_message = send_profile_audit_confirmation_email(request_id, full_name, email, linkedin_url)
+        try:
+            success, error_message = send_profile_audit_confirmation_email(request_id, full_name, email, linkedin_url)
+            
+            # Even if email fails, we'll consider the request successful since it's saved in the database
+            if not success:
+                logger.warning(f"Email sending failed, but request was saved: {error_message}")
+                
+        except Exception as email_err:
+            logger.error(f"Email error: {str(email_err)}")
+            logger.error(traceback.format_exc())
+            # Continue processing - we don't want to fail the request if just the email fails
         
         # Still log to CSV as backup like regular leads
-        log_new_lead(full_name, email, company, linkedin_url)
+        try:
+            log_new_lead(full_name, email, company, linkedin_url)
+        except Exception as log_err:
+            logger.error(f"Error logging to CSV: {str(log_err)}")
+            # This is just backup logging, so continue processing
         
-        if success:
-            return jsonify({'success': True, 'message': 'Profile audit request received successfully'})
-        else:
-            logger.error(f"Email sending failed: {error_message}")
-            return jsonify({'success': False, 'message': 'Request saved but failed to send confirmation email: ' + error_message}), 500
+        return jsonify({'success': True, 'message': 'Profile audit request received successfully'})
             
     except Exception as e:
-        logger.error(f"Error in profile audit submission: {str(e)}")
+        error_msg = f"Error in profile audit submission: {str(e)}"
+        logger.error(error_msg)
         logger.error(traceback.format_exc())
-        return jsonify({'success': False, 'message': str(e)}), 500
+        return jsonify({'success': False, 'message': error_msg}), 500
 
 def save_lead_to_db(full_name, email, company, linkedin_url, consent, ip_address, user_agent):
     """Save lead information to the database."""
@@ -512,13 +539,47 @@ def save_profile_audit_request(full_name, email, linkedin_url, target_audience, 
     """Save profile audit request to the database."""
     try:
         logger.debug(f"Attempting to save profile audit request for: {email}")
+        logger.debug(f"DB Connection params: Host={DB_HOST}, User={DB_USER}, DB={DB_NAME}")
         
         conn = get_db_connection()
         if not conn:
             logger.error("Database connection failed when saving profile audit request")
             return None
             
+        logger.debug("Database connection successful for profile audit request")
+        
         with conn.cursor() as cursor:
+            # Check if the profile_audit_requests table exists
+            try:
+                cursor.execute("SHOW TABLES LIKE 'profile_audit_requests'")
+                if cursor.rowcount == 0:
+                    logger.error("Table 'profile_audit_requests' does not exist - attempting to create it")
+                    # Table doesn't exist - try to create it
+                    cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS profile_audit_requests (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        full_name VARCHAR(255) NOT NULL,
+                        email VARCHAR(255) NOT NULL,
+                        linkedin_url VARCHAR(255) NOT NULL,
+                        target_audience TEXT NOT NULL,
+                        linkedin_goal VARCHAR(100) NOT NULL,
+                        linkedin_challenge TEXT,
+                        company VARCHAR(255),
+                        consent BOOLEAN DEFAULT TRUE,
+                        lead_source VARCHAR(100) DEFAULT 'Profile Audit Video',
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                        status VARCHAR(50) DEFAULT 'Pending',
+                        ip_address VARCHAR(45),
+                        user_agent TEXT
+                    )
+                    """)
+                    logger.info("Successfully created 'profile_audit_requests' table")
+            except Exception as table_err:
+                logger.error(f"Error checking/creating table: {str(table_err)}")
+                logger.error(traceback.format_exc())
+            
+            # Insert the record
+            logger.debug("Inserting audit request record into database")
             sql = """
             INSERT INTO profile_audit_requests (
                 full_name, email, linkedin_url, target_audience, linkedin_goal, 
@@ -531,6 +592,7 @@ def save_profile_audit_request(full_name, email, linkedin_url, target_audience, 
                 linkedin_challenge, company, consent, ip_address, user_agent
             ))
             request_id = cursor.lastrowid
+            logger.debug(f"Request inserted with ID: {request_id}")
             
         conn.close()
         logger.info(f"Profile audit request saved to database with ID: {request_id}")
