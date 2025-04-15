@@ -38,7 +38,7 @@ CHECKLIST_PDF_PATH = 'static/resources/01_LinkedIn_Profile_Audit_Checklist.pdf' 
 DB_HOST = os.getenv('DB_HOST', 'localhost')
 DB_USER = os.getenv('DB_USER', 'root')  # Match .env file
 DB_PASSWORD = os.getenv('DB_PASSWORD', '')
-DB_NAME = os.getenv('DB_NAME', 'inlinkai_db')  # Match .env file
+DB_NAME = os.getenv('DB_NAME', 'inlinkff_leads')  # Match .env file
 
 def get_db_connection():
     """Create a connection to the MySQL database."""
