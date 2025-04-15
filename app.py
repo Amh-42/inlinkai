@@ -116,6 +116,10 @@ def contact():
 def resources():
     return render_template('leadmagnet.html')
 
+@app.route('/profile-audit')
+def profile_audit():
+    return render_template('audit_video.html')
+
 @app.route('/submit-lead-magnet', methods=['POST'])
 def submit_lead_magnet():
     try:
@@ -173,6 +177,97 @@ def submit_lead_magnet():
         logger.error(traceback.format_exc())
         return jsonify({'success': False, 'message': str(e)}), 500
 
+
+@app.route('/submit-profile-audit', methods=['POST'])
+def submit_profile_audit():
+    try:
+        # Log the raw request for debugging
+        logger.debug(f"Received profile audit submission: Method={request.method}, ContentType={request.content_type}")
+        
+        # Get form data - handle both JSON and form data
+        if request.is_json:
+            logger.debug("Processing JSON data")
+            data = request.get_json()
+        else:
+            logger.debug("Processing form data")
+            data = request.form.to_dict()
+        
+        logger.debug(f"Profile audit form data: {data}")
+        
+        full_name = data.get('fullName', '')
+        email = data.get('email', '')
+        linkedin_url = data.get('linkedinUrl', '')
+        target_audience = data.get('targetAudience', '')
+        linkedin_goal = data.get('linkedinGoal', '')
+        linkedin_challenge = data.get('linkedinChallenge', '')
+        company = data.get('company', '')
+        consent = True  # Default to True since checkbox is required in form
+        
+        # Get additional info
+        ip_address = request.remote_addr
+        user_agent = request.headers.get('User-Agent', '')
+        
+        logger.info(f"Profile audit form submitted for: {email}")
+        
+        # Validate required fields
+        if not full_name or not email or not linkedin_url or not target_audience or not linkedin_goal:
+            missing_fields = []
+            if not full_name: missing_fields.append("Full Name")
+            if not email: missing_fields.append("Email")
+            if not linkedin_url: missing_fields.append("LinkedIn URL")
+            if not target_audience: missing_fields.append("Target Audience")
+            if not linkedin_goal: missing_fields.append("LinkedIn Goal")
+            
+            error_msg = f"Missing required fields: {', '.join(missing_fields)}"
+            logger.warning(error_msg)
+            return jsonify({'success': False, 'message': error_msg}), 400
+        
+        # Save profile audit request to database
+        try:
+            request_id = save_profile_audit_request(
+                full_name, email, linkedin_url, target_audience, linkedin_goal,
+                linkedin_challenge, company, consent, ip_address, user_agent
+            )
+            
+            if not request_id:
+                db_error = "Failed to save to database. Check database connection and permissions."
+                logger.error(db_error)
+                return jsonify({'success': False, 'message': db_error}), 500
+                
+        except Exception as db_err:
+            db_error = f"Database error: {str(db_err)}"
+            logger.error(db_error)
+            logger.error(traceback.format_exc())
+            return jsonify({'success': False, 'message': db_error}), 500
+            
+        # Send confirmation email
+        try:
+            success, error_message = send_profile_audit_confirmation_email(request_id, full_name, email, linkedin_url)
+            
+            # Even if email fails, we'll consider the request successful since it's saved in the database
+            if not success:
+                logger.warning(f"Email sending failed, but request was saved: {error_message}")
+                
+        except Exception as email_err:
+            logger.error(f"Email error: {str(email_err)}")
+            logger.error(traceback.format_exc())
+            # Continue processing - we don't want to fail the request if just the email fails
+        
+        # Still log to CSV as backup like regular leads
+        try:
+            log_new_lead(full_name, email, company, linkedin_url)
+        except Exception as log_err:
+            logger.error(f"Error logging to CSV: {str(log_err)}")
+            # This is just backup logging, so continue processing
+        
+        return jsonify({'success': True, 'message': 'Profile audit request received successfully'})
+            
+    except Exception as e:
+        error_msg = f"Error in profile audit submission: {str(e)}"
+        logger.error(error_msg)
+        logger.error(traceback.format_exc())
+        return jsonify({'success': False, 'message': error_msg}), 500
+
 def save_lead_to_db(full_name, email, company, linkedin_url, consent, ip_address, user_agent):
     """Save lead information to the database."""
     try:
@@ -197,6 +292,75 @@ def save_lead_to_db(full_name, email, company, linkedin_url, consent, ip_address
         
     except Exception as e:
         logger.error(f"Error saving lead to database: {str(e)}")
+        logger.error(traceback.format_exc())
+        return None
+
+def save_profile_audit_request(full_name, email, linkedin_url, target_audience, linkedin_goal, 
+                             linkedin_challenge, company, consent, ip_address, user_agent):
+    """Save profile audit request to the database."""
+    try:
+        logger.debug(f"Attempting to save profile audit request for: {email}")
+        logger.debug(f"DB Connection params: Host={DB_HOST}, User={DB_USER}, DB={DB_NAME}")
+        
+        conn = get_db_connection()
+        if not conn:
+            logger.error("Database connection failed when saving profile audit request")
+            return None
+            
+        logger.debug("Database connection successful for profile audit request")
+        
+        with conn.cursor() as cursor:
+            # Check if the profile_audit_requests table exists
+            try:
+                cursor.execute("SHOW TABLES LIKE 'profile_audit_requests'")
+                if cursor.rowcount == 0:
+                    logger.error("Table 'profile_audit_requests' does not exist - attempting to create it")
+                    # Table doesn't exist - try to create it
+                    cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS profile_audit_requests (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        full_name VARCHAR(255) NOT NULL,
+                        email VARCHAR(255) NOT NULL,
+                        linkedin_url VARCHAR(255) NOT NULL,
+                        target_audience TEXT NOT NULL,
+                        linkedin_goal VARCHAR(100) NOT NULL,
+                        linkedin_challenge TEXT,
+                        company VARCHAR(255),
+                        consent BOOLEAN DEFAULT TRUE,
+                        lead_source VARCHAR(100) DEFAULT 'Profile Audit Video',
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                        status VARCHAR(50) DEFAULT 'Pending',
+                        ip_address VARCHAR(45),
+                        user_agent TEXT
+                    )
+                    """)
+                    logger.info("Successfully created 'profile_audit_requests' table")
+            except Exception as table_err:
+                logger.error(f"Error checking/creating table: {str(table_err)}")
+                logger.error(traceback.format_exc())
+            
+            # Insert the record
+            logger.debug("Inserting audit request record into database")
+            sql = """
+            INSERT INTO profile_audit_requests (
+                full_name, email, linkedin_url, target_audience, linkedin_goal, 
+                linkedin_challenge, company, consent, ip_address, user_agent
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """
+            cursor.execute(sql, (
+                full_name, email, linkedin_url, target_audience, linkedin_goal,
+                linkedin_challenge, company, consent, ip_address, user_agent
+            ))
+            request_id = cursor.lastrowid
+            logger.debug(f"Request inserted with ID: {request_id}")
+            
+        conn.close()
+        logger.info(f"Profile audit request saved to database with ID: {request_id}")
+        return request_id
+        
+    except Exception as e:
+        logger.error(f"Error saving profile audit request to database: {str(e)}")
         logger.error(traceback.format_exc())
         return None
 
@@ -241,6 +405,87 @@ def get_professional_email_template(name):
         <p>Best regards,<br>The InlinkAI Team</p>
         
         <p>You are receiving this email because you requested this resource or interacted with our content.</p>
+    </body>
+    </html>
+    """
+
+    return html_template
+
+def get_profile_audit_email_template(name, linkedin_url):
+    """Returns a professional HTML email template for profile audit confirmation."""
+    recipient_name = name
+    
+    html_template = f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Your LinkedIn Profile Audit Video Request</title>
+        <style>
+            body {{
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                color: #333;
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 20px;
+            }}
+            .header {{
+                text-align: center;
+                margin-bottom: 30px;
+            }}
+            .content {{
+                margin-bottom: 30px;
+            }}
+            .footer {{
+                font-size: 12px;
+                color: #666;
+                text-align: center;
+                margin-top: 40px;
+                padding-top: 20px;
+                border-top: 1px solid #eee;
+            }}
+            .highlight {{
+                background-color: #f7f9fc;
+                border-left: 4px solid #0077b5;
+                padding: 15px;
+                margin: 20px 0;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <h2>Your LinkedIn Profile Audit Request Received</h2>
+        </div>
+        
+        <div class="content">
+            <p>Hi <strong>{recipient_name}</strong>,</p>
+            
+            <p>Thank you for requesting a personalized LinkedIn Profile Audit video. We're excited to help you optimize your professional presence on LinkedIn!</p>
+            
+            <div class="highlight">
+                <p><strong>Profile being reviewed:</strong> {linkedin_url}</p>
+                <p><strong>Estimated delivery:</strong> Within 48 business hours</p>
+            </div>
+            
+            <p>Our team of LinkedIn experts will carefully review your profile and create a custom 5-minute video that focuses specifically on your headline and banner, highlighting key opportunities for improvement.</p>
+            
+            <p>You'll receive actionable feedback tailored to your profile and goals as a financial advisor, with specific suggestions you can implement right away to improve your profile's effectiveness.</p>
+            
+            <p>Keep an eye on your inbox – we'll deliver your personalized audit video to this email address as soon as it's ready.</p>
+            
+            <p>In the meantime, if you have any questions, feel free to reply to this email.</p>
+            
+            <p>We look forward to helping you maximize your LinkedIn presence!</p>
+            
+            <p>Best regards,<br>The InlinkAI Team</p>
+        </div>
+        
+        <div class="footer">
+            <p>© InlinkAI. All rights reserved.</p>
+            <p>You're receiving this email because you requested a LinkedIn Profile Audit from our website.</p>
+        </div>
     </body>
     </html>
     """
@@ -325,6 +570,50 @@ def log_email_status(lead_id, email, status, error_message=None):
         logger.error(f"Error logging email status: {str(e)}")
         logger.error(traceback.format_exc())
 
+def send_profile_audit_confirmation_email(request_id, name, email, linkedin_url):
+    """Send confirmation email for profile audit request."""
+    try:
+        logger.debug(f"Preparing to send profile audit confirmation email to: {email}")
+        
+        # Create the email message
+        msg = MIMEMultipart()
+        msg['From'] = EMAIL_FROM
+        msg['To'] = email
+        msg['Subject'] = 'Your LinkedIn Profile Audit Video Request'
+        
+        # Get email template for profile audit
+        html_body = get_profile_audit_email_template(name, linkedin_url)
+        msg.attach(MIMEText(html_body, 'html'))
+        
+        logger.debug(f"Connecting to email server: {EMAIL_HOST}:{EMAIL_PORT}")
+        
+        # Connect to SMTP server and send email
+        try:
+            with smtplib.SMTP(EMAIL_HOST, EMAIL_PORT) as server:
+                server.set_debuglevel(1)  # Enable debug output
+                server.starttls()
+                logger.debug(f"Logging into email server as: {EMAIL_HOST_USER}")
+                server.login(EMAIL_HOST_USER, EMAIL_HOST_PASSWORD)
+                logger.debug(f"Sending confirmation email to: {email}")
+                server.send_message(msg)
+                
+            logger.info(f"Profile audit confirmation sent successfully to: {email}")
+            # Log the email status - Using a different table/function could be considered in the future
+            log_email_status(request_id, email, 'Sent')
+            return True, None
+        except smtplib.SMTPException as smtp_error:
+            error_msg = f"SMTP error: {str(smtp_error)}"
+            logger.error(error_msg)
+            log_email_status(request_id, email, 'Failed', error_msg)
+            return False, error_msg
+        
+    except Exception as e:
+        error_msg = str(e)
+        logger.error(f"Error sending profile audit confirmation email: {error_msg}")
+        logger.error(traceback.format_exc())
+        log_email_status(request_id, email, 'Failed', error_msg)
+        return False, error_msg
+
 def log_new_lead(name, email, company, linkedin_url):
     """Log new lead information to CSV as backup."""
     try:
@@ -350,6 +639,7 @@ def log_new_lead(name, email, company, linkedin_url):
     except Exception as e:
         logger.error(f"Error logging lead to CSV: {str(e)}")
         logger.error(traceback.format_exc())
+
 
 if __name__ == '__main__':
     # Check if checklist file exists
