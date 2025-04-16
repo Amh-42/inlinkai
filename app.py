@@ -116,7 +116,7 @@ def contact():
 def resources():
     return render_template('leadmagnet.html')
 
-@app.route('/profile-audit')
+@app.route('/audit')
 def profile_audit():
     return render_template('audit_video.html')
 
