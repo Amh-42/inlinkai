@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="lead-magnet-section section-bg-subtle" style="padding-top: 100px; padding-bottom: 100px;">
+    <div class="w-layout-blockcontainer new-container w-container">
+        <div class="center-alignment">
+            <div class="section-sub-title-wrap">
+                <p class="section-sub-title">
+                    <span class="sub-title-sub-text">FREE RESOURCE</span>
+                </p>
+            </div>
+            <h2 class="new-section-title">
+                Master the <b class="text-gradient">3-Step Process</b> to LinkedIn Success
+            </h2>
+            <div class="agency-title-content-wrap">
+                <p class="new-section-content">
+                    Get your free LinkedIn Profile Audit Checklist and learn how to implement our proven 3-step process:
+                    Get Found, Get Relevant, Get Chosen.
+                </p>
+            </div>
+            <!-- Button to open popup -->
+            <div style="margin-top: 30px;">
+                <button id="open-form-popup" class="new-banner-button gradient-bg w-inline-block"
+                    style="border: none; cursor: pointer;">
+                    <p class="banner-button-content white">
+                        Get Resources for Free
+                    </p>
+                    <div class="banner-button-arrow-wrap white-bg">
+                        <img loading="lazy"
+                            src="https://cdn.prod.website-files.com/61461a5621e91a9346dd631e/64757d1b8ab9ea3bafaf0fdc_banner-button-arrow.svg"
+                            alt="" class="banner-button-arrow" />
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Benefits Section -->
+        <div class="lead-magnet-benefits" style="margin-top: 60px;">
+            <div class="center-alignment" style="margin-bottom: 40px;">
+                <h3 style="font-size: 24px; font-weight: 600;">What You'll Learn:</h3>
+            </div>
+
+            <div class="benefits-grid"
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; max-width: 1000px; margin: 0 auto;">
+                <div class="benefit-card"
+                    style="background-color: white; padding: 25px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
+                    <div style="font-weight: 600; font-size: 18px; margin-bottom: 12px; color: rgb(37, 99, 235);">
+                        Step 1: Get Found</div>
+                    <p style="color: #4b5563; line-height: 1.6;">Learn how to optimize your LinkedIn profile to show up
+                        in the feeds of your ideal prospects and attract the right audience.</p>
+                </div>
+
+                <div class="benefit-card"
+                    style="background-color: white; padding: 25px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
+                    <div style="font-weight: 600; font-size: 18px; margin-bottom: 12px; color: rgb(37, 99, 235);">
+                        Step 2: Get Relevant</div>
+                    <p style="color: #4b5563; line-height: 1.6;">Discover how to create valuable content that your
+                        prospects actually care about and want to engage with.</p>
+                </div>
+
+                <div class="benefit-card"
+                    style="background-color: white; padding: 25px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
+                    <div style="font-weight: 600; font-size: 18px; margin-bottom: 12px; color: rgb(37, 99, 235);">
+                        Step 3: Get Chosen</div>
+                    <p style="color: #4b5563; line-height: 1.6;">Master the art of reaching out when prospects need you
+                        most and offering the solution they've been looking for.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form popup overlay -->
+    <div id="form-popup-overlay"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center;">
+        <!-- Lead Magnet Form Popup -->
+        <div class="lead-magnet-form-container"
+            style="max-width: 600px; padding: 30px; background-color: white; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); position: relative;">
+            <!-- Close button -->
+            <button id="close-form-popup"
+                style="position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 20px; cursor: pointer; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">✕</button>
+
+            <!-- Form title -->
+            <div style="text-align: center; margin-bottom: 25px;">
+                <h3 style="font-size: 22px; margin-bottom: 10px;">LinkedIn Profile Audit Checklist</h3>
+                <p style="color: #4b5563;">Complete the form to receive your free resource</p>
+            </div>
+
+            <form action="/submit-lead-magnet" method="POST" id="lead-magnet-form">
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="fullName" style="display: block; margin-bottom: 8px; font-weight: 500;">Full
+                        Name*</label>
+                    <input type="text" id="fullName" name="fullName" required
+                        style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 16px;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="email" style="display: block; margin-bottom: 8px; font-weight: 500;">Email
+                        Address*</label>
+                    <input type="email" id="email" name="email" required
+                        style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 16px;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="company" style="display: block; margin-bottom: 8px; font-weight: 500;">Company
+                        Name</label>
+                    <input type="text" id="company" name="company"
+                        style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 16px;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <label for="linkedinUrl" style="display: block; margin-bottom: 8px; font-weight: 500;">LinkedIn
+                        Profile URL</label>
+                    <input type="text" id="linkedinUrl" name="linkedinUrl"
+                        style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 16px;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label style="display: flex; align-items: flex-start; cursor: pointer;">
+                        <input type="checkbox" name="consent" required style="margin-right: 10px; margin-top: 3px;">
+                        <span style="font-size: 14px;">I agree to receive the LinkedIn Profile Audit Checklist and
+                            occasional emails with valuable content. You can unsubscribe at any time.*</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="new-banner-button gradient-bg w-inline-block"
+                    style="width: 100%; border: none; cursor: pointer;">
+                    <p class="banner-button-content white">
+                        Get Your Free Checklist
+                    </p>
+                    <div class="banner-button-arrow-wrap white-bg">
+                        <img loading="lazy"
+                            src="https://cdn.prod.website-files.com/61461a5621e91a9346dd631e/64757d1b8ab9ea3bafaf0fdc_banner-button-arrow.svg"
+                            alt="" class="banner-button-arrow" />
+                    </div>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Form submission handling script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('lead-magnet-form');
+            const formPopup = document.getElementById('form-popup-overlay');
+            const openFormButton = document.getElementById('open-form-popup');
+            const closeFormButton = document.getElementById('close-form-popup');
+
+            // Open popup when button is clicked
+            openFormButton.addEventListener('click', function () {
+                formPopup.style.display = 'flex';
+                document.body.style.overflow = 'hidden'; // Prevent scrolling when popup is open
+            });
+
+            // Close popup when close button is clicked
+            closeFormButton.addEventListener('click', function () {
+                formPopup.style.display = 'none';
+                document.body.style.overflow = ''; // Restore scrolling
+            });
+
+            // Close popup when clicking outside the form
+            formPopup.addEventListener('click', function (e) {
+                if (e.target === formPopup) {
+                    formPopup.style.display = 'none';
+                    document.body.style.overflow = ''; // Restore scrolling
+                }
+            });
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                // Show loading state
+                const submitButton = form.querySelector('button[type="submit"]');
+                const originalButtonText = submitButton.innerHTML;
+                submitButton.innerHTML = '<p class="banner-button-content white">Sending...</p>';
+                submitButton.disabled = true;
+
+                // Get form data
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData);
+
+                console.log('Submitting form data:', data);
+
+                // Submit form via fetch API
+                fetch('/submit-lead-magnet', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                })
+                    .then(response => {
+                        console.log('Response status:', response.status);
+                        return response.json().catch(error => {
+                            console.error('Error parsing JSON:', error);
+                            throw new Error('Invalid JSON response');
+                        });
+                    })
+                    .then(data => {
+                        console.log('Response data:', data);
+
+                        if (data.success) {
+                            // Show success message
+                            const formContainer = document.querySelector('.lead-magnet-form-container');
+                            formContainer.innerHTML = `
+                <div style="text-align: center; padding: 30px 20px;">
+                  <div style="font-size: 60px; margin-bottom: 20px;">✅</div>
+                  <h3 style="margin-bottom: 15px; font-size: 24px;">Thank You!</h3>
+                  <p style="margin-bottom: 20px; color: #4b5563;">Your LinkedIn Profile Audit Checklist has been sent to your email. Please check your inbox (and spam folder just in case).</p>
+                  <button id="close-success" style="background: none; border: 1px solid #e2e8f0; padding: 10px 20px; border-radius: 6px; cursor: pointer;">Close</button>
+                </div>
+              `;
+
+                            // Add event listener to close button
+                            document.getElementById('close-success').addEventListener('click', function () {
+                                formPopup.style.display = 'none';
+                                document.body.style.overflow = ''; // Restore scrolling
+                            });
+                        } else {
+                            // Restore button state
+                            submitButton.innerHTML = originalButtonText;
+                            submitButton.disabled = false;
+
+                            // Show error message
+                            alert('There was an error submitting your request: ' + (data.message || 'Please try again.'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+
+                        // Restore button state
+                        submitButton.innerHTML = originalButtonText;
+                        submitButton.disabled = false;
+
+                        alert('There was an error submitting your request. Please try again.');
+                    });
+            });
+        });
+    </script>
+</section>
+{% endblock %}
