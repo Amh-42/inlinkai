@@ -120,6 +120,26 @@ def resources():
 def profile_audit():
     return render_template('audit_video.html')
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    success = None
+    
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        
+        # Basic validation
+        if not email or not password:
+            error = 'Please enter both email and password.'
+        else:
+            # Here you would typically validate against your database
+            # For now, we'll just show a placeholder message
+            # You can implement actual authentication logic later
+            error = 'Login functionality will be implemented soon. Please contact support for access.'
+    
+    return render_template('login.html', error=error, success=success)
+
 @app.route('/submit-lead-magnet', methods=['POST'])
 def submit_lead_magnet():
     try:
