@@ -140,6 +140,38 @@ def login():
     
     return render_template('login.html', error=error, success=success)
 
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    error = None
+    success = None
+    
+    if request.method == 'POST':
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+        email = request.form.get('email')
+        company = request.form.get('company')
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+        terms = request.form.get('terms')
+        newsletter = request.form.get('newsletter')
+        
+        # Basic validation
+        if not first_name or not last_name or not email or not password or not confirm_password:
+            error = 'Please fill in all required fields.'
+        elif password != confirm_password:
+            error = 'Passwords do not match.'
+        elif len(password) < 8:
+            error = 'Password must be at least 8 characters long.'
+        elif not terms:
+            error = 'You must agree to the Terms of Service and Privacy Policy.'
+        else:
+            # Here you would typically save the user to your database
+            # For now, we'll just show a placeholder message
+            # You can implement actual user registration logic later
+            success = 'Account creation functionality will be implemented soon. Please contact support for access.'
+    
+    return render_template('signup.html', error=error, success=success)
+
 @app.route('/submit-lead-magnet', methods=['POST'])
 def submit_lead_magnet():
     try:
