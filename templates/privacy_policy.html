@@ -1,0 +1,416 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="privacy-policy-section">
+  <div class="new-container w-container">
+    <div class="privacy-policy-content">
+      
+      <!-- Header Section -->
+      <div class="privacy-policy-header">
+        <h1 class="privacy-policy-title">Privacy Policy</h1>
+        <p class="privacy-policy-subtitle">
+          Last updated: <strong>{{ current_date or "September 10, 2025" }}</strong>
+        </p>
+      </div>
+
+      <!-- Introduction -->
+      <div class="privacy-policy-section-content">
+        <h2>Introduction</h2>
+        <p>
+          Welcome to InlinkAI ("we," "our," or "us"). We are committed to protecting your privacy and personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website <a href="https://inlinkai.com">inlinkai.com</a> and use our services.
+        </p>
+        <p>
+          By using our services, you agree to the collection and use of information in accordance with this Privacy Policy. If you do not agree with our policies and practices, do not use our services.
+        </p>
+      </div>
+
+      <!-- Information We Collect -->
+      <div class="privacy-policy-section-content">
+        <h2>Information We Collect</h2>
+        
+        <h3>Personal Information</h3>
+        <p>We may collect the following types of personal information:</p>
+        <ul>
+          <li><strong>Contact Information:</strong> Name, email address, phone number, company name</li>
+          <li><strong>LinkedIn Profile Information:</strong> LinkedIn profile URL, professional headline, company information</li>
+          <li><strong>Account Information:</strong> Username, password, preferences, and settings</li>
+          <li><strong>Communication Data:</strong> Messages, feedback, and support requests</li>
+          <li><strong>Professional Information:</strong> Job title, industry, business goals, target audience details</li>
+        </ul>
+
+        <h3>Automatically Collected Information</h3>
+        <p>When you use our services, we automatically collect:</p>
+        <ul>
+          <li><strong>Technical Data:</strong> IP address, browser type, device information, operating system</li>
+          <li><strong>Usage Data:</strong> Pages visited, time spent, clicks, interactions with our platform</li>
+          <li><strong>Cookies and Tracking Technologies:</strong> Information collected through cookies, web beacons, and similar technologies</li>
+          <li><strong>Log Data:</strong> Server logs, error reports, and performance data</li>
+        </ul>
+
+        <h3>LinkedIn Integration Data</h3>
+        <p>When you connect your LinkedIn account to our services, we may access and collect:</p>
+        <ul>
+          <li>Basic profile information (name, headline, profile picture)</li>
+          <li>Professional experience and education</li>
+          <li>Connection information (with your explicit consent)</li>
+          <li>Content you create or engage with on LinkedIn (when authorized)</li>
+        </ul>
+        <p><strong>Note:</strong> We only access LinkedIn data that you explicitly authorize through LinkedIn's official authentication process. You can revoke this access at any time through your LinkedIn account settings.</p>
+      </div>
+
+      <!-- How We Use Your Information -->
+      <div class="privacy-policy-section-content">
+        <h2>How We Use Your Information</h2>
+        <p>We use the information we collect for the following purposes:</p>
+        
+        <h3>Service Provision</h3>
+        <ul>
+          <li>Provide, operate, and maintain our services</li>
+          <li>Optimize your LinkedIn profile and content</li>
+          <li>Generate personalized recommendations and insights</li>
+          <li>Create and schedule LinkedIn content on your behalf (when authorized)</li>
+          <li>Provide customer support and respond to inquiries</li>
+        </ul>
+
+        <h3>Communication</h3>
+        <ul>
+          <li>Send you service updates, security alerts, and administrative messages</li>
+          <li>Respond to comments, questions, and requests</li>
+          <li>Send marketing communications (with your consent)</li>
+          <li>Provide educational content and best practices</li>
+        </ul>
+
+        <h3>Analytics and Improvement</h3>
+        <ul>
+          <li>Analyze usage patterns and improve our services</li>
+          <li>Conduct research and development</li>
+          <li>Monitor and analyze trends and usage</li>
+          <li>Personalize your experience</li>
+        </ul>
+
+        <h3>Legal and Security</h3>
+        <ul>
+          <li>Comply with legal obligations</li>
+          <li>Protect against fraud, abuse, and security threats</li>
+          <li>Enforce our terms of service</li>
+          <li>Resolve disputes and troubleshoot problems</li>
+        </ul>
+      </div>
+
+      <!-- Information Sharing and Disclosure -->
+      <div class="privacy-policy-section-content">
+        <h2>Information Sharing and Disclosure</h2>
+        <p>We do not sell, trade, or otherwise transfer your personal information to third parties except as described below:</p>
+
+        <h3>Service Providers</h3>
+        <p>We may share your information with third-party service providers who assist us in:</p>
+        <ul>
+          <li>Cloud hosting and data storage</li>
+          <li>Email delivery and communication services</li>
+          <li>Analytics and performance monitoring</li>
+          <li>Customer support and CRM services</li>
+          <li>Payment processing (when applicable)</li>
+        </ul>
+
+        <h3>LinkedIn Integration</h3>
+        <p>When you use our LinkedIn integration features:</p>
+        <ul>
+          <li>We act on your behalf to access LinkedIn's API</li>
+          <li>Content created through our platform may be posted to your LinkedIn profile</li>
+          <li>We do not share your LinkedIn data with other users or third parties</li>
+        </ul>
+
+        <h3>Legal Requirements</h3>
+        <p>We may disclose your information when required by law or to:</p>
+        <ul>
+          <li>Comply with legal process or government requests</li>
+          <li>Protect our rights, property, or safety</li>
+          <li>Protect the rights, property, or safety of our users</li>
+          <li>Prevent fraud or security issues</li>
+        </ul>
+
+        <h3>Business Transfers</h3>
+        <p>In the event of a merger, acquisition, or sale of assets, your information may be transferred as part of the transaction. We will notify you before your information becomes subject to a different privacy policy.</p>
+      </div>
+
+      <!-- Data Security -->
+      <div class="privacy-policy-section-content">
+        <h2>Data Security</h2>
+        <p>We implement appropriate technical and organizational security measures to protect your personal information, including:</p>
+        <ul>
+          <li>Encryption of data in transit and at rest</li>
+          <li>Regular security assessments and updates</li>
+          <li>Access controls and authentication measures</li>
+          <li>Employee training on data protection</li>
+          <li>Secure coding practices and regular security audits</li>
+        </ul>
+        <p>However, no method of transmission over the internet or electronic storage is 100% secure. While we strive to use commercially acceptable means to protect your information, we cannot guarantee absolute security.</p>
+      </div>
+
+      <!-- Data Retention -->
+      <div class="privacy-policy-section-content">
+        <h2>Data Retention</h2>
+        <p>We retain your personal information for as long as necessary to:</p>
+        <ul>
+          <li>Provide our services to you</li>
+          <li>Comply with legal obligations</li>
+          <li>Resolve disputes and enforce agreements</li>
+          <li>Improve our services and conduct analytics</li>
+        </ul>
+        <p>When you delete your account, we will delete or anonymize your personal information within 30 days, except where we are required to retain it for legal reasons.</p>
+      </div>
+
+      <!-- Your Rights and Choices -->
+      <div class="privacy-policy-section-content">
+        <h2>Your Rights and Choices</h2>
+        
+        <h3>Access and Control</h3>
+        <p>You have the right to:</p>
+        <ul>
+          <li><strong>Access:</strong> Request access to your personal information</li>
+          <li><strong>Update:</strong> Correct inaccurate or incomplete information</li>
+          <li><strong>Delete:</strong> Request deletion of your personal information</li>
+          <li><strong>Portability:</strong> Receive a copy of your data in a portable format</li>
+          <li><strong>Restrict:</strong> Limit how we process your information</li>
+          <li><strong>Object:</strong> Object to certain types of processing</li>
+        </ul>
+
+        <h3>LinkedIn Integration</h3>
+        <p>You can:</p>
+        <ul>
+          <li>Disconnect your LinkedIn account at any time through your account settings</li>
+          <li>Revoke our access to your LinkedIn data through LinkedIn's privacy settings</li>
+          <li>Control what content we post on your behalf</li>
+        </ul>
+
+        <h3>Marketing Communications</h3>
+        <p>You can opt out of marketing communications by:</p>
+        <ul>
+          <li>Clicking the unsubscribe link in emails</li>
+          <li>Updating your preferences in your account settings</li>
+          <li>Contacting us directly</li>
+        </ul>
+
+        <h3>Cookies</h3>
+        <p>You can control cookies through your browser settings. Note that disabling cookies may affect the functionality of our services.</p>
+      </div>
+
+      <!-- International Data Transfers -->
+      <div class="privacy-policy-section-content">
+        <h2>International Data Transfers</h2>
+        <p>Your information may be transferred to and processed in countries other than your country of residence. We ensure that such transfers are subject to appropriate safeguards, including:</p>
+        <ul>
+          <li>Adequacy decisions by relevant authorities</li>
+          <li>Standard contractual clauses</li>
+          <li>Other legally recognized transfer mechanisms</li>
+        </ul>
+      </div>
+
+      <!-- Children's Privacy -->
+      <div class="privacy-policy-section-content">
+        <h2>Children's Privacy</h2>
+        <p>Our services are not intended for children under 16 years of age. We do not knowingly collect personal information from children under 16. If we become aware that we have collected personal information from a child under 16, we will take steps to delete such information.</p>
+      </div>
+
+      <!-- Third-Party Links -->
+      <div class="privacy-policy-section-content">
+        <h2>Third-Party Links and Services</h2>
+        <p>Our website may contain links to third-party websites or services, including LinkedIn. We are not responsible for the privacy practices of these third parties. We encourage you to read their privacy policies before providing any information.</p>
+      </div>
+
+      <!-- Changes to This Privacy Policy -->
+      <div class="privacy-policy-section-content">
+        <h2>Changes to This Privacy Policy</h2>
+        <p>We may update this Privacy Policy from time to time. We will notify you of any material changes by:</p>
+        <ul>
+          <li>Posting the updated policy on our website</li>
+          <li>Sending an email notification (for significant changes)</li>
+          <li>Providing notice through our services</li>
+        </ul>
+        <p>Your continued use of our services after any changes indicates your acceptance of the updated Privacy Policy.</p>
+      </div>
+
+      <!-- Contact Information -->
+      <div class="privacy-policy-section-content">
+        <h2>Contact Us</h2>
+        <p>If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact us:</p>
+        
+        <div class="contact-info">
+          <p><strong>Email:</strong> <a href="mailto:privacy@inlinkai.com">privacy@inlinkai.com</a></p>
+          <p><strong>Support:</strong> <a href="mailto:support@inlinkai.com">support@inlinkai.com</a></p>
+          <p><strong>Website:</strong> <a href="https://inlinkai.com">https://inlinkai.com</a></p>
+          <p><strong>Address:</strong> Addis Ababa, Ethiopia</p>
+        </div>
+
+        <p>We will respond to your inquiries within 30 days of receipt.</p>
+      </div>
+
+      <!-- LinkedIn API Compliance -->
+      <div class="privacy-policy-section-content">
+        <h2>LinkedIn API Compliance</h2>
+        <p>Our integration with LinkedIn is subject to LinkedIn's Developer Agreement and API Terms of Use. We:</p>
+        <ul>
+          <li>Only access LinkedIn data that you explicitly authorize</li>
+          <li>Use LinkedIn data solely to provide our services to you</li>
+          <li>Do not store LinkedIn data longer than necessary</li>
+          <li>Comply with LinkedIn's data usage and retention policies</li>
+          <li>Respect LinkedIn's rate limits and usage guidelines</li>
+        </ul>
+        <p>For more information about LinkedIn's privacy practices, please review <a href="https://www.linkedin.com/legal/privacy-policy" target="_blank">LinkedIn's Privacy Policy</a>.</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+.privacy-policy-section {
+  padding: 80px 20px;
+  background-color: #ffffff;
+}
+
+.dark-version .privacy-policy-section {
+  background-color: #171920;
+}
+
+.privacy-policy-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.privacy-policy-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.privacy-policy-title {
+  font-size: 48px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #1a1a1a;
+}
+
+.dark-version .privacy-policy-title {
+  color: #ffffff;
+}
+
+.privacy-policy-subtitle {
+  font-size: 18px;
+  color: #64748b;
+  margin: 0;
+}
+
+.dark-version .privacy-policy-subtitle {
+  color: #94a3b8;
+}
+
+.privacy-policy-section-content {
+  margin-bottom: 40px;
+}
+
+.privacy-policy-section-content h2 {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #1a1a1a;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 10px;
+}
+
+.dark-version .privacy-policy-section-content h2 {
+  color: #ffffff;
+  border-bottom-color: #374151;
+}
+
+.privacy-policy-section-content h3 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-top: 30px;
+  margin-bottom: 15px;
+  color: #374151;
+}
+
+.dark-version .privacy-policy-section-content h3 {
+  color: #d1d5db;
+}
+
+.privacy-policy-section-content p {
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 15px;
+  color: #4b5563;
+}
+
+.dark-version .privacy-policy-section-content p {
+  color: #d1d5db;
+}
+
+.privacy-policy-section-content ul {
+  margin-bottom: 20px;
+  padding-left: 20px;
+}
+
+.privacy-policy-section-content li {
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 8px;
+  color: #4b5563;
+}
+
+.dark-version .privacy-policy-section-content li {
+  color: #d1d5db;
+}
+
+.privacy-policy-section-content a {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.privacy-policy-section-content a:hover {
+  text-decoration: underline;
+}
+
+.dark-version .privacy-policy-section-content a {
+  color: #60a5fa;
+}
+
+.contact-info {
+  background-color: #f8fafc;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 20px 0;
+  border-left: 4px solid #2563eb;
+}
+
+.dark-version .contact-info {
+  background-color: #1f2937;
+  border-left-color: #60a5fa;
+}
+
+.contact-info p {
+  margin-bottom: 10px;
+}
+
+.contact-info p:last-child {
+  margin-bottom: 0;
+}
+
+@media screen and (max-width: 767px) {
+  .privacy-policy-section {
+    padding: 60px 20px;
+  }
+  
+  .privacy-policy-title {
+    font-size: 36px;
+  }
+  
+  .privacy-policy-section-content h2 {
+    font-size: 24px;
+  }
+  
+  .privacy-policy-section-content h3 {
+    font-size: 20px;
+  }
+}
+</style>
+{% endblock %}

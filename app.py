@@ -120,6 +120,14 @@ def resources():
 def profile_audit():
     return render_template('audit_video.html')
 
+@app.route('/privacy-policy')
+def privacy_policy():
+    return render_template('privacy_policy.html')
+
+@app.route('/terms-and-conditions')
+def terms_and_conditions():
+    return render_template('terms_conditions.html')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
