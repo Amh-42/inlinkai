@@ -88,25 +88,3 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Helper function to send welcome email (can be called from other parts of the app)
-export async function sendWelcomeEmail(userId: string, userEmail: string, userName?: string) {
-  try {
-    const response = await fetch(`${process.env.BETTER_AUTH_URL || 'http://localhost:3000/'}/api/welcome-email`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        userId,
-        userEmail,
-        userName
-      }),
-    });
-
-    const result = await response.json();
-    return result;
-  } catch (error) {
-    console.error('Error calling welcome email API:', error);
-    return { success: false, error: 'Failed to send welcome email' };
-  }
-}
