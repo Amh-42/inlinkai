@@ -1,5 +1,5 @@
 import { betterAuth } from "better-auth";
-import Database from "better-sqlite3";
+import { createDatabase } from "./database";
 
 const socialProvidersConfig = {
   ...(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET && {
@@ -19,8 +19,9 @@ const socialProvidersConfig = {
 // Build trusted origins list
 const getTrustedOrigins = () => {
   const origins = [
-    "http://https://inlinkai.vercel.app",
-    "https://https://inlinkai.vercel.app",
+    "https://inlinkai.vercel.app",
+    "http://localhost:3000",
+    "https://localhost:3000",
   ];
   
   // Add environment URL if provided
@@ -48,8 +49,11 @@ const getTrustedOrigins = () => {
   return origins;
 };
 
+
 export const auth = betterAuth({
-  database: new Database("./sqlite.db"),
+  database: createDatabase(),
+  secret: process.env.BETTER_AUTH_SECRET || "development-secret-change-in-production",
+  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
   emailAndPassword: {
     enabled: true,
   },

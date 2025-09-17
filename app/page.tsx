@@ -11,7 +11,7 @@ export default function Home() {
               <i className="fab fa-linkedin"></i>
               AI-Powered LinkedIn Growth
             </div>
-            <h1 className="hero-title">Get Noticed. Get Relevant. <span className="hero-subtitle">Be Chosen.</span></h1>
+            <h1 className="hero-title">Get Noticed. Stay Relevant. <span className="hero-subtitle">Be Chosen.</span></h1>
             <p className="hero-description">
               Transform your LinkedIn presence with cutting-edge AI. Improve your profile visibility, create engaging content that converts, and connect with prospects who are ready to work with you.
             </p>
