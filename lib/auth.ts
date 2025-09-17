@@ -19,8 +19,8 @@ const socialProvidersConfig = {
 // Build trusted origins list
 const getTrustedOrigins = () => {
   const origins = [
-    "http://http://localhost:3000",
-    "https://http://localhost:3000",
+    "http://https://inlinkai.vercel.app",
+    "https://https://inlinkai.vercel.app",
   ];
   
   // Add environment URL if provided

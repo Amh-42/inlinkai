@@ -42,7 +42,7 @@ Create a `.env` file in the root directory:
 ```env
 # Better Auth Configuration
 BETTER_AUTH_SECRET=your-super-secret-key-here-please-change-in-production
-BETTER_AUTH_URL=http://http://localhost:3000
+BETTER_AUTH_URL=http://https://inlinkai.vercel.app
 
 # GitHub OAuth (optional)
 GITHUB_CLIENT_ID=your-github-client-id
@@ -69,7 +69,7 @@ This creates the required database tables using Better Auth's CLI.
 npm run dev
 ```
 
-Open [http://http://localhost:3000](http://http://localhost:3000) to see the application.
+Open [http://https://inlinkai.vercel.app](http://https://inlinkai.vercel.app) to see the application.
 
 ## Project Structure
 
@@ -105,7 +105,7 @@ To enable GitHub authentication:
 1. Create a GitHub OAuth App:
    - Go to GitHub Settings > Developer settings > OAuth Apps
    - Create a new OAuth App
-   - Set Authorization callback URL to: `http://localhost:3000/api/auth/callback/github`
+   - Set Authorization callback URL to: `https://inlinkai.vercel.app/api/auth/callback/github`
 
 2. Add your GitHub app credentials to `.env`:
    ```env
@@ -123,7 +123,7 @@ To enable Google authentication:
    - Enable Google+ API
    - Go to "Credentials" > "Create Credentials" > "OAuth client ID"
    - Choose "Web application"
-   - Add authorized redirect URI: `http://localhost:3000/api/auth/callback/google`
+   - Add authorized redirect URI: `https://inlinkai.vercel.app/api/auth/callback/google`
 
 2. Add your Google app credentials to `.env`:
    ```env

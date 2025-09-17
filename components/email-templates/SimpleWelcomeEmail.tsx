@@ -200,7 +200,7 @@ export function SimpleWelcomeEmail({ firstName, userEmail, customMessage }: Simp
             {/* CTA Button */}
             <div style={{ textAlign: 'center', margin: '40px 0' }}>
               <a
-                href="http://localhost:3000/dashboard"
+                href="https://inlinkai.vercel.app/dashboard"
                 style={{
                   display: 'inline-block',
                   background: 'linear-gradient(135deg, #0084ff 0%, #44bcf0 100%)',

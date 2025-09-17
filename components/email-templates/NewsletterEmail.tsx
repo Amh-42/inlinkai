@@ -223,7 +223,7 @@ export function NewsletterEmail({ firstName, userEmail, subject, content }: News
           Join thousands of professionals already using InlinkAI
         </p>
         <a
-          href="http://localhost:3000/dashboard"
+          href="https://inlinkai.vercel.app/dashboard"
           style={{
             display: 'inline-block',
             background: 'linear-gradient(135deg, #0084ff 0%, #44bcf0 100%)',
