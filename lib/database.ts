@@ -23,11 +23,15 @@ export function createDatabase() {
   
   if (process.env.NODE_ENV === 'production') {
     try {
-      // Use /tmp directory which is available on Vercel
-      dbPath = '/tmp/auth.db';
+      const os = require('os');
+      const path = require('path');
+      
+      // Use platform-specific temp directory
+      const tmpDir = os.tmpdir();
+      dbPath = path.join(tmpDir, 'auth.db');
       console.log(`🗃️ Using persistent SQLite database at ${dbPath}`);
     } catch (error) {
-      console.warn('⚠️ Could not create temp database file, using in-memory');
+      console.warn('⚠️ Could not create temp database file, using in-memory:', error);
       dbPath = ':memory:';
     }
   }
