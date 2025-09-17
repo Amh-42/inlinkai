@@ -2,6 +2,11 @@ import { ConvexHttpClient } from "convex/browser";
 import { Pool } from "pg";
 
 export function createDatabase() {
+  console.log('🔍 DATABASE DEBUGGING - Environment check:');
+  console.log('NODE_ENV:', process.env.NODE_ENV);
+  console.log('DATABASE_URL exists:', !!process.env.DATABASE_URL);
+  console.log('POSTGRES_URL exists:', !!process.env.POSTGRES_URL);
+  
   // Check if PostgreSQL is configured
   const pgConnectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL;
   
@@ -9,10 +14,28 @@ export function createDatabase() {
     console.error('❌ PostgreSQL not configured!');
     console.error('📋 Add DATABASE_URL to your environment variables');
     console.error('💡 Format: postgresql://user:password@host:port/database');
+    console.error('🔍 Available env vars:', Object.keys(process.env).filter(key => key.includes('DATA')));
     throw new Error('DATABASE_URL is required');
   }
 
   console.log('🐘 Using PostgreSQL database');
+  console.log('🔍 Connection string length:', pgConnectionString.length);
+  console.log('🔍 Connection string prefix:', pgConnectionString.substring(0, 50) + '...');
+  
+  // Parse connection string to debug
+  try {
+    const url = new URL(pgConnectionString);
+    console.log('🌐 Database host:', url.hostname);
+    console.log('🔌 Database port:', url.port || '5432');
+    console.log('📊 Database name:', url.pathname.slice(1));
+    console.log('🔐 Has username:', !!url.username);
+    console.log('🔑 Has password:', !!url.password);
+    console.log('🔒 Search params:', url.searchParams.toString());
+  } catch (error) {
+    console.error('❌ Invalid DATABASE_URL format:', error);
+    console.error('❌ Raw connection string:', pgConnectionString);
+    throw new Error('Invalid DATABASE_URL format');
+  }
   
   // Create PostgreSQL connection pool with proper SSL config for Neon
   const pool = new Pool({
@@ -23,15 +46,29 @@ export function createDatabase() {
     connectionTimeoutMillis: 5000,
   });
 
-  // Test the connection
+  // Enhanced connection logging and error handling
   pool.on('connect', () => {
-    console.log('✅ Connected to PostgreSQL database');
+    console.log('✅ Successfully connected to PostgreSQL database');
   });
 
-  pool.on('error', (err) => {
+  pool.on('error', (err, client) => {
     console.error('❌ PostgreSQL pool error:', err);
+    console.error('❌ Error code:', (err as any).code);
+    console.error('❌ Error hostname:', (err as any).hostname);
+    console.error('❌ Error syscall:', (err as any).syscall);
+    console.error('❌ Error message:', err.message);
+    console.error('❌ Error stack:', err.stack);
   });
 
+  pool.on('acquire', () => {
+    console.log('🔄 Client acquired from pool');
+  });
+
+  pool.on('release', () => {
+    console.log('🔄 Client released back to pool');
+  });
+
+  console.log('🎯 Pool created successfully, returning pool instance');
   return pool;
 }
 
