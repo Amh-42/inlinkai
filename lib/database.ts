@@ -17,20 +17,37 @@ export function createDatabase() {
 
   console.log('📊 Using Convex database (serverless + real-time)');
   
-  // Create in-memory SQLite database with Better Auth tables
-  // This acts as a local cache while Convex handles persistence
-  const db = new Database(':memory:');
+  // In production, use a file-based database in temp directory
+  // This allows persistence during the lifetime of the serverless function
+  let dbPath = ':memory:';
+  
+  if (process.env.NODE_ENV === 'production') {
+    try {
+      // Use /tmp directory which is available on Vercel
+      dbPath = '/tmp/auth.db';
+      console.log(`🗃️ Using persistent SQLite database at ${dbPath}`);
+    } catch (error) {
+      console.warn('⚠️ Could not create temp database file, using in-memory');
+      dbPath = ':memory:';
+    }
+  }
+  
+  const db = new Database(dbPath);
   initializeBetterAuthTables(db);
   
-  // TODO: Integrate with Convex for actual persistence
-  // For now, the in-memory database will work for authentication
-  // Future: Sync data between SQLite cache and Convex
+  // Enable foreign keys and WAL mode for better performance
+  db.pragma('foreign_keys = ON');
+  if (dbPath !== ':memory:') {
+    db.pragma('journal_mode = WAL');
+  }
   
   return db;
 }
 
 function initializeBetterAuthTables(db: Database.Database) {
   try {
+    console.log('🔧 Initializing Better Auth tables...');
+    
     // Create all Better Auth required tables
     db.exec(`
       CREATE TABLE IF NOT EXISTS user (
@@ -108,8 +125,14 @@ function initializeBetterAuthTables(db: Database.Database) {
     `);
     
     console.log('✅ Better Auth tables created successfully');
+    
+    // Test database operations
+    const userCount = db.prepare('SELECT COUNT(*) as count FROM user').get() as { count: number };
+    console.log(`📊 Database initialized with ${userCount.count} users`);
+    
   } catch (error) {
     console.error('❌ Failed to create Better Auth tables:', error);
+    console.error('❌ Error details:', error);
     throw error;
   }
 }
