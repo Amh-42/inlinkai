@@ -12,23 +12,28 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Query the database for user's onboarding data
-    const db = auth.options.database as any;
+    // Query the PostgreSQL database for user's onboarding data
+    const pool = auth.options.database as any;
     
     let userData = null;
     try {
-      userData = db.prepare(`
+      console.log('🔍 Checking onboarding status for user:', session.user.id);
+      const result = await pool.query(`
         SELECT onboarding_complete, onboarding_role, onboarding_discovery, 
                onboarding_terms, onboarding_marketing 
-        FROM user 
-        WHERE id = ?
-      `).get(session.user.id);
+        FROM "user" 
+        WHERE id = $1
+      `, [session.user.id]);
+      
+      userData = result.rows[0];
+      console.log('📊 Onboarding data found:', userData);
     } catch (error) {
       // Columns might not exist yet, return incomplete status
-      console.log('Onboarding columns not yet created, returning incomplete status');
+      console.log('❌ Error querying onboarding data:', error);
+      console.log('🔄 Onboarding columns not yet created, returning incomplete status');
     }
 
-    const isComplete = userData?.onboarding_complete === 1;
+    const isComplete = userData?.onboarding_complete === true;
 
     return NextResponse.json({
       isComplete,
@@ -36,7 +41,7 @@ export async function GET(request: NextRequest) {
         role: userData.onboarding_role,
         discovery: userData.onboarding_discovery,
         terms: userData.onboarding_terms,
-        marketing: userData.onboarding_marketing === 1
+        marketing: userData.onboarding_marketing === true
       } : null
     });
   } catch (error) {
@@ -70,48 +75,53 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing data parameter' }, { status: 400 });
     }
 
-    const db = auth.options.database as any;
+    const pool = auth.options.database as any;
 
-    // First, ensure the onboarding columns exist
+    // First, ensure the onboarding columns exist in PostgreSQL
     const columns = [
-      'onboarding_complete INTEGER DEFAULT 0',
-      'onboarding_role TEXT',
-      'onboarding_discovery TEXT',
-      'onboarding_terms TEXT',
-      'onboarding_marketing INTEGER DEFAULT 0'
+      { name: 'onboarding_complete', type: 'BOOLEAN DEFAULT FALSE' },
+      { name: 'onboarding_role', type: 'TEXT' },
+      { name: 'onboarding_discovery', type: 'TEXT' },
+      { name: 'onboarding_terms', type: 'TEXT' },
+      { name: 'onboarding_marketing', type: 'BOOLEAN DEFAULT FALSE' }
     ];
 
     for (const column of columns) {
       try {
-        const columnName = column.split(' ')[0];
         // Check if column exists first
-        const checkColumn = db.prepare(`PRAGMA table_info(user)`).all();
-        const columnExists = checkColumn.some((col: any) => col.name === columnName);
+        const checkResult = await pool.query(`
+          SELECT column_name 
+          FROM information_schema.columns 
+          WHERE table_name = 'user' AND column_name = $1
+        `, [column.name]);
         
-        if (!columnExists) {
-          db.exec(`ALTER TABLE user ADD COLUMN ${column};`);
+        if (checkResult.rows.length === 0) {
+          console.log(`🔧 Adding column ${column.name} to user table`);
+          await pool.query(`ALTER TABLE "user" ADD COLUMN ${column.name} ${column.type}`);
         }
       } catch (e) {
-        console.error(`Error adding column ${column}:`, e);
+        console.error(`❌ Error adding column ${column.name}:`, e);
       }
     }
 
     // Update user's onboarding data based on step
     switch (step) {
       case 'role':
-        db.prepare(`
-          UPDATE user 
-          SET onboarding_role = ? 
-          WHERE id = ?
-        `).run(JSON.stringify(data), session.user.id);
+        console.log('💼 Saving role data for user:', session.user.id);
+        await pool.query(`
+          UPDATE "user" 
+          SET onboarding_role = $1 
+          WHERE id = $2
+        `, [JSON.stringify(data), session.user.id]);
         break;
 
       case 'discovery':
-        db.prepare(`
-          UPDATE user 
-          SET onboarding_discovery = ? 
-          WHERE id = ?
-        `).run(JSON.stringify(data), session.user.id);
+        console.log('🔍 Saving discovery data for user:', session.user.id);
+        await pool.query(`
+          UPDATE "user" 
+          SET onboarding_discovery = $1 
+          WHERE id = $2
+        `, [JSON.stringify(data), session.user.id]);
         break;
 
       case 'complete':
@@ -120,18 +130,19 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ error: 'Missing terms data' }, { status: 400 });
         }
         
-        db.prepare(`
-          UPDATE user 
-          SET onboarding_terms = ?, 
-              onboarding_marketing = ?, 
-              onboarding_complete = 1 
-          WHERE id = ?
-        `).run(
+        console.log('✅ Completing onboarding for user:', session.user.id);
+        await pool.query(`
+          UPDATE "user" 
+          SET onboarding_terms = $1, 
+              onboarding_marketing = $2, 
+              onboarding_complete = TRUE 
+          WHERE id = $3
+        `, [
           JSON.stringify(data.terms), 
-          data.marketing ? 1 : 0, 
+          data.marketing || false, 
           session.user.id
-        );
-        console.log('Onboarding completed for user:', session.user.id);
+        ]);
+        console.log('🎉 Onboarding completed successfully for user:', session.user.id);
         break;
 
       default:
