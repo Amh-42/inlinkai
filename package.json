@@ -5,22 +5,23 @@
   "main": "index.js",
   "scripts": {
     "dev": "next dev -p 3000",
-    "build": "next build",
+    "build": "npx convex deploy && next build",
     "start": "next start",
     "lint": "next lint",
     "db:migrate": "npx @better-auth/cli migrate",
-    "db:generate": "npx @better-auth/cli generate"
+    "db:generate": "npx @better-auth/cli generate",
+    "convex:dev": "npx convex dev",
+    "convex:deploy": "npx convex deploy"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "@libsql/client": "^0.15.15",
     "@react-email/components": "^0.5.3",
     "@react-email/render": "^1.2.3",
     "@types/bcryptjs": "^2.4.6",
-    "@types/better-sqlite3": "^7.6.11",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^24.5.1",
     "@types/react": "^18.3.24",
     "@types/react-dom": "^18.3.1",

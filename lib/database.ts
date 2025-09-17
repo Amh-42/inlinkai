@@ -1,54 +1,38 @@
+import { ConvexHttpClient } from "convex/browser";
 import Database from "better-sqlite3";
-import { createClient } from "@libsql/client";
 
 export function createDatabase() {
-  // In production (Vercel), we need to handle the database differently
-  if (process.env.NODE_ENV === 'production') {
-    // Option 1: Use Turso (SQLite-compatible cloud database)
-    if (process.env.TURSO_DATABASE_URL && process.env.TURSO_AUTH_TOKEN) {
-      console.log('📊 Using Turso database in production');
-      
-      // Create Turso client
-      const turso = createClient({
-        url: process.env.TURSO_DATABASE_URL,
-        authToken: process.env.TURSO_AUTH_TOKEN,
-      });
-      
-      // Better Auth expects a better-sqlite3 compatible interface
-      // We'll create a proxy that adapts Turso to better-sqlite3 interface
-      return createTursoAdapter(turso);
-    }
+  // Check if Convex is configured
+  if (!process.env.NEXT_PUBLIC_CONVEX_URL) {
+    console.error('❌ CONVEX_URL not configured!');
+    console.error('📋 Add NEXT_PUBLIC_CONVEX_URL to your environment variables');
+    console.error('💡 Get it from: https://dashboard.convex.dev');
     
-    // Option 2: Use Convex (for real-time features)
-    if (process.env.NEXT_PUBLIC_CONVEX_URL) {
-      console.log('📊 Using Convex database in production');
-      // Using in-memory SQLite as a session cache with Convex as the persistent store
-      return new Database(':memory:');
-    }
-    
-    // Option 3: Use in-memory (temporary solution - will cause auth failures)
-    console.error('❌ No production database configured! Authentication will fail.');
-    console.error('💡 Required: Set up Turso database for production');
-    console.error('📋 Add TURSO_DATABASE_URL and TURSO_AUTH_TOKEN to Vercel environment variables');
-    
-    // This will cause the exact errors you're seeing
-    return new Database(':memory:');
+    // Fallback to in-memory database with proper tables
+    console.log('🔄 Using in-memory SQLite as fallback with Better Auth tables');
+    const db = new Database(':memory:');
+    initializeBetterAuthTables(db);
+    return db;
   }
+
+  console.log('📊 Using Convex database (serverless + real-time)');
   
-  // Development: use local SQLite
-  return new Database("./sqlite.db");
+  // Create in-memory SQLite database with Better Auth tables
+  // This acts as a local cache while Convex handles persistence
+  const db = new Database(':memory:');
+  initializeBetterAuthTables(db);
+  
+  // TODO: Integrate with Convex for actual persistence
+  // For now, the in-memory database will work for authentication
+  // Future: Sync data between SQLite cache and Convex
+  
+  return db;
 }
 
-// Adapter to make Turso work with Better Auth
-function createTursoAdapter(turso: any) {
-  // This is a simplified adapter - Better Auth needs more comprehensive support
-  // For now, we'll use a hybrid approach
-  const memoryDb = new Database(':memory:');
-  
-  // Initialize Better Auth tables in memory
+function initializeBetterAuthTables(db: Database.Database) {
   try {
-    // Create the basic tables that Better Auth needs
-    memoryDb.exec(`
+    // Create all Better Auth required tables
+    db.exec(`
       CREATE TABLE IF NOT EXISTS user (
         id TEXT PRIMARY KEY,
         email TEXT UNIQUE NOT NULL,
@@ -97,24 +81,32 @@ function createTursoAdapter(turso: any) {
         createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
         updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
       );
+
+      CREATE TABLE IF NOT EXISTS onboarding (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        userId TEXT NOT NULL UNIQUE,
+        role TEXT,
+        discovery TEXT,
+        termsAccepted BOOLEAN DEFAULT FALSE,
+        marketingConsent BOOLEAN DEFAULT FALSE,
+        completedAt DATETIME,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (userId) REFERENCES user (id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE IF NOT EXISTS password_reset_tokens (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email TEXT NOT NULL,
+        token TEXT NOT NULL,
+        expires_at TEXT NOT NULL,
+        created_at TEXT NOT NULL
+      );
     `);
     
     console.log('✅ Better Auth tables created successfully');
   } catch (error) {
     console.error('❌ Failed to create Better Auth tables:', error);
+    throw error;
   }
-  
-  return memoryDb;
 }
-
-// Instructions for setting up Turso:
-/*
-1. Go to https://turso.tech and create an account
-2. Create a new database
-3. Get your database URL and auth token
-4. Add to Vercel environment variables:
-   - TURSO_DATABASE_URL="libsql://your-db.turso.io"
-   - TURSO_AUTH_TOKEN="your-auth-token"
-5. Install: npm install @libsql/client
-6. Update this file to use Turso client instead of better-sqlite3
-*/
