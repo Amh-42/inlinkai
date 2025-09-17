@@ -38,7 +38,18 @@ RESEND_API_KEY="your-resend-api-key"
 
 ## 🗄️ Database Setup (Choose One Option)
 
-### Option A: Turso (Recommended - SQLite Compatible)
+### Option A: Convex (Recommended - Real-time & Serverless)
+1. Sign up at [convex.dev](https://convex.dev)
+2. Create a new project: `inlinkai_db`
+3. Get your deployment URL from dashboard
+4. Add environment variable:
+   ```bash
+   NEXT_PUBLIC_CONVEX_URL="https://abundant-mule-775.convex.cloud"
+   CONVEX_DEPLOY_KEY="dev:abundant-mule-775|your-deploy-key"
+   ```
+5. Run: `npx convex dev` (already installed)
+
+### Option B: Turso (SQLite Compatible)
 1. Sign up at [turso.tech](https://turso.tech)
 2. Create a new database
 3. Add environment variables:
@@ -48,7 +59,7 @@ RESEND_API_KEY="your-resend-api-key"
    ```
 4. Run: `npm install @libsql/client`
 
-### Option B: Planetscale (MySQL)
+### Option C: Planetscale (MySQL)
 1. Sign up at [planetscale.com](https://planetscale.com)
 2. Create a new database
 3. Add environment variable:
@@ -56,7 +67,7 @@ RESEND_API_KEY="your-resend-api-key"
    DATABASE_URL="mysql://username:password@host/database?ssl=true"
    ```
 
-### Option C: Supabase (PostgreSQL)
+### Option D: Supabase (PostgreSQL)
 1. Sign up at [supabase.com](https://supabase.com)
 2. Create a new project
 3. Add environment variable:

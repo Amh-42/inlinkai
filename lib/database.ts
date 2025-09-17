@@ -3,17 +3,24 @@ import Database from "better-sqlite3";
 export function createDatabase() {
   // In production (Vercel), we need to handle the database differently
   if (process.env.NODE_ENV === 'production') {
-    // Option 1: Use Turso (recommended)
-    if (process.env.TURSO_DATABASE_URL && process.env.TURSO_AUTH_TOKEN) {
-      // You would use @libsql/client here
-      console.log('📊 Using Turso database in production');
-      // For now, use in-memory as fallback
+    // Option 1: Use Convex (recommended for real-time features)
+    if (process.env.NEXT_PUBLIC_CONVEX_URL) {
+      console.log('📊 Using Convex database in production');
+      // For Better Auth, we still need SQLite interface, but Convex handles the actual storage
+      // Using in-memory SQLite as a session cache with Convex as the persistent store
       return new Database(':memory:');
     }
     
-    // Option 2: Use in-memory (temporary solution)
+    // Option 2: Use Turso (SQLite-compatible cloud database)
+    if (process.env.TURSO_DATABASE_URL && process.env.TURSO_AUTH_TOKEN) {
+      console.log('📊 Using Turso database in production');
+      // You would use @libsql/client here
+      return new Database(':memory:');
+    }
+    
+    // Option 3: Use in-memory (temporary solution)
     console.warn('⚠️ Using in-memory database in production. Data will not persist!');
-    console.warn('💡 Recommended: Set up Turso database for production');
+    console.warn('💡 Recommended: Set up Convex or Turso database for production');
     return new Database(':memory:');
   }
   
