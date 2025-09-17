@@ -8,7 +8,13 @@ export function createDatabase() {
   console.log('POSTGRES_URL exists:', !!process.env.POSTGRES_URL);
   
   // Check if PostgreSQL is configured
-  const pgConnectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL;
+  let pgConnectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL;
+  
+  // Remove quotes if they exist (common issue with environment variables)
+  if (pgConnectionString) {
+    pgConnectionString = pgConnectionString.replace(/^['"]|['"]$/g, '');
+    console.log('🧹 Cleaned connection string:', pgConnectionString.substring(0, 50) + '...');
+  }
   
   if (!pgConnectionString) {
     console.error('❌ PostgreSQL not configured!');
@@ -19,8 +25,8 @@ export function createDatabase() {
   }
 
   console.log('🐘 Using PostgreSQL database');
-  console.log('🔍 Connection string length:', pgConnectionString.length);
-  console.log('🔍 Connection string prefix:', pgConnectionString.substring(0, 50) + '...');
+  console.log('🔍 Final connection string length:', pgConnectionString.length);
+  console.log('🔍 Final connection string prefix:', pgConnectionString.substring(0, 50) + '...');
   
   // Parse connection string to debug
   try {
