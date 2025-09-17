@@ -144,6 +144,8 @@ export const deleteSession = mutation({
 export const createAccount = mutation({
   args: {
     id: v.string(),
+    accountId: v.optional(v.string()),
+    providerId: v.optional(v.string()),
     userId: v.string(),
     provider: v.string(),
     providerAccountId: v.string(),
@@ -154,6 +156,7 @@ export const createAccount = mutation({
     refreshTokenExpiresAt: v.optional(v.number()),
     scope: v.optional(v.string()),
     password: v.optional(v.string()),
+    idToken: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const now = Date.now();
@@ -185,12 +188,15 @@ export const updateAccount = mutation({
   args: {
     id: v.string(),
     data: v.object({
+      accountId: v.optional(v.string()),
+      providerId: v.optional(v.string()),
       accessToken: v.optional(v.string()),
       refreshToken: v.optional(v.string()),
       accessTokenExpiresAt: v.optional(v.number()),
       refreshTokenExpiresAt: v.optional(v.number()),
       scope: v.optional(v.string()),
       password: v.optional(v.string()),
+      idToken: v.optional(v.string()),
     }),
   },
   handler: async (ctx, args) => {

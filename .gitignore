@@ -38,6 +38,7 @@ next-env.d.ts
 
 # SQLite database
 *.db
+sqlite.db
 
 # IDE
 .vscode/

@@ -57,6 +57,8 @@ function initializeBetterAuthTables(db: Database.Database) {
       
       CREATE TABLE IF NOT EXISTS account (
         id TEXT PRIMARY KEY,
+        accountId TEXT,
+        providerId TEXT,
         userId TEXT NOT NULL,
         provider TEXT NOT NULL,
         providerAccountId TEXT NOT NULL,
@@ -67,6 +69,7 @@ function initializeBetterAuthTables(db: Database.Database) {
         refreshTokenExpiresAt DATETIME,
         scope TEXT,
         password TEXT,
+        idToken TEXT,
         createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
         updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (userId) REFERENCES user (id) ON DELETE CASCADE,

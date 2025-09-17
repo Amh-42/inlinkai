@@ -31,6 +31,8 @@ export default defineSchema({
 
   account: defineTable({
     id: v.string(),
+    accountId: v.optional(v.string()),
+    providerId: v.optional(v.string()),
     userId: v.string(),
     provider: v.string(),
     providerAccountId: v.string(),
@@ -41,6 +43,7 @@ export default defineSchema({
     refreshTokenExpiresAt: v.optional(v.number()),
     scope: v.optional(v.string()),
     password: v.optional(v.string()), // Hashed password for email/password
+    idToken: v.optional(v.string()),
     createdAt: v.number(),
     updatedAt: v.number(),
   })
