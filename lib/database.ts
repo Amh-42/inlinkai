@@ -63,15 +63,6 @@ export function createDatabase() {
     console.error('❌ Error hostname:', (err as any).hostname);
     console.error('❌ Error syscall:', (err as any).syscall);
     console.error('❌ Error message:', err.message);
-    console.error('❌ Error stack:', err.stack);
-  });
-
-  pool.on('acquire', () => {
-    console.log('🔄 Client acquired from pool');
-  });
-
-  pool.on('release', () => {
-    console.log('🔄 Client released back to pool');
   });
 
   console.log('🎯 Pool created successfully, returning pool instance');
