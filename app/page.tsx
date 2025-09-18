@@ -1,6 +1,40 @@
+'use client';
+
 import Link from 'next/link';
+import { useTheme } from './components/ThemeProvider';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
+  const { theme } = useTheme();
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  
+  const getVideoSource = () => {
+    return theme === 'dark' ? '/dark.webm' : '/hero.webm';
+  };
+
+  useEffect(() => {
+    // Handle smooth video transition on theme change
+    const videoElement = document.querySelector('.hero-video') as HTMLVideoElement;
+    if (videoElement) {
+      setIsTransitioning(true);
+      
+      // Fade out current video
+      videoElement.style.opacity = '0';
+      
+      setTimeout(() => {
+        // Change video source
+        const sourceElement = videoElement.querySelector('source');
+        if (sourceElement) {
+          sourceElement.src = getVideoSource();
+          videoElement.load(); // Reload video with new source
+        }
+        
+        // Fade in new video
+        videoElement.style.opacity = '1';
+        setIsTransitioning(false);
+      }, 300); // 300ms fade duration
+    }
+  }, [theme]);
   return (
     <>
       {/* Hero Section */}
@@ -26,13 +60,17 @@ export default function Home() {
               </Link>
             </div>
           </div>
-          <div className="hero-visual">
-            <div className="visual-card visual-card-main">
-              <i className="fab fa-linkedin"></i>
-              <h3>AI-Powered Growth</h3>
-              <p>Transform your LinkedIn presence</p>
-            </div>
-          </div>
+          <video 
+            className={`hero-video ${isTransitioning ? 'transitioning' : ''}`}
+            autoPlay 
+            muted 
+            loop 
+            playsInline
+            key={getVideoSource()} // Force re-render on theme change
+          >
+            <source src={getVideoSource()} type="video/webm" />
+            Your browser does not support the video tag.
+          </video>
         </div>
       </section>
 

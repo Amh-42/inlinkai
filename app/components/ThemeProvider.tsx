@@ -6,18 +6,18 @@ const ThemeContext = createContext<{
   theme: string;
   toggleTheme: () => void;
 }>({
-  theme: 'light',
+  theme: 'dark',
   toggleTheme: () => {},
 });
 
 export const useTheme = () => useContext(ThemeContext);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState('dark');
 
   useEffect(() => {
-    // Check for saved theme preference or default to light mode
-    const savedTheme = localStorage.getItem('theme') || 'light';
+    // Check for saved theme preference or default to dark mode
+    const savedTheme = localStorage.getItem('theme') || 'dark';
     setTheme(savedTheme);
     document.body.setAttribute('data-theme', savedTheme);
   }, []);
