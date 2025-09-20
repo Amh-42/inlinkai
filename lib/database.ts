@@ -1,4 +1,3 @@
-import { ConvexHttpClient } from "convex/browser";
 import { Pool } from "pg";
 
 export function createDatabase() {
