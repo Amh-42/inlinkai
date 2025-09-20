@@ -54,10 +54,7 @@ export function Navigation() {
                   Dashboard
                   <i className="fas fa-chart-line" aria-hidden="true"></i>
                 </Link>
-                <button onClick={handleSignOut} className="cta-button secondary-button logout-button">
-                  Sign Out
-                  <i className="fas fa-sign-out-alt" aria-hidden="true"></i>
-                </button>
+                
               </>
             ) : (
               <Link href="/login" className="cta-button login-button">
@@ -143,10 +140,7 @@ export function Navigation() {
                 Dashboard
                 <i className="fas fa-chart-line" aria-hidden="true"></i>
               </Link>
-              <button onClick={() => { handleSignOut(); toggleMobileMenu(); }} className="cta-button secondary-button logout-button">
-                Sign Out
-                <i className="fas fa-sign-out-alt" aria-hidden="true"></i>
-              </button>
+              
             </>
           ) : (
             <Link href="/login" className="cta-button login-button" onClick={toggleMobileMenu}>

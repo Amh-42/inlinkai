@@ -29,89 +29,254 @@ export default function FeaturesPage() {
         </div>
       </section>
 
-      {/* Features Grid */}
-      <section className="benefits">
-        <div className="benefits-container">
-          <div className="section-header">
-            <div className="section-tag">
-              <i className="fas fa-magic"></i>
-              CORE FEATURES
+      {/* Feature 1: AI Profile Optimization */}
+      <section className="feature-section feature-left">
+        <div className="feature-container">
+          <div className="feature-content">
+            <div className="feature-badge">
+              <i className="fas fa-user-edit"></i>
+              PROFILE OPTIMIZATION
             </div>
-            <h2 className="section-title">Everything You Need to Dominate LinkedIn</h2>
-            <p className="section-subtitle">Comprehensive AI-powered tools for professional growth</p>
+            <h2 className="feature-title">AI Profile Optimization</h2>
+            <p className="feature-description">
+              Transform your LinkedIn profile with AI-powered insights. Our advanced algorithms analyze your current profile and provide personalized recommendations to maximize visibility, engagement, and professional appeal.
+            </p>
+            <div className="feature-benefits">
+              <div className="benefit-item">
+                <i className="fas fa-check-circle"></i>
+                <span>Headline optimization for maximum impact</span>
+              </div>
+              <div className="benefit-item">
+                <i className="fas fa-check-circle"></i>
+                <span>About section enhancement</span>
+              </div>
+              <div className="benefit-item">
+                <i className="fas fa-check-circle"></i>
+                <span>Experience section improvements</span>
+              </div>
+            </div>
           </div>
-
-          <div className="benefits-grid">
-            <div className="benefit-card loading">
-              <div className="benefit-icon">
-                <i className="fas fa-user-edit"></i>
+          <div className="feature-visual">
+            <div className="feature-mockup profile-mockup">
+              <div className="mockup-header">
+                <div className="mockup-avatar"></div>
+                <div className="mockup-info">
+                  <div className="mockup-name"></div>
+                  <div className="mockup-title"></div>
+                </div>
               </div>
-              <h3>AI Profile Optimization</h3>
-              <p>Get your LinkedIn profile analyzed by AI and receive personalized recommendations to improve visibility, engagement, and professional appeal.</p>
-            </div>
-
-            <div className="benefit-card loading">
-              <div className="benefit-icon">
-                <i className="fas fa-edit"></i>
+              <div className="mockup-content">
+                <div className="mockup-line"></div>
+                <div className="mockup-line short"></div>
+                <div className="mockup-line medium"></div>
               </div>
-              <h3>Smart Content Generation</h3>
-              <p>Create compelling LinkedIn posts, articles, and updates with AI that understands your industry, audience, and personal brand voice.</p>
             </div>
+          </div>
+        </div>
+      </section>
 
-            <div className="benefit-card loading">
-              <div className="benefit-icon">
-                <i className="fas fa-bullseye"></i>
+      {/* Feature 2: Smart Content Generation */}
+      <section className="feature-section feature-right">
+        <div className="feature-container">
+          <div className="feature-visual">
+            <div className="feature-mockup content-mockup">
+              <div className="content-editor">
+                <div className="editor-toolbar">
+                  <div className="toolbar-btn"></div>
+                  <div className="toolbar-btn"></div>
+                  <div className="toolbar-btn"></div>
+                </div>
+                <div className="editor-content">
+                  <div className="typing-animation">
+                    <span className="typing-text">Creating engaging content...</span>
+                    <span className="cursor"></span>
+                  </div>
+                </div>
               </div>
-              <h3>Prospect Targeting</h3>
-              <p>Identify and connect with high-value prospects who match your ideal customer profile using advanced AI algorithms.</p>
+              <div className="ai-suggestions">
+                <div className="suggestion-item">
+                  <i className="fas fa-lightbulb"></i>
+                  <span>AI Suggestion 1</span>
+                </div>
+                <div className="suggestion-item">
+                  <i className="fas fa-lightbulb"></i>
+                  <span>AI Suggestion 2</span>
+                </div>
+              </div>
             </div>
+          </div>
+          <div className="feature-content">
+            <div className="feature-badge">
+              <i className="fas fa-edit"></i>
+              CONTENT CREATION
+            </div>
+            <h2 className="feature-title">Smart Content Generation</h2>
+            <p className="feature-description">
+              Never run out of engaging content ideas. Our AI understands your industry, audience, and personal brand voice to create compelling LinkedIn posts, articles, and updates that drive engagement and establish thought leadership.
+            </p>
+            <div className="feature-benefits">
+              <div className="benefit-item">
+                <i className="fas fa-check-circle"></i>
+                <span>Industry-specific content suggestions</span>
+              </div>
+              <div className="benefit-item">
+                <i className="fas fa-check-circle"></i>
+                <span>Personal brand voice matching</span>
+              </div>
+              <div className="benefit-item">
+                <i className="fas fa-check-circle"></i>
+                <span>Engagement-optimized posts</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-            <div className="benefit-card loading">
-              <div className="benefit-icon">
+      {/* Feature 3: Performance Analytics */}
+      <section className="feature-section feature-center">
+        <div className="feature-container">
+          <div className="feature-content-center">
+            <div className="feature-badge">
+              <i className="fas fa-chart-line"></i>
+              ANALYTICS & INSIGHTS
+            </div>
+            <h2 className="feature-title">Performance Analytics</h2>
+            <p className="feature-description">
+              Track your LinkedIn success with comprehensive analytics. Monitor profile views, post engagement, connection growth, and conversion metrics to optimize your strategy.
+            </p>
+          </div>
+          <div className="feature-visual-wide">
+            <div className="analytics-dashboard">
+              <div className="dashboard-header">
+                <h3>LinkedIn Performance Dashboard</h3>
+              </div>
+              <div className="dashboard-metrics">
+                <div className="metric-card">
+                  <div className="metric-number">847</div>
+                  <div className="metric-label">Profile Views</div>
+                  <div className="metric-change positive">+23%</div>
+                </div>
+                <div className="metric-card">
+                  <div className="metric-number">156</div>
+                  <div className="metric-label">Post Likes</div>
+                  <div className="metric-change positive">+45%</div>
+                </div>
+                <div className="metric-card">
+                  <div className="metric-number">23</div>
+                  <div className="metric-label">New Connections</div>
+                  <div className="metric-change positive">+12%</div>
+                </div>
+              </div>
+              <div className="dashboard-chart">
+                <div className="chart-bars">
+                  <div className="chart-bar" style={{ height: '60%' }}></div>
+                  <div className="chart-bar" style={{ height: '80%' }}></div>
+                  <div className="chart-bar" style={{ height: '45%' }}></div>
+                  <div className="chart-bar" style={{ height: '90%' }}></div>
+                  <div className="chart-bar" style={{ height: '75%' }}></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Feature 4: Prospect Targeting */}
+      <section className="feature-section feature-diagonal">
+        <div className="feature-container">
+          <div className="feature-content">
+            <div className="feature-badge">
+              <i className="fas fa-bullseye"></i>
+              SMART TARGETING
+            </div>
+            <h2 className="feature-title">Prospect Targeting</h2>
+            <p className="feature-description">
+              Find and connect with your ideal prospects using advanced AI algorithms. Target by industry, role, company size, and engagement patterns to build a high-quality network.
+            </p>
+            <div className="targeting-filters">
+              <div className="filter-tag">Industry: Tech</div>
+              <div className="filter-tag">Role: Decision Maker</div>
+              <div className="filter-tag">Company: 50-200</div>
+              <div className="filter-tag">Active: Last 30 days</div>
+            </div>
+          </div>
+          <div className="feature-visual">
+            <div className="prospect-network">
+              <div className="network-center">
+                <div className="user-avatar main">You</div>
+              </div>
+              <div className="network-prospects">
+                <div className="prospect-node prospect-1">
+                  <div className="user-avatar"></div>
+                  <div className="connection-line"></div>
+                </div>
+                <div className="prospect-node prospect-2">
+                  <div className="user-avatar"></div>
+                  <div className="connection-line"></div>
+                </div>
+                <div className="prospect-node prospect-3">
+                  <div className="user-avatar"></div>
+                  <div className="connection-line"></div>
+                </div>
+                <div className="prospect-node prospect-4">
+                  <div className="user-avatar"></div>
+                  <div className="connection-line"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Feature 5: Automation Suite */}
+      <section className="feature-section feature-timeline">
+        <div className="feature-container">
+          <div className="feature-content-center">
+            <div className="feature-badge">
+              <i className="fas fa-robot"></i>
+              AUTOMATION SUITE
+            </div>
+            <h2 className="feature-title">Complete Automation</h2>
+            <p className="feature-description">
+              Save hours every week with intelligent automation. From content scheduling to engagement and outreach campaigns, let AI handle the routine while you focus on building relationships.
+            </p>
+          </div>
+          <div className="automation-timeline">
+            <div className="timeline-item">
+              <div className="timeline-icon">
                 <i className="fas fa-calendar-alt"></i>
               </div>
-              <h3>Content Scheduling</h3>
-              <p>Plan and schedule your LinkedIn content for optimal engagement times, ensuring consistent visibility without the daily effort.</p>
-            </div>
-
-            <div className="benefit-card loading">
-              <div className="benefit-icon">
-                <i className="fas fa-chart-line"></i>
+              <div className="timeline-content">
+                <h4>Content Scheduling</h4>
+                <p>Auto-schedule posts for optimal engagement</p>
               </div>
-              <h3>Performance Analytics</h3>
-              <p>Track your LinkedIn performance with detailed analytics on profile views, engagement rates, and connection success metrics.</p>
             </div>
-
-            <div className="benefit-card loading">
-              <div className="benefit-icon">
+            <div className="timeline-item">
+              <div className="timeline-icon">
                 <i className="fas fa-comments"></i>
               </div>
-              <h3>Engagement Automation</h3>
-              <p>Automatically engage with relevant content in your network to increase your visibility and build meaningful professional relationships.</p>
-            </div>
-
-            <div className="benefit-card loading">
-              <div className="benefit-icon">
-                <i className="fas fa-search"></i>
+              <div className="timeline-content">
+                <h4>Smart Engagement</h4>
+                <p>Automatically engage with relevant content</p>
               </div>
-              <h3>Lead Research</h3>
-              <p>Research potential leads and clients with AI-powered insights about their business needs, challenges, and decision-making patterns.</p>
             </div>
-
-            <div className="benefit-card loading">
-              <div className="benefit-icon">
+            <div className="timeline-item">
+              <div className="timeline-icon">
                 <i className="fas fa-paper-plane"></i>
               </div>
-              <h3>Outreach Campaigns</h3>
-              <p>Create and manage personalized outreach campaigns that convert prospects into clients with AI-crafted messaging.</p>
-            </div>
-
-            <div className="benefit-card loading">
-              <div className="benefit-icon">
-                <i className="fas fa-brain"></i>
+              <div className="timeline-content">
+                <h4>Outreach Campaigns</h4>
+                <p>Personalized connection requests and follow-ups</p>
               </div>
-              <h3>AI Learning & Adaptation</h3>
-              <p>Our AI continuously learns from your interactions and results, becoming more effective at generating content and identifying opportunities.</p>
+            </div>
+            <div className="timeline-item">
+              <div className="timeline-icon">
+                <i className="fas fa-search"></i>
+              </div>
+              <div className="timeline-content">
+                <h4>Lead Research</h4>
+                <p>Continuous prospect discovery and analysis</p>
+              </div>
             </div>
           </div>
         </div>
