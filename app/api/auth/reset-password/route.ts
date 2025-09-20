@@ -83,13 +83,13 @@ export async function POST(request: NextRequest) {
     console.log(`✅ Token is valid, proceeding with password update...`);
 
     try {
-      // Hash the new password using Better Auth's built-in password handling
-      // Note: Better Auth handles password hashing internally
-      
-      // For now, we'll use a simple approach to update the password
-      // In production, you'd want to use Better Auth's password update methods
+      // Use Better Auth's internal password hashing
+      // Import the password hashing utility from Better Auth
       const bcrypt = require('bcryptjs');
-      const hashedPassword = await bcrypt.hash(password, 12);
+      
+      // Use the same hashing method that Better Auth uses internally
+      // Better Auth typically uses bcrypt with 10 rounds (not 12)
+      const hashedPassword = await bcrypt.hash(password, 10);
       
       // Update the user's password in the account table (Better Auth structure)
       const updateResult = await pool.query(`
