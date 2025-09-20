@@ -60,19 +60,7 @@ export const auth = betterAuth({
   socialProviders: socialProvidersConfig,
   trustedOrigins: getTrustedOrigins(),
   session: {
-    cookieCache: {
-      enabled: true,
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-    },
-    cookieOptions: {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-    },
-  },
-  advanced: {
-    crossSubDomainCookies: {
-      enabled: false, // Disable for single domain
-    },
+    expiresIn: 60 * 60 * 24 * 7, // 7 days
+    updateAge: 60 * 60 * 24, // Update session every day
   },
 });

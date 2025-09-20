@@ -12,6 +12,17 @@ export default function Dashboard() {
   const { data: session, isPending } = useSession();
   const { theme, toggleTheme } = useTheme();
   const router = useRouter();
+  
+  // Debug session state
+  console.log('🔍 Dashboard render - Session debug:', {
+    isPending,
+    hasSession: !!session,
+    hasUser: !!session?.user,
+    userId: session?.user?.id,
+    userEmail: session?.user?.email,
+    sessionKeys: session ? Object.keys(session) : [],
+    timestamp: new Date().toISOString()
+  });
   const [activeSection, setActiveSection] = useState('overview');
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);

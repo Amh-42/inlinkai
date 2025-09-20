@@ -10,6 +10,8 @@ const getBaseURL = () => {
   return process.env.BETTER_AUTH_URL || "https://inlinkai.vercel.app";
 };
 
+console.log('🔍 Auth client initializing with baseURL:', getBaseURL());
+
 export const authClient = createAuthClient({
   baseURL: getBaseURL(),
   fetchOptions: {
