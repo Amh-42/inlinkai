@@ -59,4 +59,16 @@ export const auth = betterAuth({
   },
   socialProviders: socialProvidersConfig,
   trustedOrigins: getTrustedOrigins(),
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    },
+  },
+  advanced: {
+    crossSubDomainCookies: {
+      enabled: false, // Disable for single domain
+    },
+    generateId: false, // Use default ID generation
+  },
 });

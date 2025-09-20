@@ -19,9 +19,22 @@ export default function Dashboard() {
 
   useEffect(() => {
     const checkAccessAndRedirect = async () => {
+      console.log('🔍 Dashboard: Checking auth status...', { 
+        isPending, 
+        hasSession: !!session, 
+        hasUser: !!session?.user,
+        userId: session?.user?.id 
+      });
+      
       if (!isPending && !session?.user) {
+        console.log('❌ Dashboard: No authenticated user, redirecting to login');
         router.push('/login');
-      } else if (!isPending && session?.user) {
+        return;
+      } 
+      
+      if (!isPending && session?.user) {
+        console.log('✅ Dashboard: User authenticated:', session.user.email);
+        
         // Fallback check: send welcome email if this is a new user who hasn't received one
         if (shouldSendWelcomeEmail(session) && !hasWelcomeEmailBeenSent(session.user.id)) {
           console.log('🎉 Dashboard: New user detected, sending welcome email...');
@@ -38,10 +51,14 @@ export default function Dashboard() {
         }
         
         // Check onboarding status from database
-        const isComplete = await syncOnboardingStatus();
-        if (!isComplete) {
-          // Redirect to onboarding if not completed
-          router.push('/onboarding/role');
+        try {
+          const isComplete = await syncOnboardingStatus();
+          if (!isComplete) {
+            console.log('🔄 Dashboard: Onboarding incomplete, redirecting...');
+            router.push('/onboarding/role');
+          }
+        } catch (error) {
+          console.error('❌ Dashboard: Error checking onboarding status:', error);
         }
       }
     };
