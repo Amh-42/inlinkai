@@ -35,8 +35,8 @@ export async function GET(request: NextRequest) {
       password_analysis: {
         with_password: users.filter((u: any) => u.has_password).length,
         without_password: users.filter((u: any) => !u.has_password).length,
-        password_lengths: [...new Set(users.filter((u: any) => u.has_password).map((u: any) => u.password_length))],
-        password_prefixes: [...new Set(users.filter((u: any) => u.has_password).map((u: any) => u.password_prefix))]
+        password_lengths: Array.from(new Set(users.filter((u: any) => u.has_password).map((u: any) => u.password_length))),
+        password_prefixes: Array.from(new Set(users.filter((u: any) => u.has_password).map((u: any) => u.password_prefix)))
       }
     };
     
