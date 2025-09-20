@@ -130,10 +130,10 @@ export default function Dashboard() {
         margin: 0
       }}>
         {/* Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <a href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none' }}>
           <img src="/images/logo.svg" alt="InlinkAI Logo" width="32" height="32" />
           <span style={{ fontWeight: 700, fontSize: '1.25rem', color: 'var(--text-primary)' }}>InlinkAI</span>
-        </div>
+        </a>
         
         {/* Right side actions */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>

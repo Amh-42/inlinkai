@@ -56,25 +56,31 @@ export async function POST(request: NextRequest) {
     if (recipients === 'all') {
       // Get all users who opted in for marketing emails
       try {
-        targetUsers = db.prepare(`
+        const result = await db.query(`
           SELECT email, name, onboarding_marketing 
-          FROM user 
-          WHERE onboarding_marketing = 1 AND email IS NOT NULL
-        `).all();
+          FROM "user" 
+          WHERE onboarding_marketing = true AND email IS NOT NULL
+        `);
+        targetUsers = result.rows;
       } catch (error) {
         console.error('Error fetching opted-in users:', error);
         return NextResponse.json({ error: 'Database error' }, { status: 500 });
       }
     } else if (recipients === 'test') {
       // Send test email to current user only
-      const currentUser = db.prepare(`
-        SELECT email, name 
-        FROM user 
-        WHERE id = ?
-      `).get(session.user.id);
-      
-      if (currentUser) {
-        targetUsers = [currentUser];
+      try {
+        const result = await db.query(`
+          SELECT email, name 
+          FROM "user" 
+          WHERE id = $1
+        `, [session.user.id]);
+        
+        if (result.rows.length > 0) {
+          targetUsers = [result.rows[0]];
+        }
+      } catch (error) {
+        console.error('Error fetching current user:', error);
+        return NextResponse.json({ error: 'Database error' }, { status: 500 });
       }
     } else if (Array.isArray(recipients)) {
       // Send to specific email addresses
@@ -279,22 +285,22 @@ export async function GET(request: NextRequest) {
 
     try {
       // Count opted-in users
-      const optedInResult = db.prepare(`
+      const optedInResult = await db.query(`
         SELECT COUNT(*) as count 
-        FROM user 
-        WHERE onboarding_marketing = 1 AND email IS NOT NULL
-      `).get();
+        FROM "user" 
+        WHERE onboarding_marketing = true AND email IS NOT NULL
+      `);
       
-      optedInCount = optedInResult?.count || 0;
+      optedInCount = parseInt(optedInResult.rows[0]?.count) || 0;
 
       // Count total users
-      const totalResult = db.prepare(`
+      const totalResult = await db.query(`
         SELECT COUNT(*) as count 
-        FROM user 
+        FROM "user" 
         WHERE email IS NOT NULL
-      `).get();
+      `);
       
-      totalUsers = totalResult?.count || 0;
+      totalUsers = parseInt(totalResult.rows[0]?.count) || 0;
 
     } catch (error) {
       console.error('Error fetching user statistics:', error);

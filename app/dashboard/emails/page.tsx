@@ -4,6 +4,7 @@ import { useSession } from '@/lib/auth-client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '@/app/components/ThemeProvider';
+import { Navigation } from '@/app/components/Navigation';
 import { isAdmin } from '@/lib/admin-utils';
 
 interface EmailStats {
@@ -289,12 +290,16 @@ Note: This announcement will be displayed in our premium announcement template w
   }
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      backgroundColor: 'var(--bg-primary)',
-      padding: '2rem',
-      paddingTop: 'calc(2rem + 70px)' // Account for dashboard navbar
-    }}>
+    <>
+      {/* Homepage Navigation */}
+      <Navigation />
+      
+      <div style={{
+        minHeight: '100vh',
+        backgroundColor: 'var(--bg-primary)',
+        padding: '2rem',
+        paddingTop: 'calc(2rem + 120px)' // Account for homepage navbar (120px total height)
+      }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         {/* Header */}
         <div style={{ marginBottom: '2rem' }}>
@@ -801,5 +806,6 @@ Note: This announcement will be displayed in our premium announcement template w
         </div>
       </div>
     </div>
+    </>
   );
 }

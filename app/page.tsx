@@ -47,8 +47,9 @@ export default function Home() {
             </div>
             <h1 className="hero-title">Get Noticed. Stay Relevant. <span className="hero-subtitle">Be Chosen.</span></h1>
             <p className="hero-description">
-              Transform your LinkedIn presence with cutting-edge AI. Improve your profile visibility, create engaging content that converts, and connect with prospects who are ready to work with you.
+              Transform your LinkedIn presence with cutting-edge AI. 
             </p>
+            
             <div className="hero-actions">
               <Link href="/login" className="cta-button login-button" aria-label="Start Free Trial">
                 Start Free Trial
@@ -72,6 +73,28 @@ export default function Home() {
             Your browser does not support the video tag.
           </video>
         </div>
+        
+        {/* Hero Stats - Full Width */}
+        <div className="hero-stats-wrapper">
+          <div className="hero-stats">
+            <div className="hero-stat-item">
+              <div className="hero-stat-number">3x</div>
+              <div className="hero-stat-label">More Profile Views</div>
+            </div>
+            <div className="hero-stat-item">
+              <div className="hero-stat-number">5x</div>
+              <div className="hero-stat-label">Higher Engagement</div>
+            </div>
+            <div className="hero-stat-item">
+              <div className="hero-stat-number">200%</div>
+              <div className="hero-stat-label">More Connections</div>
+            </div>
+            <div className="hero-stat-item">
+              <div className="hero-stat-number">80%</div>
+              <div className="hero-stat-label">Time Saved</div>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* How It Works Section */}
@@ -87,46 +110,94 @@ export default function Home() {
           </div>
           <div className="benefits-grid">
             <div className="benefit-card loading">
-              <div className="benefit-icon">
-                <i className="fas fa-eye"></i>
+              <div className="card-image">
+                <div className="card-image-placeholder">
+                  <i className="fas fa-eye"></i>
+                </div>
               </div>
-              <h3>Get Noticed</h3>
-              <p>AI optimizes your LinkedIn profile - headline, about section, experience, and featured content to improve visibility and attract your ideal prospects.</p>
+              <div className="card-content">
+                <h3>Get Noticed</h3>
+                <p>AI optimizes your LinkedIn profile</p>
+                <div className="card-footer">
+                  <span className="read-more">Learn More</span>
+                  <i className="fas fa-arrow-right card-arrow"></i>
+                </div>
+              </div>
             </div>
             <div className="benefit-card loading">
-              <div className="benefit-icon">
-                <i className="fas fa-bullseye"></i>
+              <div className="card-image">
+                <div className="card-image-placeholder">
+                  <i className="fas fa-bullseye"></i>
+                </div>
               </div>
-              <h3>Stay Relevant</h3>
-              <p>Create engaging, topic-specific content that positions you as an expert. Our AI generates posts, articles, and updates tailored to your niche and audience.</p>
+              <div className="card-content">
+                <h3>Stay Relevant</h3>
+                <p>Create engaging, topic-specific content</p>
+                <div className="card-footer">
+                  <span className="read-more">Learn More</span>
+                  <i className="fas fa-arrow-right card-arrow"></i>
+                </div>
+              </div>
             </div>
             <div className="benefit-card loading">
-              <div className="benefit-icon">
-                <i className="fas fa-handshake"></i>
+              <div className="card-image">
+                <div className="card-image-placeholder">
+                  <i className="fas fa-handshake"></i>
+                </div>
               </div>
-              <h3>Be Chosen</h3>
-              <p>Connect with prospects who engage with your content and match your ideal customer profile. Reach out at the perfect moment when they're most interested.</p>
+              <div className="card-content">
+                <h3>Be Chosen</h3>
+                <p>Connect with prospects who engage with your content</p>
+                <div className="card-footer">
+                  <span className="read-more">Learn More</span>
+                  <i className="fas fa-arrow-right card-arrow"></i>
+                </div>
+              </div>
             </div>
             <div className="benefit-card loading">
-              <div className="benefit-icon">
-                <i className="fas fa-robot"></i>
+              <div className="card-image">
+                <div className="card-image-placeholder">
+                  <i className="fas fa-robot"></i>
+                </div>
               </div>
-              <h3>AI-Powered</h3>
-              <p>State-of-the-art artificial intelligence analyzes LinkedIn trends, optimizes your content strategy, and identifies high-potential connections.</p>
+              <div className="card-content">
+                <h3>AI-Powered</h3>
+                <p>State-of-the-art artificial intelligence</p>
+                <div className="card-footer">
+                  <span className="read-more">Learn More</span>
+                  <i className="fas fa-arrow-right card-arrow"></i>
+                </div>
+              </div>
             </div>
             <div className="benefit-card loading">
-              <div className="benefit-icon">
-                <i className="fas fa-chart-line"></i>
+              <div className="card-image">
+                <div className="card-image-placeholder">
+                  <i className="fas fa-chart-line"></i>
+                </div>
               </div>
-              <h3>Data-Driven</h3>
-              <p>Track your performance with detailed analytics. See which content performs best, monitor profile views, and measure connection success rates.</p>
+              <div className="card-content">
+                <h3>Data-Driven</h3>
+                <p>Track your performance with detailed analytics. </p>
+                <div className="card-footer">
+                  <span className="read-more">Learn More</span>
+                  <i className="fas fa-arrow-right card-arrow"></i>
+                </div>
+              </div>
             </div>
             <div className="benefit-card loading">
-              <div className="benefit-icon">
-                <i className="fas fa-clock"></i>
+              <div className="card-image">
+                <div className="card-image-placeholder">
+                  <i className="fas fa-clock"></i>
+                </div>
               </div>
-              <h3>Time-Saving</h3>
-              <p>Automate your LinkedIn strategy. Spend minutes, not hours, maintaining a professional presence that generates real business opportunities.</p>
+              <div className="card-content">
+                <h3>Time-Saving</h3>
+                <p>Automate your LinkedIn strategy.</p>
+                <div className="card-footer">
+                  <span className="read-more">Learn More</span>
+                  <i className="fas fa-arrow-right card-arrow"></i>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -161,27 +232,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="stats">
-        <div className="stats-container">
-          <div className="stat-item loading">
-            <div className="stat-number">3x</div>
-            <div className="stat-label">More Profile Views</div>
-          </div>
-          <div className="stat-item loading">
-            <div className="stat-number">5x</div>
-            <div className="stat-label">Higher Engagement</div>
-          </div>
-          <div className="stat-item loading">
-            <div className="stat-number">200%</div>
-            <div className="stat-label">More Connections</div>
-          </div>
-          <div className="stat-item loading">
-            <div className="stat-number">80%</div>
-            <div className="stat-label">Time Saved</div>
-          </div>
-        </div>
-      </section>
 
       {/* Pricing Section */}
       <section className="pricing" id="pricing">
@@ -196,104 +246,73 @@ export default function Home() {
           </div>
           <div className="pricing-grid">
             <div className="pricing-card free-card loading">
-              <div className="pricing-header">
-                <div className="pricing-icon">
+              <div className="card-image">
+                <div className="card-image-placeholder pricing-image">
                   <i className="fas fa-seedling"></i>
                 </div>
+              </div>
+              <div className="card-content">
                 <h3>Free Trial</h3>
                 <div className="price">
                   <span className="currency">$</span>
                   <span className="amount">0</span>
                   <span className="period">/14 days</span>
                 </div>
-              </div>
-              <div className="pricing-features">
-                <div className="feature">
-                  <i className="fas fa-check"></i>
-                  <span>Profile optimization</span>
-                </div>
-                <div className="feature">
-                  <i className="fas fa-check"></i>
-                  <span>5 AI-generated posts</span>
-                </div>
-                <div className="feature">
-                  <i className="fas fa-check"></i>
-                  <span>Basic analytics</span>
-                </div>
-                <div className="feature">
-                  <i className="fas fa-check"></i>
-                  <span>Connection insights</span>
-                </div>
-                <div className="feature">
-                  <i className="fas fa-check"></i>
-                  <span>Email support</span>
-                </div>
-                <div className="feature">
-                  <i className="fas fa-check"></i>
-                  <span>No credit card required</span>
+                <p>Perfect for getting started with AI-powered LinkedIn optimization. Includes profile optimization, content generation, and basic analytics.</p>
+                <div className="card-footer">
+                  <Link href="/login" className="read-more-link" aria-label="Start Free Trial">
+                    <span className="read-more">Start Free Trial</span>
+                    <i className="fas fa-arrow-right card-arrow"></i>
+                  </Link>
                 </div>
               </div>
-              <Link href="/login" className="pricing-button free-button" aria-label="Start Free Trial">
-                Start Free Trial
-                <i className="fas fa-rocket" aria-hidden="true"></i>
-              </Link>
             </div>
 
             <div className="pricing-card elite-card loading">
               <div className="pricing-badge">Most Popular</div>
-              <div className="pricing-header">
-                <div className="pricing-icon">
+              <div className="card-image">
+                <div className="card-image-placeholder pricing-image">
                   <i className="fas fa-crown"></i>
                 </div>
+              </div>
+              <div className="card-content">
                 <h3>Pro Plan</h3>
                 <div className="price">
                   <span className="currency">$</span>
                   <span className="amount">29</span>
                   <span className="period">/month</span>
                 </div>
-              </div>
-              <div className="pricing-features">
-                <div className="feature">
-                  <i className="fas fa-check"></i>
-                  <span>Everything in Free</span>
-                </div>
-                <div className="feature">
-                  <i className="fas fa-check"></i>
-                  <span>Unlimited AI content</span>
-                </div>
-                <div className="feature">
-                  <i className="fas fa-check"></i>
-                  <span>Advanced analytics</span>
-                </div>
-                <div className="feature">
-                  <i className="fas fa-check"></i>
-                  <span>Smart prospect targeting</span>
-                </div>
-                <div className="feature">
-                  <i className="fas fa-check"></i>
-                  <span>Automated outreach</span>
-                </div>
-                <div className="feature">
-                  <i className="fas fa-check"></i>
-                  <span>Priority support</span>
-                </div>
-                <div className="feature">
-                  <i className="fas fa-check"></i>
-                  <span>Content scheduling</span>
-                </div>
-                <div className="feature">
-                  <i className="fas fa-check"></i>
-                  <span>API access</span>
+                <p>Unlock the full power of InlinkAI with unlimited content generation, advanced analytics, automated outreach, and priority support.</p>
+                <div className="card-footer">
+                  <Link href="/login" className="read-more-link" aria-label="Upgrade to Pro Plan">
+                    <span className="read-more">Start Pro Trial</span>
+                    <i className="fas fa-arrow-right card-arrow"></i>
+                  </Link>
                 </div>
               </div>
-              <Link href="/login" className="pricing-button elite-button" aria-label="Upgrade to Pro Plan">
-                Start Pro Trial
-                <i className="fas fa-crown" aria-hidden="true"></i>
-              </Link>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Simple Footer */}
+      <footer className="simple-footer">
+        <div className="footer-container">
+          <div className="footer-content">
+            <h3 className="footer-title">Ready to Transform Your LinkedIn?</h3>
+            <p className="footer-description">Join thousands of professionals already growing their networks with AI.</p>
+          </div>
+          <div className="footer-actions">
+            <Link href="/login" className="cta-button login-button" aria-label="Start Free Trial">
+              Start Free Trial
+              <i className="fas fa-rocket" aria-hidden="true"></i>
+            </Link>
+            <Link href="/login" className="footer-signin" aria-label="Sign In">
+              Already have an account? <span>Sign In</span>
+            </Link>
+          </div>
+        </div>
+      </footer>
     </>
   );
 }
