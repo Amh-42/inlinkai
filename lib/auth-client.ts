@@ -19,4 +19,22 @@ export const authClient = createAuthClient({
   },
 });
 
+// Add debugging to the useSession hook
+const originalUseSession = authClient.useSession;
+authClient.useSession = function(...args) {
+  const result = originalUseSession.apply(this, args);
+  
+  console.log('🔍 useSession called:', {
+    isPending: result.isPending,
+    hasData: !!result.data,
+    hasUser: !!result.data?.user,
+    userId: result.data?.user?.id,
+    userEmail: result.data?.user?.email,
+    timestamp: new Date().toISOString(),
+    baseURL: getBaseURL()
+  });
+  
+  return result;
+};
+
 export const { signIn, signUp, signOut, useSession } = authClient;
