@@ -23,7 +23,7 @@ export function createDatabase() {
     throw new Error('DATABASE_URL is required');
   }
 
-  console.log('🐘 Using PostgreSQL database');
+  console.log('🐘 Using PostgreSQL database (Convex temporarily disabled due to webpack issues)');
   console.log('🔍 Final connection string length:', pgConnectionString.length);
   console.log('🔍 Final connection string prefix:', pgConnectionString.substring(0, 50) + '...');
   
