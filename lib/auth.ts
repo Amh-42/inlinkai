@@ -5,6 +5,7 @@ const socialProvidersConfig = {
   linkedin: {
     clientId: process.env.LINKEDIN_CLIENT_ID as string,
     clientSecret: process.env.LINKEDIN_CLIENT_SECRET as string,
+    scope: ["profile", "email", "openid"], // Explicit scopes as per LinkedIn docs
   },
 };
 
@@ -51,4 +52,16 @@ export const auth = betterAuth({
   },
   socialProviders: socialProvidersConfig,
   trustedOrigins: getTrustedOrigins(),
+  // Add proper redirect handling
+  callbacks: {
+    async signIn({ user, account }) {
+      console.log('🎯 Better Auth signIn callback:', { userId: user.id, provider: account?.provider });
+      return true; // Allow sign in
+    },
+    async redirect({ url, baseURL }) {
+      console.log('🔄 Better Auth redirect callback:', { url, baseURL });
+      // Always redirect to login page after OAuth, let the frontend handle the rest
+      return `${baseURL}/login`;
+    },
+  },
 });
