@@ -2,12 +2,10 @@ import { betterAuth } from "better-auth";
 import { createDatabase } from "./database";
 
 const socialProvidersConfig = {
-  ...(process.env.LINKEDIN_CLIENT_ID && process.env.LINKEDIN_CLIENT_SECRET && {
-    linkedin: {
-      clientId: process.env.LINKEDIN_CLIENT_ID as string,
-      clientSecret: process.env.LINKEDIN_CLIENT_SECRET as string,
-    },
-  }),
+  linkedin: {
+    clientId: process.env.LINKEDIN_CLIENT_ID as string,
+    clientSecret: process.env.LINKEDIN_CLIENT_SECRET as string,
+  },
 };
 
 // Build trusted origins list
