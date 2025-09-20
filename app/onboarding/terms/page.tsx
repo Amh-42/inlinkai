@@ -40,12 +40,21 @@ export default function OnboardingTermsPage() {
       });
       
       if (success) {
-        // Mark onboarding as complete
-        localStorage.setItem('onboarding_completed', 'true');
+        // Mark onboarding as complete in localStorage with correct key
+        const onboardingComplete = {
+          completed: true,
+          completedAt: new Date().toISOString(),
+          synced: true
+        };
+        localStorage.setItem('onboarding_complete', JSON.stringify(onboardingComplete));
         localStorage.removeItem('onboarding_current_step');
         
-        // Redirect to dashboard
-        router.push('/dashboard');
+        console.log('✅ Onboarding completed, redirecting to dashboard...');
+        
+        // Small delay to ensure database update is processed
+        setTimeout(() => {
+          router.push('/dashboard');
+        }, 500);
       } else {
         alert('Failed to save preferences. Please try again.');
       }
