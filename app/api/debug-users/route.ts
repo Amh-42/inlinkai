@@ -24,25 +24,25 @@ export async function GET(request: NextRequest) {
       ORDER BY u.email
     `);
     
-    const users = result.rows;
+    const users = result.rows as any[];
     
     // Group by account type
     const analysis = {
       total_users: users.length,
-      oauth_only: users.filter(u => u.provider !== 'credential').length,
-      email_password: users.filter(u => u.provider === 'credential').length,
-      no_account: users.filter(u => !u.provider).length,
+      oauth_only: users.filter((u: any) => u.provider !== 'credential').length,
+      email_password: users.filter((u: any) => u.provider === 'credential').length,
+      no_account: users.filter((u: any) => !u.provider).length,
       password_analysis: {
-        with_password: users.filter(u => u.has_password).length,
-        without_password: users.filter(u => !u.has_password).length,
-        password_lengths: [...new Set(users.filter(u => u.has_password).map(u => u.password_length))],
-        password_prefixes: [...new Set(users.filter(u => u.has_password).map(u => u.password_prefix))]
+        with_password: users.filter((u: any) => u.has_password).length,
+        without_password: users.filter((u: any) => !u.has_password).length,
+        password_lengths: [...new Set(users.filter((u: any) => u.has_password).map((u: any) => u.password_length))],
+        password_prefixes: [...new Set(users.filter((u: any) => u.has_password).map((u: any) => u.password_prefix))]
       }
     };
     
     return NextResponse.json({
       analysis,
-      users: users.map(u => ({
+      users: users.map((u: any) => ({
         email: u.email,
         provider: u.provider || 'none',
         providerId: u.providerId || 'none',
