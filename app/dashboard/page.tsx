@@ -53,12 +53,18 @@ export default function Dashboard() {
         // Check onboarding status from database
         try {
           const isComplete = await syncOnboardingStatus();
+          console.log('🔍 Dashboard: Onboarding status check result:', isComplete);
+          
           if (!isComplete) {
-            console.log('🔄 Dashboard: Onboarding incomplete, redirecting...');
+            console.log('🔄 Dashboard: Onboarding incomplete, redirecting to onboarding...');
             router.push('/onboarding/role');
+            return; // Prevent further execution
+          } else {
+            console.log('✅ Dashboard: Onboarding complete, user can access dashboard');
           }
         } catch (error) {
           console.error('❌ Dashboard: Error checking onboarding status:', error);
+          // On error, don't redirect - let user stay on dashboard
         }
       }
     };
