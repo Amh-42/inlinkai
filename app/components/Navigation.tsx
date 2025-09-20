@@ -15,11 +15,38 @@ export function Navigation() {
 
   const handleSignOut = async () => {
     try {
-      await signOut();
-      clearOnboardingData(); // Clear onboarding data on logout
-      router.push('/'); // Redirect to home page after logout
+      console.log('🚪 Navigation: Starting logout process...');
+      
+      // Clear onboarding data first
+      clearOnboardingData();
+      
+      // Clear any cached session data
+      if (typeof window !== 'undefined') {
+        // Clear all auth-related localStorage
+        Object.keys(localStorage).forEach(key => {
+          if (key.includes('auth') || key.includes('session') || key.includes('token')) {
+            localStorage.removeItem(key);
+          }
+        });
+      }
+      
+      // Call Better Auth signOut
+      await signOut({
+        fetchOptions: {
+          credentials: 'include',
+        }
+      });
+      
+      console.log('✅ Navigation: Logout successful, redirecting...');
+      
+      // Force a hard redirect to clear any cached state
+      window.location.href = '/';
     } catch (error) {
-      console.error('Sign-out error:', error);
+      console.error('❌ Navigation: Sign-out error:', error);
+      // Even if signOut fails, clear local data and redirect
+      if (typeof window !== 'undefined') {
+        window.location.href = '/';
+      }
     }
   };
 
