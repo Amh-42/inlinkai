@@ -2,16 +2,10 @@ import { betterAuth } from "better-auth";
 import { createDatabase } from "./database";
 
 const socialProvidersConfig = {
-  ...(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET && {
-    github: {
-      clientId: process.env.GITHUB_CLIENT_ID as string,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
-    },
-  }),
-  ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && {
-    google: {
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+  ...(process.env.LINKEDIN_CLIENT_ID && process.env.LINKEDIN_CLIENT_SECRET && {
+    linkedin: {
+      clientId: process.env.LINKEDIN_CLIENT_ID as string,
+      clientSecret: process.env.LINKEDIN_CLIENT_SECRET as string,
     },
   }),
 };
@@ -55,7 +49,7 @@ export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET || "development-secret-change-in-production",
   baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
   emailAndPassword: {
-    enabled: true,
+    enabled: false, // Disabled - LinkedIn only
   },
   socialProviders: socialProvidersConfig,
   trustedOrigins: getTrustedOrigins(),
