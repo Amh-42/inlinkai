@@ -29,12 +29,14 @@ export async function POST(request: NextRequest) {
     // For now, we'll just update the password directly
     // Note: This is a simplified implementation for demo purposes
     
-    const db = auth.options.database as any;
+    const pool = auth.options.database as any;
     
     // Check if user exists
-    const user = db.prepare(`
-      SELECT id, email FROM user WHERE email = ?
-    `).get(email);
+    const userResult = await pool.query(`
+      SELECT id, email FROM "user" WHERE email = $1
+    `, [email]);
+
+    const user = userResult.rows[0];
 
     if (!user) {
       return NextResponse.json({ 
@@ -44,10 +46,12 @@ export async function POST(request: NextRequest) {
 
     // Verify the reset token
     console.log(`🔍 Looking for token in database...`);
-    const resetTokenRecord = db.prepare(`
+    const resetTokenResult = await pool.query(`
       SELECT token, expires_at FROM password_reset_tokens 
-      WHERE email = ? AND token = ?
-    `).get(email, token);
+      WHERE email = $1 AND token = $2
+    `, [email, token]);
+
+    const resetTokenRecord = resetTokenResult.rows[0];
 
     if (!resetTokenRecord) {
       console.log(`❌ Token not found for ${email}`);
@@ -67,9 +71,9 @@ export async function POST(request: NextRequest) {
     if (now > expiresAt) {
       console.log(`❌ Token expired`);
       // Clean up expired token
-      db.prepare(`
-        DELETE FROM password_reset_tokens WHERE email = ? AND token = ?
-      `).run(email, token);
+      await pool.query(`
+        DELETE FROM password_reset_tokens WHERE email = $1 AND token = $2
+      `, [email, token]);
       
       return NextResponse.json({ 
         error: 'Reset token has expired. Please request a new password reset.' 
@@ -88,23 +92,23 @@ export async function POST(request: NextRequest) {
       const hashedPassword = await bcrypt.hash(password, 12);
       
       // Update the user's password in the account table (Better Auth structure)
-      const updateResult = db.prepare(`
+      const updateResult = await pool.query(`
         UPDATE account 
-        SET password = ? 
-        WHERE userId = (SELECT id FROM user WHERE email = ?) 
-        AND providerId = 'credential'
-      `).run(hashedPassword, email);
+        SET password = $1 
+        WHERE "userId" = (SELECT id FROM "user" WHERE email = $2) 
+        AND "providerId" = 'credential'
+      `, [hashedPassword, email]);
 
-      if (updateResult.changes === 0) {
+      if (updateResult.rowCount === 0) {
         return NextResponse.json({ 
           error: 'No credential account found for this email. This user may have signed up with OAuth.' 
         }, { status: 400 });
       }
 
       // Clean up the used reset token
-      db.prepare(`
-        DELETE FROM password_reset_tokens WHERE email = ? AND token = ?
-      `).run(email, token);
+      await pool.query(`
+        DELETE FROM password_reset_tokens WHERE email = $1 AND token = $2
+      `, [email, token]);
 
       console.log(`✅ Password reset successfully for user: ${email}`);
 

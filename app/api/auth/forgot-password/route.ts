@@ -14,10 +14,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user exists in database
-    const db = auth.options.database as any;
-    const user = db.prepare(`
-      SELECT id, email, name FROM user WHERE email = ?
-    `).get(email);
+    const pool = auth.options.database as any;
+    const userResult = await pool.query(`
+      SELECT id, email, name FROM "user" WHERE email = $1
+    `, [email]);
+
+    const user = userResult.rows[0];
 
     if (!user) {
       // For security, don't reveal if user exists or not
@@ -35,36 +37,36 @@ export async function POST(request: NextRequest) {
     
     try {
       // First, clean up any existing tokens for this user
-      db.prepare(`
-        DELETE FROM password_reset_tokens WHERE email = ?
-      `).run(email);
+      await pool.query(`
+        DELETE FROM password_reset_tokens WHERE email = $1
+      `, [email]);
       
       // Insert new reset token
-      db.prepare(`
+      await pool.query(`
         INSERT INTO password_reset_tokens (email, token, expires_at, created_at)
-        VALUES (?, ?, ?, ?)
-      `).run(email, resetToken, expiresAt.toISOString(), new Date().toISOString());
+        VALUES ($1, $2, $3, $4)
+      `, [email, resetToken, expiresAt.toISOString(), new Date().toISOString()]);
       
       console.log(`🔑 Password reset token generated for ${email} (expires: ${expiresAt.toISOString()})`);
     } catch (dbError: any) {
       // If table doesn't exist, create it
-      if (dbError.message.includes('no such table')) {
+      if (dbError.message.includes('does not exist') || dbError.code === '42P01') {
         console.log('📝 Creating password_reset_tokens table...');
-        db.prepare(`
+        await pool.query(`
           CREATE TABLE IF NOT EXISTS password_reset_tokens (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             email TEXT NOT NULL,
             token TEXT NOT NULL,
-            expires_at TEXT NOT NULL,
-            created_at TEXT NOT NULL
+            expires_at TIMESTAMP NOT NULL,
+            created_at TIMESTAMP NOT NULL DEFAULT NOW()
           )
-        `).run();
+        `);
         
         // Now insert the token
-        db.prepare(`
+        await pool.query(`
           INSERT INTO password_reset_tokens (email, token, expires_at, created_at)
-          VALUES (?, ?, ?, ?)
-        `).run(email, resetToken, expiresAt.toISOString(), new Date().toISOString());
+          VALUES ($1, $2, $3, $4)
+        `, [email, resetToken, expiresAt.toISOString(), new Date().toISOString()]);
         
         console.log(`🔑 Password reset token generated for ${email} (expires: ${expiresAt.toISOString()})`);
       } else {
