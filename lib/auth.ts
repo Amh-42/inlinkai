@@ -74,6 +74,5 @@ export const auth = betterAuth({
     crossSubDomainCookies: {
       enabled: false, // Disable for single domain
     },
-    generateId: false, // Use default ID generation
   },
 });
