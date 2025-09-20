@@ -9,12 +9,15 @@ import { sendWelcomeEmailToUser, shouldSendWelcomeEmail, markWelcomeEmailSent, h
 export default function LoginPage() {
   const { data: session, isPending } = useSession();
   const [isLoading, setIsLoading] = useState(false);
+  const [hasRedirected, setHasRedirected] = useState(false);
   const router = useRouter();
 
   // Auto-redirect based on login status and onboarding completion
   useEffect(() => {
     const checkOnboardingAndRedirect = async () => {
-      if (!isPending && session?.user) {
+      if (!isPending && session?.user && !hasRedirected) {
+        console.log('🔄 Login page: User authenticated, checking onboarding status...');
+        setHasRedirected(true); // Prevent multiple redirects
         // Check if this is a new user who needs a welcome email (for OAuth signups)
         if (shouldSendWelcomeEmail(session) && !hasWelcomeEmailBeenSent(session.user.id)) {
           console.log('🎉 New LinkedIn user detected, sending welcome email...');
@@ -37,6 +40,8 @@ export default function LoginPage() {
         // Sync onboarding status from database
         const isComplete = await syncOnboardingStatus();
         
+        console.log('🎯 Redirecting user:', { isComplete, userId: session.user.id });
+        
         if (isComplete) {
           router.push('/dashboard');
         } else {
@@ -46,14 +51,14 @@ export default function LoginPage() {
     };
 
     checkOnboardingAndRedirect();
-  }, [session, isPending, router]);
+  }, [session, isPending, router, hasRedirected]);
 
   const handleLinkedInSignIn = async () => {
     setIsLoading(true);
     try {
       await signIn.social({
         provider: 'linkedin',
-        callbackURL: '/dashboard',
+        // Remove callbackURL to let Better Auth handle redirects properly
       });
     } catch (error) {
       console.error('LinkedIn sign-in error:', error);
