@@ -54,11 +54,11 @@ export const auth = betterAuth({
   trustedOrigins: getTrustedOrigins(),
   // Add proper redirect handling
   callbacks: {
-    async signIn({ user, account }) {
+    async signIn({ user, account }: { user: any; account: any }) {
       console.log('🎯 Better Auth signIn callback:', { userId: user.id, provider: account?.provider });
       return true; // Allow sign in
     },
-    async redirect({ url, baseURL }) {
+    async redirect({ url, baseURL }: { url: string; baseURL: string }) {
       console.log('🔄 Better Auth redirect callback:', { url, baseURL });
       // Always redirect to login page after OAuth, let the frontend handle the rest
       return `${baseURL}/login`;
