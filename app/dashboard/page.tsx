@@ -21,8 +21,20 @@ export default function Dashboard() {
     userId: session?.user?.id,
     userEmail: session?.user?.email,
     sessionKeys: session ? Object.keys(session) : [],
-    timestamp: new Date().toISOString()
+    fullSession: session,
+    timestamp: new Date().toISOString(),
+    userAgent: typeof window !== 'undefined' ? navigator.userAgent : 'server',
+    isIncognito: typeof window !== 'undefined' ? 'unknown' : 'server'
   });
+  
+  // Check if this is actually a real session or some kind of fallback
+  if (session && !isPending) {
+    console.log('🚨 CRITICAL: Session exists in dashboard!', {
+      sessionData: JSON.stringify(session, null, 2),
+      cookies: typeof document !== 'undefined' ? document.cookie : 'no-document',
+      localStorage: typeof localStorage !== 'undefined' ? Object.keys(localStorage) : 'no-localStorage'
+    });
+  }
   const [activeSection, setActiveSection] = useState('overview');
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
