@@ -210,10 +210,35 @@ export default function LoginPage() {
 
   const handleSignOut = async () => {
     try {
-      await signOut();
-      router.push('/');
+      console.log('🚪 Login page: Starting logout process...');
+      
+      // Clear any cached session data
+      if (typeof window !== 'undefined') {
+        // Clear all auth-related localStorage
+        Object.keys(localStorage).forEach(key => {
+          if (key.includes('auth') || key.includes('session') || key.includes('token') || key.includes('onboarding')) {
+            localStorage.removeItem(key);
+          }
+        });
+      }
+      
+      // Call Better Auth signOut
+      await signOut({
+        fetchOptions: {
+          credentials: 'include',
+        }
+      });
+      
+      console.log('✅ Login page: Logout successful, redirecting...');
+      
+      // Force a hard redirect to clear any cached state
+      window.location.href = '/';
     } catch (error) {
-      console.error('Sign-out error:', error);
+      console.error('❌ Login page: Sign-out error:', error);
+      // Even if signOut fails, clear local data and redirect
+      if (typeof window !== 'undefined') {
+        window.location.href = '/';
+      }
     }
   };
 
