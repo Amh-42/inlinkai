@@ -1,40 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { useTheme } from './components/ThemeProvider';
-import { useEffect, useState } from 'react';
-
 export default function Home() {
-  const { theme } = useTheme();
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  
   const getVideoSource = () => {
-    return theme === 'dark' ? '/dark.webm' : '/hero.webm';
+    return '/hero-v3.webm';
   };
 
-  useEffect(() => {
-    // Handle smooth video transition on theme change
-    const videoElement = document.querySelector('.hero-video') as HTMLVideoElement;
-    if (videoElement) {
-      setIsTransitioning(true);
-      
-      // Fade out current video
-      videoElement.style.opacity = '0';
-      
-      setTimeout(() => {
-        // Change video source
-        const sourceElement = videoElement.querySelector('source');
-        if (sourceElement) {
-          sourceElement.src = getVideoSource();
-          videoElement.load(); // Reload video with new source
-        }
-        
-        // Fade in new video
-        videoElement.style.opacity = '1';
-        setIsTransitioning(false);
-      }, 300); // 300ms fade duration
-    }
-  }, [theme]);
+  // No longer need video transition effect since we use the same video for both themes
   return (
     <>
       {/* Hero Section */}
@@ -62,12 +34,11 @@ export default function Home() {
             </div>
           </div>
           <video 
-            className={`hero-video ${isTransitioning ? 'transitioning' : ''}`}
+            className="hero-video"
             autoPlay 
             muted 
             loop 
             playsInline
-            key={getVideoSource()} // Force re-render on theme change
           >
             <source src={getVideoSource()} type="video/webm" />
             Your browser does not support the video tag.

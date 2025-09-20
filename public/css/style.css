@@ -671,8 +671,8 @@
 
         .hero-title .hero-subtitle {
             display: block;
-            font-size: clamp(1.75rem, 7vw, 3.5rem);
-            font-weight: 700;
+            font-size: clamp(2.25rem, 9vw, 4.5rem);
+            font-weight: 800;
             line-height: 1.1;
             background: var(--accent-gradient);
             -webkit-background-clip: text;
@@ -823,21 +823,26 @@
              border-radius: 0;
              box-shadow: none;
              border: none;
-             object-fit: cover;
+             object-fit: contain;
              animation: floatVideo 8s ease-in-out infinite;
              transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease-in-out;
-             aspect-ratio: 16/9;
              justify-self: center;
              align-self: center;
              position: relative;
              z-index: 2;
              background: transparent;
              opacity: 1;
+             /* Add blending mode to help with dark/black video elements on light backgrounds */
+             mix-blend-mode: lighten;
          }
 
-         .hero-video.transitioning {
-             opacity: 0;
+         @media (prefers-color-scheme: dark) {
+             .hero-video {
+                 /* In dark mode, revert to normal blending for best contrast */
+                 mix-blend-mode: normal;
+             }
          }
+
 
          .hero-video:hover {
              transform: scale(1.05) rotate(1deg);
@@ -2253,9 +2258,12 @@
         
         /* Small devices (landscape phones, 576px and up) */
         @media (min-width: 36rem) {
-            .hero-title,
-            .hero-subtitle {
+            .hero-title {
                 font-size: clamp(2rem, 4vw, 2.5rem);
+            }
+            
+            .hero-title .hero-subtitle {
+                font-size: clamp(2.5rem, 6vw, 3.25rem);
             }
 
             .hero-description {
@@ -2307,9 +2315,12 @@
                  gap: 2.5rem;
              }
 
-            .hero-title,
-            .hero-subtitle {
+            .hero-title {
                 font-size: clamp(2.5rem, 5vw, 3.5rem);
+            }
+            
+            .hero-title .hero-subtitle {
+                font-size: clamp(3rem, 7vw, 4.5rem);
             }
 
             .hero-description {
@@ -2481,7 +2492,7 @@
             }
 
             .hero {
-                padding-block: clamp(4rem, 15vw, 7rem) 2rem;
+                padding-block: clamp(5.5rem, 15vw, 7rem) 2rem;
                 padding-inline: 1rem;
             }
 
@@ -2634,9 +2645,13 @@
 
         /* Very small devices (small phones) */
         @media (max-width: 23.4375rem) {
-            .hero-title,
-            .hero-subtitle {
+            .hero-title {
                 font-size: clamp(1.5rem, 8vw, 2rem);
+                line-height: 1.1;
+            }
+            
+            .hero-title .hero-subtitle {
+                font-size: clamp(2rem, 10vw, 2.75rem);
                 line-height: 1.1;
             }
 
@@ -2646,7 +2661,7 @@
             }
 
             .hero {
-                padding-block: clamp(3rem, 12vw, 5rem) 1.5rem;
+                padding-block: clamp(7rem, 20vw, 9rem) 1.5rem;
                 padding-inline: 0.75rem;
             }
 
