@@ -2,18 +2,11 @@ import { betterAuth } from "better-auth";
 import { createDatabase } from "./database";
 
 const socialProvidersConfig = {
-  ...(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET && {
-    github: {
-      clientId: process.env.GITHUB_CLIENT_ID as string,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
-    },
-  }),
-  ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && {
-    google: {
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-    },
-  }),
+  linkedin: {
+    clientId: process.env.LINKEDIN_CLIENT_ID as string,
+    clientSecret: process.env.LINKEDIN_CLIENT_SECRET as string,
+    scope: ["profile", "email", "openid"], // Explicit scopes as per LinkedIn docs
+  },
 };
 
 // Build trusted origins list
@@ -51,13 +44,24 @@ const getTrustedOrigins = () => {
 
 
 export const auth = betterAuth({
-  database: createDatabase(), // PostgreSQL database
+  database: createDatabase(), // PostgreSQL (Convex temporarily disabled due to webpack issues)
   secret: process.env.BETTER_AUTH_SECRET || "development-secret-change-in-production",
   baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
   emailAndPassword: {
-    enabled: true, // Email/password authentication enabled
+    enabled: false, // Disabled - LinkedIn only
   },
   socialProviders: socialProvidersConfig,
   trustedOrigins: getTrustedOrigins(),
-  // Use Better Auth's default session management
+  // Add proper redirect handling
+  callbacks: {
+    async signIn({ user, account }: { user: any; account: any }) {
+      console.log('🎯 Better Auth signIn callback:', { userId: user.id, provider: account?.provider });
+      return true; // Allow sign in
+    },
+    async redirect({ url, baseURL }: { url: string; baseURL: string }) {
+      console.log('🔄 Better Auth redirect callback:', { url, baseURL });
+      // Always redirect to login page after OAuth, let the frontend handle the rest
+      return `${baseURL}/login`;
+    },
+  },
 });

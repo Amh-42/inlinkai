@@ -434,6 +434,29 @@ export default function Dashboard() {
   const { data: session, isPending } = useSession();
   const { theme, toggleTheme } = useTheme();
   const router = useRouter();
+  
+  // Debug session state
+  console.log('🔍 Dashboard render - Session debug:', {
+    isPending,
+    hasSession: !!session,
+    hasUser: !!session?.user,
+    userId: session?.user?.id,
+    userEmail: session?.user?.email,
+    sessionKeys: session ? Object.keys(session) : [],
+    fullSession: session,
+    timestamp: new Date().toISOString(),
+    userAgent: typeof window !== 'undefined' ? navigator.userAgent : 'server',
+    isIncognito: typeof window !== 'undefined' ? 'unknown' : 'server'
+  });
+  
+  // Check if this is actually a real session or some kind of fallback
+  if (session && !isPending) {
+    console.log('🚨 CRITICAL: Session exists in dashboard!', {
+      sessionData: JSON.stringify(session, null, 2),
+      cookies: typeof document !== 'undefined' ? document.cookie : 'no-document',
+      localStorage: typeof localStorage !== 'undefined' ? Object.keys(localStorage) : 'no-localStorage'
+    });
+  }
   const [activeSection, setActiveSection] = useState('overview');
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -557,7 +580,8 @@ export default function Dashboard() {
       
       if (!isPending && !session?.user) {
         console.log('❌ Dashboard: No authenticated user, redirecting to login');
-        router.push('/login');
+        // Force a hard redirect to ensure clean state
+        window.location.href = '/login';
         return;
       } 
       
@@ -582,12 +606,18 @@ export default function Dashboard() {
         // Check onboarding status from database
         try {
           const isComplete = await syncOnboardingStatus();
+          console.log('🔍 Dashboard: Onboarding status check result:', isComplete);
+          
           if (!isComplete) {
-            console.log('🔄 Dashboard: Onboarding incomplete, redirecting...');
+            console.log('🔄 Dashboard: Onboarding incomplete, redirecting to onboarding...');
             router.push('/onboarding/role');
+            return; // Prevent further execution
+          } else {
+            console.log('✅ Dashboard: Onboarding complete, user can access dashboard');
           }
         } catch (error) {
           console.error('❌ Dashboard: Error checking onboarding status:', error);
+          // On error, don't redirect - let user stay on dashboard
         }
       }
     };
@@ -614,11 +644,38 @@ export default function Dashboard() {
 
   const handleSignOut = async () => {
     try {
-      await signOut();
-      clearOnboardingData(); // Clear onboarding data on logout
-      router.push('/');
+      console.log('🚪 Starting logout process...');
+      
+      // Clear onboarding data first
+      clearOnboardingData();
+      
+      // Clear any cached session data
+      if (typeof window !== 'undefined') {
+        // Clear all auth-related localStorage
+        Object.keys(localStorage).forEach(key => {
+          if (key.includes('auth') || key.includes('session') || key.includes('token')) {
+            localStorage.removeItem(key);
+          }
+        });
+      }
+      
+      // Call Better Auth signOut
+      await signOut({
+        fetchOptions: {
+          credentials: 'include',
+        }
+      });
+      
+      console.log('✅ Logout successful, redirecting...');
+      
+      // Force a hard redirect to clear any cached state
+      window.location.href = '/';
     } catch (error) {
-      console.error('Sign out error:', error);
+      console.error('❌ Sign out error:', error);
+      // Even if signOut fails, clear local data and redirect
+      if (typeof window !== 'undefined') {
+        window.location.href = '/';
+      }
     }
   };
 

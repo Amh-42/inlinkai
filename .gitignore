@@ -50,3 +50,4 @@ sqlite.db
 
 # OS
 Thumbs.db
+.env.local
