@@ -24,12 +24,12 @@ interface PasswordResetEmailProps {
 
 const baseUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
-  : "https://inlinkai.vercel.app";
+  : "http://localhost:3000";
 
 export const PasswordResetEmail = ({
   userName = "there",
   userEmail = "user@example.com",
-  resetUrl = "https://inlinkai.vercel.app/reset-password?token=example&email=user@example.com",
+  resetUrl = "http://localhost:3000/reset-password?token=example&email=user@example.com",
 }: PasswordResetEmailProps) => {
   const previewText = `Reset your InlinkAI password`;
 

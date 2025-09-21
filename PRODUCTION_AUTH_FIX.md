@@ -53,7 +53,7 @@ Ensure these are set in your Vercel dashboard:
 ### Critical Variables:
 ```bash
 BETTER_AUTH_SECRET="your-32-character-random-secret-key"
-BETTER_AUTH_URL="https://inlinkai.vercel.app"
+BETTER_AUTH_URL="http://localhost:3000"
 NODE_ENV="production"
 ```
 
@@ -70,8 +70,8 @@ GITHUB_CLIENT_SECRET="5c8c3f1b5be2d0d0a33e71d3f34f4ae7cca5752e"
 1. Go to GitHub Settings → Developer settings → OAuth Apps
 2. Edit your OAuth app
 3. Ensure these URLs are EXACTLY:
-   - **Homepage URL**: `https://inlinkai.vercel.app`
-   - **Authorization callback URL**: `https://inlinkai.vercel.app/api/auth/callback/github`
+   - **Homepage URL**: `http://localhost:3000`
+   - **Authorization callback URL**: `http://localhost:3000/api/auth/callback/github`
 
 ## 🐛 Debugging Steps
 

@@ -39,6 +39,9 @@ next-env.d.ts
 *.db
 sqlite.db
 
+# User settings file
+.user-settings.json
+
 # IDE
 .vscode/
 .idea/

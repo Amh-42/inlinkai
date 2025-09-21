@@ -8,6 +8,428 @@ import { syncOnboardingStatus, clearOnboardingData } from '@/lib/onboarding-util
 import { isAdmin } from '@/lib/admin-utils';
 import { sendWelcomeEmailToUser, shouldSendWelcomeEmail, markWelcomeEmailSent, hasWelcomeEmailBeenSent } from '@/lib/welcome-email-utils';
 
+// Get Noticed Section Component
+function GetNoticedSection({ linkedinUsername, setActiveSection }: { linkedinUsername: string, setActiveSection: (section: string) => void }) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [optimizationResult, setOptimizationResult] = useState<any>(null);
+
+  const handleOptimizeProfile = async () => {
+    if (!linkedinUsername.trim()) return;
+    
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/get-noticed', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: linkedinUsername.trim() })
+      });
+      
+      const result = await response.json();
+      if (result.success) {
+        setOptimizationResult(result.data);
+      }
+    } catch (error) {
+      console.error('Error optimizing profile:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div>
+      <div style={{ marginBottom: '2rem' }}>
+        <h1 style={{ color: 'var(--text-primary)', fontSize: '1.75rem', fontWeight: 700, margin: '0 0 0.5rem 0' }}>Get Noticed</h1>
+        <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Optimize your LinkedIn profile with AI-powered recommendations</p>
+      </div>
+
+      {linkedinUsername ? (
+        <div style={{ background: 'var(--bg-secondary)', padding: '2rem', borderRadius: '12px', marginBottom: '2rem' }}>
+          <h3 style={{ color: 'var(--text-primary)', marginBottom: '1rem' }}>Optimize Your Profile</h3>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '0.875rem' }}>
+            Analyzing LinkedIn profile: <strong>linkedin.com/in/{linkedinUsername}</strong>
+          </p>
+          <button
+            onClick={handleOptimizeProfile}
+            disabled={isLoading}
+            className="cta-button"
+            style={{ minWidth: '150px' }}
+          >
+            {isLoading ? (
+              <>
+                <i className="fas fa-spinner fa-spin"></i>
+                Analyzing...
+              </>
+            ) : (
+              <>
+                <i className="fas fa-magic"></i>
+                Optimize Profile
+              </>
+            )}
+          </button>
+        </div>
+      ) : (
+        <div style={{ 
+          background: 'var(--bg-secondary)', 
+          padding: '2rem', 
+          borderRadius: '12px', 
+          marginBottom: '2rem',
+          textAlign: 'center',
+          border: '2px dashed var(--border-color)'
+        }}>
+          <i className="fab fa-linkedin" style={{ fontSize: '3rem', color: '#0077B5', marginBottom: '1rem' }}></i>
+          <h3 style={{ color: 'var(--text-primary)', marginBottom: '0.5rem' }}>LinkedIn Username Required</h3>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
+            Configure your LinkedIn username in settings to optimize your profile with AI-powered recommendations.
+          </p>
+          <button 
+            onClick={() => setActiveSection('settings')}
+            className="cta-button"
+          >
+            <i className="fas fa-cog"></i>
+            Go to Settings
+          </button>
+        </div>
+      )}
+
+      {optimizationResult && (
+        <div style={{ display: 'grid', gap: '1.5rem' }}>
+          <div style={{ background: 'var(--bg-secondary)', padding: '1.5rem', borderRadius: '12px' }}>
+            <h3 style={{ color: 'var(--text-primary)', marginBottom: '1rem' }}>Optimized Headline</h3>
+            <div style={{ background: 'var(--bg-primary)', padding: '1rem', borderRadius: '8px', marginBottom: '1rem' }}>
+              <p style={{ color: 'var(--text-primary)', margin: 0, fontWeight: 500 }}>
+                {optimizationResult.optimizedProfile.optimizedHeadline}
+              </p>
+            </div>
+          </div>
+
+          <div style={{ background: 'var(--bg-secondary)', padding: '1.5rem', borderRadius: '12px' }}>
+            <h3 style={{ color: 'var(--text-primary)', marginBottom: '1rem' }}>Optimized About Section</h3>
+            <div style={{ background: 'var(--bg-primary)', padding: '1rem', borderRadius: '8px', marginBottom: '1rem' }}>
+              <p style={{ color: 'var(--text-primary)', margin: 0, whiteSpace: 'pre-line' }}>
+                {optimizationResult.optimizedProfile.optimizedAbout}
+              </p>
+            </div>
+          </div>
+
+          <div style={{ background: 'var(--bg-secondary)', padding: '1.5rem', borderRadius: '12px' }}>
+            <h3 style={{ color: 'var(--text-primary)', marginBottom: '1rem' }}>Recommendations</h3>
+            <ul style={{ color: 'var(--text-primary)', paddingLeft: '1.5rem' }}>
+              {optimizationResult.optimizedProfile.recommendations.map((rec: string, index: number) => (
+                <li key={index} style={{ marginBottom: '0.5rem' }}>{rec}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Stay Relevant Section Component
+function StayRelevantSection() {
+  const [sources, setSources] = useState(['']);
+  const [isLoading, setIsLoading] = useState(false);
+  const [contentResult, setContentResult] = useState<any>(null);
+
+  const addSource = () => setSources([...sources, '']);
+  const updateSource = (index: number, value: string) => {
+    const newSources = [...sources];
+    newSources[index] = value;
+    setSources(newSources);
+  };
+  const removeSource = (index: number) => setSources(sources.filter((_, i) => i !== index));
+
+  const handleGenerateContent = async () => {
+    const validSources = sources.filter(s => s.trim());
+    if (validSources.length === 0) return;
+    
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/stay-relevant', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sources: validSources })
+      });
+      
+      const result = await response.json();
+      if (result.success) {
+        setContentResult(result.data);
+      }
+    } catch (error) {
+      console.error('Error generating content:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div>
+      <div style={{ marginBottom: '2rem' }}>
+        <h1 style={{ color: 'var(--text-primary)', fontSize: '1.75rem', fontWeight: 700, margin: '0 0 0.5rem 0' }}>Stay Relevant</h1>
+        <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Create engaging LinkedIn content from trending news and articles</p>
+      </div>
+
+      <div style={{ background: 'var(--bg-secondary)', padding: '2rem', borderRadius: '12px', marginBottom: '2rem' }}>
+        <h3 style={{ color: 'var(--text-primary)', marginBottom: '1rem' }}>Add News Sources</h3>
+        {sources.map((source, index) => (
+          <div key={index} style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+            <input
+              type="url"
+              value={source}
+              onChange={(e) => updateSource(index, e.target.value)}
+              placeholder="https://example.com/article"
+              style={{
+                flex: 1,
+                padding: '0.75rem',
+                border: '1px solid var(--border-color)',
+                borderRadius: '8px',
+                background: 'var(--bg-primary)',
+                color: 'var(--text-primary)'
+              }}
+            />
+            {sources.length > 1 && (
+              <button
+                onClick={() => removeSource(index)}
+                style={{
+                  padding: '0.75rem',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: '8px',
+                  background: 'var(--bg-primary)',
+                  color: 'var(--text-secondary)',
+                  cursor: 'pointer'
+                }}
+              >
+                <i className="fas fa-trash"></i>
+              </button>
+            )}
+          </div>
+        ))}
+        
+        <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+          <button onClick={addSource} className="cta-button secondary-button">
+            <i className="fas fa-plus"></i>
+            Add Source
+          </button>
+          <button
+            onClick={handleGenerateContent}
+            disabled={isLoading || sources.every(s => !s.trim())}
+            className="cta-button"
+          >
+            {isLoading ? (
+              <>
+                <i className="fas fa-spinner fa-spin"></i>
+                Generating...
+              </>
+            ) : (
+              <>
+                <i className="fas fa-magic"></i>
+                Generate Content
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {contentResult && (
+        <div style={{ background: 'var(--bg-secondary)', padding: '1.5rem', borderRadius: '12px' }}>
+          <h3 style={{ color: 'var(--text-primary)', marginBottom: '1rem' }}>Generated LinkedIn Post</h3>
+          <div style={{ background: 'var(--bg-primary)', padding: '1.5rem', borderRadius: '8px', marginBottom: '1rem' }}>
+            <p style={{ color: 'var(--text-primary)', margin: '0 0 1rem 0', whiteSpace: 'pre-line' }}>
+              {contentResult.generatedContent.post}
+            </p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
+              {contentResult.generatedContent.hashtags.map((tag: string, index: number) => (
+                <span key={index} style={{ 
+                  background: 'var(--accent-primary)', 
+                  color: 'white', 
+                  padding: '0.25rem 0.5rem', 
+                  borderRadius: '12px', 
+                  fontSize: '0.875rem' 
+                }}>
+                  {tag}
+                </span>
+              ))}
+            </div>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontStyle: 'italic', margin: 0 }}>
+              {contentResult.generatedContent.callToAction}
+            </p>
+          </div>
+          <button className="cta-button" style={{ width: '100%' }}>
+            <i className="fas fa-copy"></i>
+            Copy to Clipboard
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Be Chosen Section Component
+function BeChosenSection({ linkedinUsername, setActiveSection }: { linkedinUsername: string, setActiveSection: (section: string) => void }) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [crmResult, setCrmResult] = useState<any>(null);
+  const [selectedContact, setSelectedContact] = useState<any>(null);
+
+  const handleBuildCRM = async () => {
+    if (!linkedinUsername.trim()) return;
+    
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/be-chosen', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: linkedinUsername.trim() })
+      });
+      
+      const result = await response.json();
+      if (result.success) {
+        setCrmResult(result.data);
+      }
+    } catch (error) {
+      console.error('Error building CRM:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handlePracticeCall = async (contact: any) => {
+    try {
+      const response = await fetch('/api/vapi', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          action: 'create_assistant',
+          contactData: contact
+        })
+      });
+      
+      const result = await response.json();
+      if (result.success) {
+        alert(`Practice assistant created! ${result.data.message}`);
+      }
+    } catch (error) {
+      console.error('Error creating practice assistant:', error);
+    }
+  };
+
+  return (
+    <div>
+      <div style={{ marginBottom: '2rem' }}>
+        <h1 style={{ color: 'var(--text-primary)', fontSize: '1.75rem', fontWeight: 700, margin: '0 0 0.5rem 0' }}>Be Chosen</h1>
+        <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Build your CRM from LinkedIn engagement and practice cold calls</p>
+      </div>
+
+      {linkedinUsername ? (
+        <div style={{ background: 'var(--bg-secondary)', padding: '2rem', borderRadius: '12px', marginBottom: '2rem' }}>
+          <h3 style={{ color: 'var(--text-primary)', marginBottom: '1rem' }}>Build Your CRM</h3>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '0.875rem' }}>
+            Using LinkedIn profile: <strong>linkedin.com/in/{linkedinUsername}</strong>
+          </p>
+          <button
+            onClick={handleBuildCRM}
+            disabled={isLoading}
+            className="cta-button"
+            style={{ minWidth: '150px' }}
+          >
+            {isLoading ? (
+              <>
+                <i className="fas fa-spinner fa-spin"></i>
+                Building CRM...
+              </>
+            ) : (
+              <>
+                <i className="fas fa-users"></i>
+                Build CRM
+              </>
+            )}
+          </button>
+        </div>
+      ) : (
+        <div style={{ 
+          background: 'var(--bg-secondary)', 
+          padding: '2rem', 
+          borderRadius: '12px', 
+          marginBottom: '2rem',
+          textAlign: 'center',
+          border: '2px dashed var(--border-color)'
+        }}>
+          <i className="fab fa-linkedin" style={{ fontSize: '3rem', color: '#0077B5', marginBottom: '1rem' }}></i>
+          <h3 style={{ color: 'var(--text-primary)', marginBottom: '0.5rem' }}>LinkedIn Username Required</h3>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
+            Configure your LinkedIn username in settings to build your CRM from engagement data.
+          </p>
+          <button 
+            onClick={() => setActiveSection('settings')}
+            className="cta-button"
+          >
+            <i className="fas fa-cog"></i>
+            Go to Settings
+          </button>
+        </div>
+      )}
+
+      {crmResult && (
+        <div style={{ display: 'grid', gap: '1.5rem' }}>
+          <div style={{ background: 'var(--bg-secondary)', padding: '1.5rem', borderRadius: '12px' }}>
+            <h3 style={{ color: 'var(--text-primary)', marginBottom: '1rem' }}>
+              Your CRM ({crmResult.totalContacts} contacts)
+            </h3>
+            <div style={{ display: 'grid', gap: '1rem' }}>
+              {crmResult.topContacts.slice(0, 5).map((contact: any, index: number) => (
+                <div key={index} style={{ 
+                  background: 'var(--bg-primary)', 
+                  padding: '1rem', 
+                  borderRadius: '8px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}>
+                  <div>
+                    <div style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{contact.name}</div>
+                    <div style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>{contact.title}</div>
+                    <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>
+                      Engagement Score: {contact.score}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handlePracticeCall(contact)}
+                    className="cta-button secondary-button"
+                    style={{ fontSize: '0.875rem', padding: '0.5rem 1rem' }}
+                  >
+                    <i className="fas fa-phone"></i>
+                    Practice Call
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {crmResult.outreachMessages && (
+            <div style={{ background: 'var(--bg-secondary)', padding: '1.5rem', borderRadius: '12px' }}>
+              <h3 style={{ color: 'var(--text-primary)', marginBottom: '1rem' }}>Personalized Outreach Messages</h3>
+              <div style={{ display: 'grid', gap: '1rem' }}>
+                {crmResult.outreachMessages.slice(0, 3).map((message: any, index: number) => (
+                  <div key={index} style={{ background: 'var(--bg-primary)', padding: '1rem', borderRadius: '8px' }}>
+                    <div style={{ color: 'var(--text-primary)', fontWeight: 500, marginBottom: '0.5rem' }}>
+                      To: {message.contact.name}
+                    </div>
+                    <div style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
+                      Subject: {message.subject}
+                    </div>
+                    <p style={{ color: 'var(--text-primary)', fontSize: '0.875rem', whiteSpace: 'pre-line', margin: 0 }}>
+                      {message.message}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Dashboard() {
   const { data: session, isPending } = useSession();
   const { theme, toggleTheme } = useTheme();
@@ -16,6 +438,113 @@ export default function Dashboard() {
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [overviewData, setOverviewData] = useState<any>(null);
+  const [isLoadingOverview, setIsLoadingOverview] = useState(false);
+  const [recentActivity, setRecentActivity] = useState<any>(null);
+  const [isLoadingActivity, setIsLoadingActivity] = useState(false);
+  const [linkedinUsername, setLinkedinUsername] = useState('');
+  const [isSavingSettings, setIsSavingSettings] = useState(false);
+  
+  // Cache management
+  const [lastFetchTime, setLastFetchTime] = useState<number>(0);
+  const [lastActivityFetchTime, setLastActivityFetchTime] = useState<number>(0);
+  const [lastUsername, setLastUsername] = useState<string>('');
+  const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
+
+  // Helper function to format change indicators with colors
+  const formatChange = (change: number | undefined, suffix = '%') => {
+    if (!change && change !== 0) return null;
+    
+    const isPositive = change > 0;
+    const isNegative = change < 0;
+    const color = isPositive ? '#10b981' : isNegative ? '#ef4444' : 'var(--text-secondary)';
+    const icon = isPositive ? '↗' : isNegative ? '↘' : '';
+    
+    return (
+      <span style={{ color, fontWeight: 500 }}>
+        {icon} {isPositive ? '+' : ''}{change}{suffix}
+      </span>
+    );
+  };
+
+  // Fetch overview data with caching
+  const fetchOverviewData = async (forceRefresh = false) => {
+    if (isLoadingOverview || !session?.user?.id) return;
+    
+    const now = Date.now();
+    const isCacheValid = (now - lastFetchTime) < CACHE_DURATION;
+    const isSameUsername = lastUsername === linkedinUsername;
+    
+    // Use cached data if valid and username hasn't changed
+    if (!forceRefresh && isCacheValid && isSameUsername && overviewData) {
+      console.log('📋 Using cached overview data');
+      return;
+    }
+    
+    setIsLoadingOverview(true);
+    try {
+      const response = await fetch(`/api/overview/${session.user.id}`);
+      const result = await response.json();
+      
+      if (result.success) {
+        setOverviewData(result.data);
+        setLastFetchTime(now);
+        setLastUsername(linkedinUsername);
+        console.log('✅ Overview data loaded and cached:', result.source);
+      } else {
+        console.log('❌ Failed to fetch overview data, setting null');
+        setOverviewData(null);
+      }
+    } catch (error) {
+      console.error('❌ Error fetching overview data:', error);
+      setOverviewData(null);
+    } finally {
+      setIsLoadingOverview(false);
+    }
+  };
+
+  // Fetch recent activity data with caching
+  const fetchRecentActivity = async (forceRefresh = false) => {
+    if (isLoadingActivity || !session?.user?.id) return;
+    
+    const now = Date.now();
+    const isCacheValid = (now - lastActivityFetchTime) < CACHE_DURATION;
+    const isSameUsername = lastUsername === linkedinUsername;
+    
+    // Use cached data if valid and username hasn't changed
+    if (!forceRefresh && isCacheValid && isSameUsername && recentActivity) {
+      console.log('📋 Using cached recent activity data');
+      return;
+    }
+    
+    setIsLoadingActivity(true);
+    try {
+      const response = await fetch(`/api/recent-activity/${session.user.id}`);
+      const result = await response.json();
+      
+      if (result.success) {
+        setRecentActivity(result.data);
+        setLastActivityFetchTime(now);
+        console.log('✅ Recent activity loaded and cached:', result.source);
+      } else {
+        console.log('❌ Failed to fetch recent activity, setting null');
+        setRecentActivity(null);
+      }
+    } catch (error) {
+      console.error('❌ Error fetching recent activity:', error);
+      setRecentActivity(null);
+    } finally {
+      setIsLoadingActivity(false);
+    }
+  };
+
+  // Load overview data when component mounts
+  useEffect(() => {
+    if (session?.user && activeSection === 'overview') {
+      fetchOverviewData();
+      fetchRecentActivity();
+    }
+  }, [session, activeSection]);
 
   useEffect(() => {
     const checkAccessAndRedirect = async () => {
@@ -97,6 +626,57 @@ export default function Dashboard() {
     setShowLogoutConfirm(true);
     setShowProfileDropdown(false);
   };
+
+  const handleSaveSettings = async () => {
+    if (!linkedinUsername.trim()) return;
+    
+    setIsSavingSettings(true);
+    try {
+      const response = await fetch('/api/user/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ linkedinUsername: linkedinUsername.trim() })
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        console.log('✅ LinkedIn username saved:', result.data.linkedinUsername);
+        // Force refresh data after saving username (cache invalidation)
+        if (activeSection === 'overview') {
+          fetchOverviewData(true); // Force refresh
+          fetchRecentActivity(true); // Force refresh
+        }
+      } else {
+        console.error('❌ Error saving settings:', result.error);
+      }
+      
+    } catch (error) {
+      console.error('❌ Error saving settings:', error);
+    } finally {
+      setIsSavingSettings(false);
+    }
+  };
+
+  // Load saved LinkedIn username on component mount
+  useEffect(() => {
+    const loadUserSettings = async () => {
+      if (!session?.user) return;
+      
+      try {
+        const response = await fetch('/api/user/settings');
+        const result = await response.json();
+        
+        if (result.success && result.data.linkedinUsername) {
+          setLinkedinUsername(result.data.linkedinUsername);
+        }
+      } catch (error) {
+        console.error('❌ Error loading user settings:', error);
+      }
+    };
+    
+    loadUserSettings();
+  }, [session]);
 
   if (isPending) {
     return (
@@ -505,48 +1085,248 @@ export default function Dashboard() {
             {activeSection === 'overview' && (
               <div>
                 <div style={{ marginBottom: '2rem' }}>
-                  <h1 style={{ color: 'var(--text-primary)', fontSize: '1.75rem', fontWeight: 700, margin: '0 0 0.5rem 0' }}>Dashboard Overview</h1>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                    <h1 style={{ color: 'var(--text-primary)', fontSize: '1.75rem', fontWeight: 700, margin: 0 }}>Dashboard Overview</h1>
+                    {overviewData && !isLoadingOverview && (
+                      <div style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '0.5rem',
+                        fontSize: '0.75rem',
+                        color: 'var(--text-secondary)',
+                        background: 'var(--bg-secondary)',
+                        padding: '0.25rem 0.75rem',
+                        borderRadius: '12px'
+                      }}>
+                        <i className="fas fa-clock" style={{ fontSize: '0.625rem' }}></i>
+                        {(() => {
+                          const now = Date.now();
+                          const timeSinceLastFetch = Math.floor((now - lastFetchTime) / 1000 / 60);
+                          return timeSinceLastFetch === 0 ? 'Just updated' : `Updated ${timeSinceLastFetch}m ago`;
+                        })()}
+                        <button
+                          onClick={() => {
+                            fetchOverviewData(true);
+                            fetchRecentActivity(true);
+                          }}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: 'var(--text-secondary)',
+                            cursor: 'pointer',
+                            padding: '0.25rem',
+                            borderRadius: '4px',
+                            fontSize: '0.625rem',
+                            marginLeft: '0.5rem'
+                          }}
+                          title="Refresh data"
+                        >
+                          <i className="fas fa-sync-alt"></i>
+                        </button>
+                      </div>
+                    )}
+                  </div>
                   <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Track your LinkedIn growth and AI-powered results</p>
                 </div>
                 
                 {/* Quick Stats */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
-                  <div style={{ background: 'var(--bg-secondary)', padding: '1.5rem', borderRadius: '12px', borderLeft: '4px solid #0084FF' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-                      <i className="fas fa-eye" style={{ fontSize: '1.5rem', color: '#0084FF' }}></i>
-                      <h3 style={{ margin: 0, color: 'var(--text-primary)' }}>Profile Views</h3>
-                    </div>
-                    <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>1,247</div>
-                    <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>+23% from last week</div>
+                {isLoadingOverview ? (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
+                    {[1, 2, 3, 4].map(i => (
+                      <div key={i} style={{ background: 'var(--bg-secondary)', padding: '1.5rem', borderRadius: '12px', borderLeft: '4px solid #0084FF' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+                          <div style={{ width: '24px', height: '24px', background: 'var(--border-color)', borderRadius: '4px' }}></div>
+                          <div style={{ width: '120px', height: '20px', background: 'var(--border-color)', borderRadius: '4px' }}></div>
+                        </div>
+                        <div style={{ width: '80px', height: '32px', background: 'var(--border-color)', borderRadius: '4px', marginBottom: '0.5rem' }}></div>
+                        <div style={{ width: '100px', height: '14px', background: 'var(--border-color)', borderRadius: '4px' }}></div>
+                      </div>
+                    ))}
                   </div>
+                ) : overviewData ? (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
+                    <div style={{ background: 'var(--bg-secondary)', padding: '1.5rem', borderRadius: '12px', borderLeft: '4px solid #0084FF' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+                        <i className="fas fa-eye" style={{ fontSize: '1.5rem', color: '#0084FF' }}></i>
+                        <h3 style={{ margin: 0, color: 'var(--text-primary)' }}>Profile Viewers</h3>
+                      </div>
+                      <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+                        {overviewData.profile_viewers?.toLocaleString() || '0'}
+                      </div>
+                      <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                        LinkedIn profile views
+                      </div>
+                    </div>
 
-                  <div style={{ background: 'var(--bg-secondary)', padding: '1.5rem', borderRadius: '12px', borderLeft: '4px solid #0084FF' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-                      <i className="fas fa-users" style={{ fontSize: '1.5rem', color: '#0084FF' }}></i>
-                      <h3 style={{ margin: 0, color: 'var(--text-primary)' }}>Connections</h3>
+                    <div style={{ background: 'var(--bg-secondary)', padding: '1.5rem', borderRadius: '12px', borderLeft: '4px solid #0084FF' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+                        <i className="fas fa-users" style={{ fontSize: '1.5rem', color: '#0084FF' }}></i>
+                        <h3 style={{ margin: 0, color: 'var(--text-primary)' }}>Followers</h3>
+                      </div>
+                      <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+                        {overviewData.followers?.toLocaleString() || '0'}
+                      </div>
+                      <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                        {overviewData.followers_change ? (
+                          <>LinkedIn followers {formatChange(overviewData.followers_change)}</>
+                        ) : (
+                          'LinkedIn followers'
+                        )}
+                      </div>
                     </div>
-                    <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>892</div>
-                    <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>+15% this month</div>
-                  </div>
 
-                  <div style={{ background: 'var(--bg-secondary)', padding: '1.5rem', borderRadius: '12px', borderLeft: '4px solid #0084FF' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-                      <i className="fas fa-heart" style={{ fontSize: '1.5rem', color: '#0084FF' }}></i>
-                      <h3 style={{ margin: 0, color: 'var(--text-primary)' }}>Engagement</h3>
+                    <div style={{ background: 'var(--bg-secondary)', padding: '1.5rem', borderRadius: '12px', borderLeft: '4px solid #0084FF' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+                        <i className="fas fa-chart-line" style={{ fontSize: '1.5rem', color: '#0084FF' }}></i>
+                        <h3 style={{ margin: 0, color: 'var(--text-primary)' }}>Post Impressions</h3>
+                      </div>
+                      <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+                        {overviewData.post_impressions?.toLocaleString() || '0'}
+                      </div>
+                      <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                        {overviewData.post_impressions_change ? (
+                          <>Post reach {formatChange(overviewData.post_impressions_change)}</>
+                        ) : (
+                          'Post reach'
+                        )}
+                      </div>
                     </div>
-                    <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>94%</div>
-                    <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Above average</div>
-                  </div>
 
-                  <div style={{ background: 'var(--bg-secondary)', padding: '1.5rem', borderRadius: '12px', borderLeft: '4px solid #0084FF' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-                      <i className="fas fa-star" style={{ fontSize: '1.5rem', color: '#0084FF' }}></i>
-                      <h3 style={{ margin: 0, color: 'var(--text-primary)' }}>AI Score</h3>
+                    <div style={{ background: 'var(--bg-secondary)', padding: '1.5rem', borderRadius: '12px', borderLeft: '4px solid #0084FF' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+                        <i className="fas fa-search" style={{ fontSize: '1.5rem', color: '#0084FF' }}></i>
+                        <h3 style={{ margin: 0, color: 'var(--text-primary)' }}>Search Appearances</h3>
+                      </div>
+                      <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+                        {overviewData.search_appearances?.toLocaleString() || '0'}
+                      </div>
+                      <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                        LinkedIn search results
+                      </div>
                     </div>
-                    <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>8.7</div>
-                    <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Profile optimized</div>
                   </div>
-                </div>
+                ) : (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
+                    <div style={{ 
+                      background: 'var(--bg-secondary)', 
+                      padding: '2rem', 
+                      borderRadius: '12px', 
+                      textAlign: 'center',
+                      gridColumn: '1 / -1',
+                      border: '2px dashed var(--border-color)'
+                    }}>
+                      <i className="fas fa-chart-line" style={{ fontSize: '3rem', color: 'var(--text-muted)', marginBottom: '1rem' }}></i>
+                      <h3 style={{ color: 'var(--text-primary)', marginBottom: '0.5rem' }}>No Analytics Data Available</h3>
+                      <p style={{ color: 'var(--text-secondary)', margin: 0 }}>
+                        Connect your LinkedIn account in settings to view your analytics data.
+                      </p>
+                      <button 
+                        onClick={() => setActiveSection('settings')}
+                        className="cta-button" 
+                        style={{ marginTop: '1rem' }}
+                      >
+                        <i className="fas fa-cog"></i>
+                        Go to Settings
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Recent Activity */}
+                {isLoadingActivity ? (
+                  <div style={{ background: 'var(--bg-secondary)', padding: '1.5rem', borderRadius: '12px', marginBottom: '3rem' }}>
+                    <h3 style={{ color: 'var(--text-primary)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <i className="fas fa-clock" style={{ color: '#0084FF' }}></i>
+                      Recent Activity
+                    </h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                      {[1, 2, 3].map(i => (
+                        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.75rem', background: 'var(--bg-primary)', borderRadius: '8px' }}>
+                          <div style={{ width: '16px', height: '16px', background: 'var(--border-color)', borderRadius: '50%' }}></div>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ width: '200px', height: '16px', background: 'var(--border-color)', borderRadius: '4px', marginBottom: '0.25rem' }}></div>
+                            <div style={{ width: '120px', height: '12px', background: 'var(--border-color)', borderRadius: '4px' }}></div>
+                          </div>
+                          <div style={{ width: '60px', height: '12px', background: 'var(--border-color)', borderRadius: '4px' }}></div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : recentActivity?.posts && recentActivity.posts.length > 0 ? (
+                  <div style={{ background: 'var(--bg-secondary)', padding: '1.5rem', borderRadius: '12px', marginBottom: '3rem' }}>
+                    <h3 style={{ color: 'var(--text-primary)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <i className="fas fa-clock" style={{ color: '#0084FF' }}></i>
+                      Recent Activity
+                    </h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                      {recentActivity.posts.slice(0, 3).map((post: any, index: number) => {
+                        // Get the most recent activity from this post (likes or comments)
+                        const recentLikes = post.likes?.slice(0, 2) || [];
+                        const recentComments = post.comments?.slice(0, 2) || [];
+                        const allActivity = [
+                          ...recentLikes.map((like: any) => ({
+                            type: 'like',
+                            user: like.user,
+                            date: like.created_at,
+                            post: post
+                          })),
+                          ...recentComments.map((comment: any) => ({
+                            type: 'comment',
+                            user: comment.user,
+                            date: comment.created_at,
+                            post: post,
+                            content: comment.content
+                          }))
+                        ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+                        return allActivity.slice(0, 1).map((activity: any, actIndex: number) => (
+                          <div key={`${index}-${actIndex}`} style={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: '1rem', 
+                            padding: '0.75rem', 
+                            background: 'var(--bg-primary)', 
+                            borderRadius: '8px' 
+                          }}>
+                            <i className={`fas fa-${activity.type === 'like' ? 'heart' : 'comment'}`} 
+                               style={{ color: activity.type === 'like' ? '#e91e63' : '#0084FF', width: '16px' }}></i>
+                            <div style={{ flex: 1 }}>
+                              <div style={{ color: 'var(--text-primary)', fontSize: '0.875rem', fontWeight: 500 }}>
+                                {activity.user.name} {activity.type === 'like' ? 'liked' : 'commented on'} your post
+                              </div>
+                              <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', marginTop: '0.25rem' }}>
+                                "{activity.post.content.substring(0, 60)}..."
+                              </div>
+                              {activity.type === 'comment' && activity.content && (
+                                <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', fontStyle: 'italic', marginTop: '0.25rem' }}>
+                                  "{activity.content.substring(0, 80)}..."
+                                </div>
+                              )}
+                            </div>
+                            <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>
+                              {new Date(activity.date).toLocaleDateString()}
+                            </div>
+                          </div>
+                        ));
+                      }).flat()}
+                    </div>
+                  </div>
+                ) : linkedinUsername ? (
+                  <div style={{ 
+                    background: 'var(--bg-secondary)', 
+                    padding: '2rem', 
+                    borderRadius: '12px', 
+                    marginBottom: '3rem',
+                    textAlign: 'center',
+                    border: '2px dashed var(--border-color)'
+                  }}>
+                    <i className="fas fa-clock" style={{ fontSize: '2rem', color: 'var(--text-muted)', marginBottom: '1rem' }}></i>
+                    <h3 style={{ color: 'var(--text-primary)', marginBottom: '0.5rem' }}>No Recent Activity</h3>
+                    <p style={{ color: 'var(--text-secondary)', margin: 0 }}>
+                      No recent LinkedIn activity found for your profile.
+                    </p>
+                  </div>
+                ) : null}
 
                 {/* Action Cards */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
@@ -601,19 +1381,155 @@ export default function Dashboard() {
               </div>
             )}
 
+            {/* Get Noticed Section */}
+            {activeSection === 'profile' && (
+              <GetNoticedSection linkedinUsername={linkedinUsername} setActiveSection={setActiveSection} />
+            )}
+
+            {/* Stay Relevant Section */}
+            {activeSection === 'content' && (
+              <StayRelevantSection />
+            )}
+
+            {/* Be Chosen Section */}
+            {activeSection === 'prospects' && (
+              <BeChosenSection linkedinUsername={linkedinUsername} setActiveSection={setActiveSection} />
+            )}
+
+            {/* Settings Section */}
+            {activeSection === 'settings' && (
+              <div>
+                <div style={{ marginBottom: '2rem' }}>
+                  <h1 style={{ color: 'var(--text-primary)', fontSize: '1.75rem', fontWeight: 700, margin: '0 0 0.5rem 0' }}>Account Settings</h1>
+                  <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Configure your LinkedIn integration and account preferences</p>
+                </div>
+
+                <div style={{ display: 'grid', gap: '2rem', maxWidth: '600px' }}>
+                  {/* LinkedIn Integration */}
+                  <div style={{ background: 'var(--bg-secondary)', padding: '2rem', borderRadius: '12px' }}>
+                    <h3 style={{ color: 'var(--text-primary)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <i className="fab fa-linkedin" style={{ color: '#0077B5' }}></i>
+                      LinkedIn Integration
+                    </h3>
+                    <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '0.875rem' }}>
+                      Enter your LinkedIn username to enable analytics and AI-powered features. This is the username that appears in your LinkedIn profile URL (e.g., linkedin.com/in/your-username).
+                    </p>
+                    
+                    <div style={{ marginBottom: '1rem' }}>
+                      <label style={{ display: 'block', color: 'var(--text-primary)', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500 }}>
+                        LinkedIn Username
+                      </label>
+                      <div style={{ display: 'flex', gap: '1rem' }}>
+                        <div style={{ flex: 1, position: 'relative' }}>
+                          <span style={{ 
+                            position: 'absolute', 
+                            left: '0.75rem', 
+                            top: '50%', 
+                            transform: 'translateY(-50%)', 
+                            color: 'var(--text-secondary)', 
+                            fontSize: '0.875rem',
+                            pointerEvents: 'none'
+                          }}>
+                            linkedin.com/in/
+                          </span>
+                          <input
+                            type="text"
+                            value={linkedinUsername}
+                            onChange={(e) => setLinkedinUsername(e.target.value)}
+                            placeholder="your-username"
+                            style={{
+                              width: '100%',
+                              padding: '0.75rem 0.75rem 0.75rem 140px',
+                              border: '1px solid var(--border-color)',
+                              borderRadius: '8px',
+                              background: 'var(--bg-primary)',
+                              color: 'var(--text-primary)',
+                              fontSize: '0.875rem'
+                            }}
+                          />
+                        </div>
+                        <button
+                          onClick={handleSaveSettings}
+                          disabled={isSavingSettings || !linkedinUsername.trim()}
+                          className="cta-button"
+                          style={{ minWidth: '120px' }}
+                        >
+                          {isSavingSettings ? (
+                            <>
+                              <i className="fas fa-spinner fa-spin"></i>
+                              Saving...
+                            </>
+                          ) : (
+                            <>
+                              <i className="fas fa-save"></i>
+                              Save
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                    
+                    {linkedinUsername && (
+                      <div style={{ 
+                        background: 'var(--bg-primary)', 
+                        padding: '1rem', 
+                        borderRadius: '8px', 
+                        border: '1px solid var(--border-color)',
+                        marginTop: '1rem'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                          <i className="fas fa-check-circle" style={{ color: '#10b981' }}></i>
+                          <span style={{ color: 'var(--text-primary)', fontSize: '0.875rem', fontWeight: 500 }}>
+                            LinkedIn Profile Connected
+                          </span>
+                        </div>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', margin: 0 }}>
+                          Profile URL: <a href={`https://linkedin.com/in/${linkedinUsername}`} target="_blank" rel="noopener noreferrer" style={{ color: '#0077B5' }}>
+                            linkedin.com/in/{linkedinUsername}
+                          </a>
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Account Information */}
+                  <div style={{ background: 'var(--bg-secondary)', padding: '2rem', borderRadius: '12px' }}>
+                    <h3 style={{ color: 'var(--text-primary)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <i className="fas fa-user" style={{ color: '#0084FF' }}></i>
+                      Account Information
+                    </h3>
+                    <div style={{ display: 'grid', gap: '1rem' }}>
+                      <div>
+                        <label style={{ display: 'block', color: 'var(--text-secondary)', fontSize: '0.75rem', marginBottom: '0.25rem' }}>
+                          Email Address
+                        </label>
+                        <div style={{ color: 'var(--text-primary)', fontSize: '0.875rem' }}>
+                          {session?.user?.email}
+                        </div>
+                      </div>
+                      <div>
+                        <label style={{ display: 'block', color: 'var(--text-secondary)', fontSize: '0.75rem', marginBottom: '0.25rem' }}>
+                          Account Type
+                        </label>
+                        <div style={{ color: 'var(--text-primary)', fontSize: '0.875rem' }}>
+                          {isAdmin(session?.user?.email) ? 'Administrator' : 'Free Trial'}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Other sections */}
-            {activeSection !== 'overview' && (
+            {!['overview', 'profile', 'content', 'prospects', 'settings'].includes(activeSection) && (
               <div style={{ textAlign: 'center', padding: '4rem 2rem' }}>
                 <div style={{ fontSize: '3rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
-                  <i className={`fas fa-${activeSection === 'profile' ? 'eye' : activeSection === 'content' ? 'bullseye' : activeSection === 'prospects' ? 'handshake' : activeSection === 'analytics' ? 'chart-line' : activeSection === 'insights' ? 'lightbulb' : 'cog'}`}></i>
+                  <i className={`fas fa-${activeSection === 'analytics' ? 'chart-line' : activeSection === 'insights' ? 'lightbulb' : 'cog'}`}></i>
                 </div>
                 <h2 style={{ color: 'var(--text-primary)', marginBottom: '1rem' }}>
-                  {activeSection === 'profile' && 'Get Noticed'}
-                  {activeSection === 'content' && 'Stay Relevant'}
-                  {activeSection === 'prospects' && 'Be Chosen'}
                   {activeSection === 'analytics' && 'Performance Analytics'}
                   {activeSection === 'insights' && 'AI Insights'}
-                  {activeSection === 'settings' && 'Account Settings'}
                 </h2>
                 <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>
                   This section is coming soon. We're building amazing features to help you dominate LinkedIn.

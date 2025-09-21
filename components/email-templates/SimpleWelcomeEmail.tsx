@@ -8,13 +8,7 @@ interface SimpleWelcomeEmailProps {
 
 export function SimpleWelcomeEmail({ firstName, userEmail, customMessage }: SimpleWelcomeEmailProps) {
   return (
-    <html lang="en">
-      <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Welcome to InlinkAI</title>
-      </head>
-      <body style={{
+    <div style={{
         margin: '0',
         padding: '0',
         fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
@@ -200,7 +194,7 @@ export function SimpleWelcomeEmail({ firstName, userEmail, customMessage }: Simp
             {/* CTA Button */}
             <div style={{ textAlign: 'center', margin: '40px 0' }}>
               <a
-                href="https://inlinkai.vercel.app/dashboard"
+                href="http://localhost:3000/dashboard"
                 style={{
                   display: 'inline-block',
                   background: 'linear-gradient(135deg, #0084ff 0%, #44bcf0 100%)',
@@ -250,7 +244,6 @@ export function SimpleWelcomeEmail({ firstName, userEmail, customMessage }: Simp
             </p>
           </div>
         </div>
-      </body>
-    </html>
+    </div>
   );
 }

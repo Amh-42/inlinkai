@@ -7,7 +7,7 @@ const getBaseURL = () => {
     return window.location.origin;
   }
   // Fallback for server-side rendering
-  return process.env.BETTER_AUTH_URL || "https://inlinkai.vercel.app";
+  return process.env.BETTER_AUTH_URL || "http://localhost:3000";
 };
 
 export const authClient = createAuthClient({

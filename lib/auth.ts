@@ -19,7 +19,7 @@ const socialProvidersConfig = {
 // Build trusted origins list
 const getTrustedOrigins = () => {
   const origins = [
-    "https://inlinkai.vercel.app",
+    "http://localhost:3000",
     "http://localhost:3000",
     "https://localhost:3000",
   ];
@@ -51,24 +51,13 @@ const getTrustedOrigins = () => {
 
 
 export const auth = betterAuth({
-  database: createDatabase(),
+  database: createDatabase(), // PostgreSQL database
   secret: process.env.BETTER_AUTH_SECRET || "development-secret-change-in-production",
   baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
   emailAndPassword: {
-    enabled: true,
+    enabled: true, // Email/password authentication enabled
   },
   socialProviders: socialProvidersConfig,
   trustedOrigins: getTrustedOrigins(),
-  session: {
-    cookieCache: {
-      enabled: true,
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-    },
-  },
-  advanced: {
-    crossSubDomainCookies: {
-      enabled: false, // Disable for single domain
-    },
-    generateId: false, // Use default ID generation
-  },
+  // Use Better Auth's default session management
 });
