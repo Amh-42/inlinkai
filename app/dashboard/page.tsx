@@ -7,6 +7,7 @@ import { useTheme } from '../components/ThemeProvider';
 import { syncOnboardingStatus, clearOnboardingData } from '@/lib/onboarding-utils';
 import { isAdmin } from '@/lib/admin-utils';
 import { sendWelcomeEmailToUser, shouldSendWelcomeEmail, markWelcomeEmailSent, hasWelcomeEmailBeenSent } from '@/lib/welcome-email-utils';
+import VapiWidget from '../components/VapiWidget';
 
 // Get Noticed Section Component
 function GetNoticedSection({ linkedinUsername, setActiveSection }: { linkedinUsername: string, setActiveSection: (section: string) => void }) {
@@ -269,6 +270,8 @@ function BeChosenSection({ linkedinUsername, setActiveSection }: { linkedinUsern
   const [isLoading, setIsLoading] = useState(false);
   const [crmResult, setCrmResult] = useState<any>(null);
   const [selectedContact, setSelectedContact] = useState<any>(null);
+  const [practiceAssistant, setPracticeAssistant] = useState<{assistantId: string, contactData: any} | null>(null);
+  const [creatingAssistantFor, setCreatingAssistantFor] = useState<string | null>(null);
 
   const handleBuildCRM = async () => {
     if (!linkedinUsername.trim()) return;
@@ -293,6 +296,7 @@ function BeChosenSection({ linkedinUsername, setActiveSection }: { linkedinUsern
   };
 
   const handlePracticeCall = async (contact: any) => {
+    setCreatingAssistantFor(contact.name);
     try {
       const response = await fetch('/api/vapi', {
         method: 'POST',
@@ -305,11 +309,25 @@ function BeChosenSection({ linkedinUsername, setActiveSection }: { linkedinUsern
       
       const result = await response.json();
       if (result.success) {
-        alert(`Practice assistant created! ${result.data.message}`);
+        setPracticeAssistant({
+          assistantId: result.data.assistantId,
+          contactData: contact
+        });
+        console.log('✅ Practice assistant created:', result.data.assistantId);
+      } else {
+        console.error('❌ Failed to create assistant:', result.error);
+        alert('Failed to create practice assistant. Please try again.');
       }
     } catch (error) {
       console.error('Error creating practice assistant:', error);
+      alert('Error creating practice assistant. Please try again.');
+    } finally {
+      setCreatingAssistantFor(null);
     }
+  };
+
+  const handleCallEnd = () => {
+    setPracticeAssistant(null);
   };
 
   return (
@@ -391,14 +409,24 @@ function BeChosenSection({ linkedinUsername, setActiveSection }: { linkedinUsern
                       Engagement Score: {contact.score}
                     </div>
                   </div>
-                  <button
-                    onClick={() => handlePracticeCall(contact)}
-                    className="cta-button secondary-button"
-                    style={{ fontSize: '0.875rem', padding: '0.5rem 1rem' }}
-                  >
-                    <i className="fas fa-phone"></i>
-                    Practice Call
-                  </button>
+                   <button
+                     onClick={() => handlePracticeCall(contact)}
+                     disabled={creatingAssistantFor === contact.name}
+                     className="cta-button secondary-button"
+                     style={{ fontSize: '0.875rem', padding: '0.5rem 1rem' }}
+                   >
+                     {creatingAssistantFor === contact.name ? (
+                       <>
+                         <i className="fas fa-spinner fa-spin"></i>
+                         Creating...
+                       </>
+                     ) : (
+                       <>
+                         <i className="fas fa-phone"></i>
+                         Practice Call
+                       </>
+                     )}
+                   </button>
                 </div>
               ))}
             </div>
@@ -423,12 +451,28 @@ function BeChosenSection({ linkedinUsername, setActiveSection }: { linkedinUsern
                 ))}
               </div>
             </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
+           )}
+         </div>
+       )}
+
+       {/* Voice Practice Widget */}
+       {practiceAssistant && (
+         <div style={{ background: 'var(--bg-secondary)', padding: '1.5rem', borderRadius: '12px', marginTop: '1.5rem' }}>
+           <h3 style={{ color: 'var(--text-primary)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+             <i className="fas fa-microphone" style={{ color: '#12A594' }}></i>
+             Voice Practice Session
+           </h3>
+           <VapiWidget
+             apiKey={process.env.NEXT_PUBLIC_VAPI_API_KEY || ''}
+             assistantId={practiceAssistant.assistantId}
+             contactData={practiceAssistant.contactData}
+             onCallEnd={handleCallEnd}
+           />
+         </div>
+       )}
+     </div>
+   );
+ }
 
 export default function Dashboard() {
   const { data: session, isPending } = useSession();
