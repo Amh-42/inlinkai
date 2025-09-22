@@ -8,6 +8,7 @@ import { syncOnboardingStatus, clearOnboardingData } from '@/lib/onboarding-util
 import { isAdmin } from '@/lib/admin-utils';
 import { sendWelcomeEmailToUser, shouldSendWelcomeEmail, markWelcomeEmailSent, hasWelcomeEmailBeenSent } from '@/lib/welcome-email-utils';
 import VapiWidget from '../components/VapiWidget';
+import { useCustomer } from "autumn-js/react";
 
 // Get Noticed Section Component
 function GetNoticedSection({ linkedinUsername, setActiveSection }: { linkedinUsername: string, setActiveSection: (section: string) => void }) {
@@ -478,6 +479,7 @@ export default function Dashboard() {
   const { data: session, isPending } = useSession();
   const { theme, toggleTheme } = useTheme();
   const router = useRouter();
+  const { customer } = useCustomer();
   
   // Debug session state
   console.log('🔍 Dashboard render - Session debug:', {
@@ -511,6 +513,9 @@ export default function Dashboard() {
   const [isLoadingActivity, setIsLoadingActivity] = useState(false);
   const [linkedinUsername, setLinkedinUsername] = useState('');
   const [isSavingSettings, setIsSavingSettings] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteEmailInput, setDeleteEmailInput] = useState('');
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
   
   // Cache management
   const [lastFetchTime, setLastFetchTime] = useState<number>(0);
@@ -669,6 +674,27 @@ export default function Dashboard() {
     checkAccessAndRedirect();
   }, [session, isPending, router]);
 
+  // Handle upgrade success from payment
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('upgraded') === 'true') {
+        // Show success message
+        console.log('🎉 Payment successful! User upgraded to Pro');
+        
+        // Clean up URL
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, '', newUrl);
+        
+        // You could add a toast notification here
+        // For now, we'll just log it
+        setTimeout(() => {
+          alert('🎉 Welcome to Pro! Your subscription has been activated.');
+        }, 1000);
+      }
+    }
+  }, []);
+
   // Add dashboard class to body for CSS targeting - moved before any returns
   useEffect(() => {
     // Apply styles immediately
@@ -756,6 +782,40 @@ export default function Dashboard() {
       console.error('❌ Error saving settings:', error);
     } finally {
       setIsSavingSettings(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!session?.user?.email || deleteEmailInput !== session.user.email) {
+      return;
+    }
+
+    setIsDeletingAccount(true);
+    try {
+      const response = await fetch('/api/user/delete', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: deleteEmailInput })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        console.log('✅ Account deleted successfully');
+        // Sign out and redirect to home
+        await signOut();
+        window.location.href = '/';
+      } else {
+        console.error('❌ Error deleting account:', result.error);
+        alert('Failed to delete account. Please try again.');
+      }
+    } catch (error) {
+      console.error('❌ Error deleting account:', error);
+      alert('Failed to delete account. Please try again.');
+    } finally {
+      setIsDeletingAccount(false);
+      setShowDeleteConfirm(false);
+      setDeleteEmailInput('');
     }
   };
 
@@ -1006,13 +1066,35 @@ export default function Dashboard() {
                     </span>
                   )}
                 </div>
-                <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>Free Trial • 14 days left</div>
+                <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>
+                  {customer?.products?.some(p => p.id === 'pro') ? 'Pro Plan • Active' : 'Free Plan • 5 messages/month'}
+                </div>
               </div>
             </div>
-            <button className="cta-button" style={{ width: '100%', fontSize: '0.75rem', padding: '0.5rem' }}>
-              <i className="fas fa-crown"></i>
-              Upgrade to Pro
-            </button>
+            {!customer?.products?.some(p => p.id === 'pro') ? (
+              <button 
+                className="cta-button" 
+                style={{ width: '100%', fontSize: '0.75rem', padding: '0.5rem' }}
+                onClick={() => router.push('/pricing')}
+              >
+                <i className="fas fa-crown"></i>
+                Upgrade to Pro
+              </button>
+            ) : (
+              <div style={{ 
+                width: '100%', 
+                fontSize: '0.75rem', 
+                padding: '0.5rem',
+                textAlign: 'center',
+                background: 'var(--success-color)',
+                color: 'white',
+                borderRadius: '8px',
+                fontWeight: 600
+              }}>
+                <i className="fas fa-check"></i>
+                Pro Active
+              </div>
+            )}
           </div>
 
           {/* Navigation Menu */}
@@ -1618,6 +1700,60 @@ export default function Dashboard() {
                       </div>
                     </div>
                   </div>
+
+                  {/* Danger Zone - Delete Account */}
+                  <div style={{ 
+                    background: 'var(--bg-secondary)', 
+                    padding: '2rem', 
+                    borderRadius: '12px',
+                    border: '2px solid #ef4444'
+                  }}>
+                    <h3 style={{ 
+                      color: '#ef4444', 
+                      marginBottom: '1rem', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '0.5rem' 
+                    }}>
+                      <i className="fas fa-exclamation-triangle"></i>
+                      Danger Zone
+                    </h3>
+                    <p style={{ 
+                      color: 'var(--text-secondary)', 
+                      marginBottom: '1.5rem', 
+                      fontSize: '0.875rem' 
+                    }}>
+                      Once you delete your account, there is no going back. This action will permanently delete your account, 
+                      all your data, settings, and LinkedIn integration. This cannot be undone.
+                    </p>
+                    
+                    <button
+                      onClick={() => setShowDeleteConfirm(true)}
+                      style={{
+                        background: '#ef4444',
+                        color: 'white',
+                        border: 'none',
+                        padding: '0.75rem 1.5rem',
+                        borderRadius: '8px',
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = '#dc2626';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = '#ef4444';
+                      }}
+                    >
+                      <i className="fas fa-trash"></i>
+                      Delete Account
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
@@ -1739,6 +1875,152 @@ export default function Dashboard() {
               >
                 <i className="fas fa-sign-out-alt"></i>
                 Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Account Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1002
+        }}>
+          <div style={{
+            background: 'var(--bg-primary)',
+            borderRadius: '12px',
+            padding: '2rem',
+            maxWidth: '500px',
+            width: '90%',
+            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)',
+            border: '2px solid #ef4444'
+          }}>
+            <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+              <div style={{
+                width: '60px',
+                height: '60px',
+                background: '#ef4444',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 1rem auto'
+              }}>
+                <i className="fas fa-exclamation-triangle" style={{ fontSize: '1.5rem', color: 'white' }}></i>
+              </div>
+              <h3 style={{ color: '#ef4444', marginBottom: '0.5rem', fontSize: '1.25rem', fontWeight: 600 }}>
+                Delete Account
+              </h3>
+              <p style={{ color: 'var(--text-secondary)', margin: '0 0 1rem 0', lineHeight: 1.5 }}>
+                This action cannot be undone. This will permanently delete your account and all associated data.
+              </p>
+            </div>
+            
+            <div style={{ marginBottom: '1.5rem' }}>
+              <label style={{ 
+                display: 'block', 
+                color: 'var(--text-primary)', 
+                fontSize: '0.875rem', 
+                fontWeight: 600,
+                marginBottom: '0.5rem' 
+              }}>
+                Type your email address to confirm:
+              </label>
+              <input
+                type="email"
+                value={deleteEmailInput}
+                onChange={(e) => setDeleteEmailInput(e.target.value)}
+                placeholder={session?.user?.email}
+                style={{
+                  width: '100%',
+                  padding: '0.75rem',
+                  borderRadius: '6px',
+                  border: '1px solid var(--border-color)',
+                  background: 'var(--bg-secondary)',
+                  color: 'var(--text-primary)',
+                  fontSize: '0.875rem',
+                  outline: 'none'
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = '#ef4444';
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--border-color)';
+                }}
+              />
+              {deleteEmailInput && deleteEmailInput !== session?.user?.email && (
+                <p style={{ 
+                  color: '#ef4444', 
+                  fontSize: '0.75rem', 
+                  marginTop: '0.5rem',
+                  margin: '0.5rem 0 0 0'
+                }}>
+                  Email does not match your account email
+                </p>
+              )}
+            </div>
+            
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+              <button 
+                onClick={() => {
+                  setShowDeleteConfirm(false);
+                  setDeleteEmailInput('');
+                }}
+                style={{
+                  padding: '0.75rem 1.5rem',
+                  borderRadius: '6px',
+                  border: '1px solid var(--border-color)',
+                  background: 'var(--bg-secondary)',
+                  color: 'var(--text-primary)',
+                  cursor: 'pointer',
+                  fontSize: '0.875rem',
+                  fontWeight: 500,
+                  transition: 'all 0.2s ease',
+                  minWidth: '100px'
+                }}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleDeleteAccount}
+                disabled={isDeletingAccount || deleteEmailInput !== session?.user?.email}
+                style={{
+                  padding: '0.75rem 1.5rem',
+                  borderRadius: '6px',
+                  border: 'none',
+                  background: deleteEmailInput === session?.user?.email ? '#ef4444' : '#9ca3af',
+                  color: 'white',
+                  cursor: deleteEmailInput === session?.user?.email ? 'pointer' : 'not-allowed',
+                  fontSize: '0.875rem',
+                  fontWeight: 500,
+                  transition: 'all 0.2s ease',
+                  minWidth: '120px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem'
+                }}
+              >
+                {isDeletingAccount ? (
+                  <>
+                    <i className="fas fa-spinner fa-spin"></i>
+                    Deleting...
+                  </>
+                ) : (
+                  <>
+                    <i className="fas fa-trash"></i>
+                    Delete Account
+                  </>
+                )}
               </button>
             </div>
           </div>

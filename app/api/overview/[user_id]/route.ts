@@ -33,8 +33,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     
     console.log('📊 Fetching overview data for user:', session.user.email, 'with LinkedIn username:', linkedinUsername);
 
-    // Fetch data from localhost:8000/dashboard/{linkedin_username}
-    const response = await fetch(`http://localhost:8000/dashboard/${linkedinUsername}`, {
+    // Fetch data from localhost:5000/dashboard/{linkedin_username}
+    const response = await fetch(`http://localhost:5000/dashboard/${linkedinUsername}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
