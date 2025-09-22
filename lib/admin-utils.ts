@@ -1,6 +1,6 @@
 // Utility functions for admin access control
 
-export const ADMIN_EMAIL = 'anwar@inlinkai.com';
+export const ADMIN_EMAIL = 'anwarmisbaham@gmail.com';
 
 export function isAdmin(userEmail?: string | null): boolean {
   if (!userEmail) return false;

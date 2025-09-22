@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import Firecrawl from '@mendable/firecrawl-js';
 import OpenAI from 'openai';
 
-const firecrawl = process.env.FIRECRAWL_API_KEY ? new Firecrawl({ apiKey: process.env.FIRECRAWL_API_KEY }) : null;
 const openai = process.env.OPENAI_API_KEY ? new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 }) : null;
@@ -26,37 +24,15 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('📰 Creating content from sources:', sources);
-    console.log('🔧 Firecrawl configured:', !!firecrawl);
-    console.log('🔧 OpenAI configured:', !!openai);
-    console.log('🔧 Firecrawl API key present:', !!process.env.FIRECRAWL_API_KEY);
-    console.log('🔧 Firecrawl API key prefix:', process.env.FIRECRAWL_API_KEY?.substring(0, 8) + '...');
 
-    // Test Firecrawl with a simple URL first if this is the first source
-    if (firecrawl && sources.length > 0) {
-      try {
-        console.log('🧪 Testing Firecrawl API with simple URL...');
-        const testResult = await firecrawl.scrape('https://example.com', { formats: ['markdown'] }) as any;
-        console.log('🧪 Firecrawl test result:', {
-          result: testResult,
-          type: typeof testResult,
-          keys: testResult ? Object.keys(testResult) : [],
-          success: testResult?.success,
-          hasData: !!testResult?.data,
-          error: testResult?.error
-        });
-      } catch (testError: any) {
-        console.error('🧪 Firecrawl test failed:', testError.message);
-      }
-    }
-
-    // Crawl the provided sources using Firecrawl
+    // Crawl the provided sources using simple Firecrawl API
     const crawledContent = [];
     
     for (const source of sources) {
       try {
         console.log(`🔍 Crawling: ${source}`);
         
-        if (!firecrawl) {
+        if (!process.env.FIRECRAWL_API_KEY) {
           console.log('⚠️ Firecrawl API key not configured, using mock data');
           crawledContent.push({
             url: source,
@@ -67,60 +43,30 @@ export async function POST(request: NextRequest) {
           continue;
         }
 
-        // Special handling for Wikipedia and other challenging sites
-        const isWikipedia = source.includes('wikipedia.org') || source.includes('wikitia.com');
-        console.log(`🔍 Crawling ${isWikipedia ? 'Wikipedia-style' : 'regular'} site: ${source}`);
-
-        // Start with basic options and add complexity if needed
-        const scrapeOptions: any = {
-          formats: ['markdown'],
-          onlyMainContent: true
+        // Simple Firecrawl API call
+        const url = 'https://api.firecrawl.dev/v2/scrape';
+        const options = {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${process.env.FIRECRAWL_API_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            url: source,
+            onlyMainContent: true,
+            maxAge: 172800000,
+            formats: ['markdown']
+          })
         };
 
-        // Add Wikipedia-specific options if needed
-        if (isWikipedia) {
-          scrapeOptions.waitFor = 5000;
-          scrapeOptions.timeout = 30000;
-        }
+        const response = await fetch(url, options);
+        const data = await response.json();
 
-        console.log(`🔧 Using scrape options:`, {
-          formats: scrapeOptions.formats,
-          waitFor: scrapeOptions.waitFor,
-          timeout: scrapeOptions.timeout,
-          hasActions: !!scrapeOptions.actions
-        });
-
-        console.log(`🚀 Making Firecrawl API call...`);
-        const result = await firecrawl.scrape(source, scrapeOptions) as any;
-
-        console.log(`🔍 Raw Firecrawl response:`, {
-          result: result,
-          type: typeof result,
-          keys: result ? Object.keys(result) : [],
-          success: result?.success,
-          data: result?.data,
-          error: result?.error
-        });
-
-        // Handle both success property and direct data response
-        const isSuccess = result?.success === true || (result?.data && !result?.error);
-        const responseData = result?.data || result;
-
-        console.log(`🔍 Processed Firecrawl result for ${source}:`, {
-          isSuccess,
-          hasResponseData: !!responseData,
-          dataKeys: responseData ? Object.keys(responseData) : [],
-          title: responseData?.metadata?.title,
-          hasMarkdown: !!responseData?.markdown,
-          hasHtml: !!responseData?.html,
-          contentLength: responseData?.markdown?.length || responseData?.html?.length || 0
-        });
-
-        if (isSuccess && responseData) {
+        if (data.success && data.data) {
           crawledContent.push({
             url: source,
-            title: responseData.metadata?.title || 'Untitled',
-            content: responseData.markdown || responseData.html || '',
+            title: data.data.metadata?.title || 'Untitled',
+            content: data.data.markdown || data.data.html || '',
             source: 'firecrawl'
           });
           console.log(`✅ Successfully crawled: ${source}`);
@@ -134,13 +80,7 @@ export async function POST(request: NextRequest) {
           });
         }
       } catch (error: any) {
-        console.error(`❌ Error crawling ${source}:`, {
-          message: error.message,
-          status: error.status,
-          statusText: error.statusText,
-          response: error.response?.data,
-          stack: error.stack?.split('\n').slice(0, 3) // First 3 lines of stack
-        });
+        console.error(`❌ Error crawling ${source}:`, error.message);
         
         crawledContent.push({
           url: source,

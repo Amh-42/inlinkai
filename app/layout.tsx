@@ -1,5 +1,6 @@
 import { ConditionalNavigation } from '@/app/components/ConditionalNavigation'
 import { ThemeProvider } from '@/app/components/ThemeProvider'
+import { AutumnProvider } from "autumn-js/react"
 
 export const metadata = {
   title: 'InlinkAI - Transform Your LinkedIn Presence with AI',
@@ -82,10 +83,12 @@ export default function RootLayout({
         <link rel="preload" href="/images/logo.png" as="image" />
       </head>
       <body className="font-inter">
-        <ThemeProvider>
-          <ConditionalNavigation />
-          {children}
-        </ThemeProvider>
+        <AutumnProvider>
+          <ThemeProvider>
+            <ConditionalNavigation />
+            {children}
+          </ThemeProvider>
+        </AutumnProvider>
       </body>
     </html>
   )
