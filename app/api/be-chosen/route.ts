@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     // Fetch recent activity data
     let recentActivity;
     try {
-      const response = await fetch(`http://localhost:5000/in/${username}/recent-activity/all/`, {
+      const response = await fetch(`http://localhost:8000/in/${username}/recent-activity/all/`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

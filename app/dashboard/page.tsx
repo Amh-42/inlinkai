@@ -1048,11 +1048,16 @@ export default function Dashboard() {
                 {userInitial}
               </div>
               <div>
-                <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.875rem', marginBottom: '0.25rem' }}>
+                <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.875rem', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
                   {userName}
+                  {customer?.products?.some(p => p.id === 'pro') && (
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                      <path d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z" fill="#1d9bf0"/>
+                      <path d="M10.5 13.5L8.5 11.5L7.5 12.5L10.5 15.5L16.5 9.5L15.5 8.5L10.5 13.5Z" fill="white"/>
+                    </svg>
+                  )}
                   {isAdmin(session?.user?.email) && (
                     <span style={{
-                      marginLeft: '0.5rem',
                       fontSize: '0.625rem',
                       backgroundColor: '#10b981',
                       color: 'white',
@@ -1080,21 +1085,7 @@ export default function Dashboard() {
                 <i className="fas fa-crown"></i>
                 Upgrade to Pro
               </button>
-            ) : (
-              <div style={{ 
-                width: '100%', 
-                fontSize: '0.75rem', 
-                padding: '0.5rem',
-                textAlign: 'center',
-                background: 'var(--success-color)',
-                color: 'white',
-                borderRadius: '8px',
-                fontWeight: 600
-              }}>
-                <i className="fas fa-check"></i>
-                Pro Active
-              </div>
-            )}
+            ) : null}
           </div>
 
           {/* Navigation Menu */}
@@ -1136,40 +1127,6 @@ export default function Dashboard() {
               ))}
             </ul>
 
-            <div style={{ padding: '0 1.5rem', margin: '1.5rem 0 1rem 0' }}>
-              <h3 style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>Analytics</h3>
-            </div>
-            <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-              {[
-                { id: 'analytics', icon: 'chart-line', label: 'Performance' },
-                { id: 'insights', icon: 'lightbulb', label: 'Insights' }
-              ].map(item => (
-                <li key={item.id}>
-                  <button 
-                    onClick={() => setActiveSection(item.id)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.75rem',
-                      width: '100%',
-                      padding: '0.75rem 1.5rem',
-                      background: activeSection === item.id ? 'var(--accent-primary)' : 'none',
-                      color: activeSection === item.id ? 'white' : 'var(--text-secondary)',
-                      border: 'none',
-                      textDecoration: 'none',
-                      fontSize: '0.875rem',
-                      fontWeight: 500,
-                      transition: 'all 0.2s ease',
-                      cursor: 'pointer',
-                      textAlign: 'left'
-                    }}
-                  >
-                    <i className={`fas fa-${item.icon}`} style={{ width: '16px' }}></i>
-                    {item.label}
-                  </button>
-                </li>
-              ))}
-            </ul>
 
             {/* Admin-only Marketing Section */}
             {isAdmin(session?.user?.email) && (
