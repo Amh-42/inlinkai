@@ -10,6 +10,7 @@ export default function LoginPage() {
   const { data: session, isPending } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [hasRedirected, setHasRedirected] = useState(false);
+  const [isSyncingSession, setIsSyncingSession] = useState(false);
   const router = useRouter();
 
   // Auto-redirect based on login status and onboarding completion
@@ -18,6 +19,26 @@ export default function LoginPage() {
       if (!isPending && session?.user && !hasRedirected) {
         console.log('🔄 Login page: User authenticated, checking onboarding status...');
         setHasRedirected(true); // Prevent multiple redirects
+        
+        // Check if this is a LinkedIn OAuth login (social provider)
+        // Multiple ways to detect: URL params, localStorage flag, or unverified email
+        const urlParams = new URLSearchParams(window.location.search);
+        const hasOAuthCallback = urlParams.has('code') || urlParams.has('state'); // OAuth callback params
+        const linkedinInitiated = localStorage.getItem('linkedin_login_initiated');
+        const recentLinkedInLogin = linkedinInitiated && (Date.now() - parseInt(linkedinInitiated)) < 60000; // Within last minute
+        const isLinkedInLogin = (session.user.email && !session.user.emailVerified) || hasOAuthCallback || recentLinkedInLogin;
+        
+        if (isLinkedInLogin) {
+          console.log('🔗 LinkedIn login detected, waiting 5 seconds for session to sync with Neon DB...');
+          setIsSyncingSession(true);
+          // Wait 5 seconds for the session to be properly registered in Neon DB
+          await new Promise(resolve => setTimeout(resolve, 5000));
+          setIsSyncingSession(false);
+          // Clean up the LinkedIn login flag
+          localStorage.removeItem('linkedin_login_initiated');
+          console.log('✅ LinkedIn session sync wait completed');
+        }
+        
         // Check if this is a new user who needs a welcome email (for OAuth signups)
         if (shouldSendWelcomeEmail(session) && !hasWelcomeEmailBeenSent(session.user.id)) {
           console.log('🎉 New LinkedIn user detected, sending welcome email...');
@@ -56,6 +77,8 @@ export default function LoginPage() {
   const handleLinkedInSignIn = async () => {
     setIsLoading(true);
     try {
+      // Mark that we initiated a LinkedIn login
+      localStorage.setItem('linkedin_login_initiated', Date.now().toString());
       await signIn.social({
         provider: 'linkedin',
         // Remove callbackURL to let Better Auth handle redirects properly
@@ -122,19 +145,31 @@ export default function LoginPage() {
         <div className="hero-container">
           <div className="login-card">
             <div className="login-header">
-              <h2>Welcome back!</h2>
-              <p>You're already signed in as {session.user.email}</p>
+              {isSyncingSession ? (
+                <>
+                  <div className="loading-spinner"></div>
+                  <h2>Syncing your session...</h2>
+                  <p>Please wait while we sync your LinkedIn session with our database. This will take about 5 seconds.</p>
+                </>
+              ) : (
+                <>
+                  <h2>Welcome back!</h2>
+                  <p>You're already signed in as {session.user.email}</p>
+                </>
+              )}
             </div>
             
-            <div className="login-form">
-              <button 
-                onClick={handleSignOut}
-                className="logout-button"
-                disabled={isLoading}
-              >
-                {isLoading ? 'Signing out...' : 'Sign Out'}
-              </button>
-            </div>
+            {!isSyncingSession && (
+              <div className="login-form">
+                <button 
+                  onClick={handleSignOut}
+                  className="logout-button"
+                  disabled={isLoading}
+                >
+                  {isLoading ? 'Signing out...' : 'Sign Out'}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </section>
