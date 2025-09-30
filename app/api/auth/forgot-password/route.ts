@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
 
     // Generate secure reset token
     const resetToken = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-    const resetUrl = `${process.env.BETTER_AUTH_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}&email=${encodeURIComponent(email)}`;
+    const resetUrl = `${process.env.BETTER_AUTH_URL || 'https://inlinkai.com'}/reset-password?token=${resetToken}&email=${encodeURIComponent(email)}`;
     
     // Store reset token in database with expiration (1 hour from now)
     const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour

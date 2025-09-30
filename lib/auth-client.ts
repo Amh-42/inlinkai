@@ -7,7 +7,7 @@ const getBaseURL = () => {
     return window.location.origin;
   }
   // Fallback for server-side rendering
-  return process.env.BETTER_AUTH_URL || "http://localhost:3000";
+  return process.env.BETTER_AUTH_URL || "https://inlinkai.com";
 };
 
 console.log('🔍 Auth client initializing with baseURL:', getBaseURL());

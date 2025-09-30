@@ -69,7 +69,7 @@ export default function EmailsPage() {
         }
       ],
       ctaText: 'Try New Features',
-      ctaUrl: 'http://localhost:3000/dashboard'
+      ctaUrl: 'https://inlinkai.com/dashboard'
     }
   });
   const [lastResult, setLastResult] = useState<EmailResult | null>(null);

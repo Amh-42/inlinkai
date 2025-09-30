@@ -151,7 +151,7 @@ export async function POST(request: NextRequest) {
               }
             ],
             ctaText: 'Try New Features',
-            ctaUrl: 'http://localhost:3000/dashboard'
+            ctaUrl: 'https://inlinkai.com/dashboard'
           }
         });
         break;
