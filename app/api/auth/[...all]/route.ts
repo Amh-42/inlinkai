@@ -95,8 +95,8 @@ export async function POST(request: NextRequest) {
     authLogger.error('AUTH', `POST request failed`, error, {
       pathname,
       duration: `${duration}ms`,
-      errorMessage: error?.message,
-      errorStack: error?.stack
+      errorMessage: error instanceof Error ? error.message : String(error),
+      errorStack: error instanceof Error ? error.stack : undefined
     }, meta);
     
     return NextResponse.json(

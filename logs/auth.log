@@ -1,0 +1,738 @@
+[2025-09-30T17:25:40.595Z] [INFO] [CONFIG] Configuration LINKEDIN_CLIENT_ID is valid
+  DATA: {
+  "configName": "LINKEDIN_CLIENT_ID",
+  "hasValue": false
+}
+[2025-09-30T17:25:40.597Z] [INFO] [CONFIG] Configuration LINKEDIN_CLIENT_SECRET is valid
+  DATA: {
+  "configName": "LINKEDIN_CLIENT_SECRET",
+  "hasValue": false
+}
+[2025-09-30T17:25:40.597Z] [INFO] [CONFIG] Configuration BETTER_AUTH_SECRET is valid
+  DATA: {
+  "configName": "BETTER_AUTH_SECRET",
+  "hasValue": false
+}
+[2025-09-30T17:25:40.597Z] [INFO] [CONFIG] Configuration BETTER_AUTH_URL is valid
+  DATA: {
+  "configName": "BETTER_AUTH_URL",
+  "hasValue": false
+}
+[2025-09-30T17:25:40.598Z] [INFO] [CONFIG] Social providers configured
+  DATA: {
+  "providers": [
+    "linkedin"
+  ],
+  "linkedinConfigured": true
+}
+[2025-09-30T17:25:40.601Z] [INFO] [DATABASE] Database connection established successfully
+[2025-09-30T17:25:40.602Z] [INFO] [CONFIG] Better Auth configuration starting
+  DATA: {
+  "baseURL": "https://inlinkai.com",
+  "emailAndPasswordEnabled": false,
+  "socialProvidersCount": 1,
+  "environment": "development"
+}
+[2025-09-30T17:25:40.602Z] [INFO] [CONFIG] Added BETTER_AUTH_URL to trusted origins
+  DATA: {
+  "url": "https://inlinkai.com"
+}
+[2025-09-30T17:25:40.602Z] [INFO] [CONFIG] Added development tunneling domains to trusted origins
+[2025-09-30T17:25:40.603Z] [INFO] [CONFIG] Trusted origins configured
+  DATA: {
+  "origins": [
+    "https://inlinkai.com",
+    "https://localhost:3000",
+    "https://inlinkai.com",
+    "https://*.ngrok.io",
+    "https://*.ngrok-free.app",
+    "https://*.ngrok.app",
+    "https://*.loca.lt",
+    "https://*.tunnelto.dev"
+  ],
+  "count": 8,
+  "environment": "development"
+}
+[2025-09-30T17:25:40.605Z] [INFO] [CONFIG] Better Auth initialized successfully
+[2025-09-30T17:25:40.635Z] [INFO] [AUTH] GET request started | endpoint=http://localhost:3000/api/auth/get-session | ip=::1 | userAgent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Sa...
+  DATA: {
+  "pathname": "/api/auth/get-session",
+  "searchParams": {}
+}
+[2025-09-30T17:25:40.639Z] [INFO] [AUTH] GET request completed | endpoint=http://localhost:3000/api/auth/get-session | ip=::1 | userAgent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Sa...
+  DATA: {
+  "pathname": "/api/auth/get-session",
+  "status": 200,
+  "duration": "4ms"
+}
+[2025-09-30T17:25:41.319Z] [INFO] [CONFIG] Configuration LINKEDIN_CLIENT_ID is valid
+  DATA: {
+  "configName": "LINKEDIN_CLIENT_ID",
+  "hasValue": false
+}
+[2025-09-30T17:25:41.321Z] [INFO] [CONFIG] Configuration LINKEDIN_CLIENT_SECRET is valid
+  DATA: {
+  "configName": "LINKEDIN_CLIENT_SECRET",
+  "hasValue": false
+}
+[2025-09-30T17:25:41.321Z] [INFO] [CONFIG] Configuration BETTER_AUTH_SECRET is valid
+  DATA: {
+  "configName": "BETTER_AUTH_SECRET",
+  "hasValue": false
+}
+[2025-09-30T17:25:41.322Z] [INFO] [CONFIG] Configuration BETTER_AUTH_URL is valid
+  DATA: {
+  "configName": "BETTER_AUTH_URL",
+  "hasValue": false
+}
+[2025-09-30T17:25:41.322Z] [INFO] [CONFIG] Social providers configured
+  DATA: {
+  "providers": [
+    "linkedin"
+  ],
+  "linkedinConfigured": true
+}
+[2025-09-30T17:25:41.324Z] [INFO] [DATABASE] Database connection established successfully
+[2025-09-30T17:25:41.324Z] [INFO] [CONFIG] Better Auth configuration starting
+  DATA: {
+  "baseURL": "https://inlinkai.com",
+  "emailAndPasswordEnabled": false,
+  "socialProvidersCount": 1,
+  "environment": "development"
+}
+[2025-09-30T17:25:41.324Z] [INFO] [CONFIG] Added BETTER_AUTH_URL to trusted origins
+  DATA: {
+  "url": "https://inlinkai.com"
+}
+[2025-09-30T17:25:41.325Z] [INFO] [CONFIG] Added development tunneling domains to trusted origins
+[2025-09-30T17:25:41.325Z] [INFO] [CONFIG] Trusted origins configured
+  DATA: {
+  "origins": [
+    "https://inlinkai.com",
+    "https://localhost:3000",
+    "https://inlinkai.com",
+    "https://*.ngrok.io",
+    "https://*.ngrok-free.app",
+    "https://*.ngrok.app",
+    "https://*.loca.lt",
+    "https://*.tunnelto.dev"
+  ],
+  "count": 8,
+  "environment": "development"
+}
+[2025-09-30T17:25:41.329Z] [INFO] [CONFIG] Better Auth initialized successfully
+[2025-09-30T17:25:42.253Z] [INFO] [CONFIG] Configuration LINKEDIN_CLIENT_ID is valid
+  DATA: {
+  "configName": "LINKEDIN_CLIENT_ID",
+  "hasValue": false
+}
+[2025-09-30T17:25:42.253Z] [INFO] [CONFIG] Configuration LINKEDIN_CLIENT_SECRET is valid
+  DATA: {
+  "configName": "LINKEDIN_CLIENT_SECRET",
+  "hasValue": false
+}
+[2025-09-30T17:25:42.253Z] [INFO] [CONFIG] Configuration BETTER_AUTH_SECRET is valid
+  DATA: {
+  "configName": "BETTER_AUTH_SECRET",
+  "hasValue": false
+}
+[2025-09-30T17:25:42.254Z] [INFO] [CONFIG] Configuration BETTER_AUTH_URL is valid
+  DATA: {
+  "configName": "BETTER_AUTH_URL",
+  "hasValue": false
+}
+[2025-09-30T17:25:42.254Z] [INFO] [CONFIG] Social providers configured
+  DATA: {
+  "providers": [
+    "linkedin"
+  ],
+  "linkedinConfigured": true
+}
+[2025-09-30T17:25:42.259Z] [INFO] [DATABASE] Database connection established successfully
+[2025-09-30T17:25:42.259Z] [INFO] [CONFIG] Better Auth configuration starting
+  DATA: {
+  "baseURL": "https://inlinkai.com",
+  "emailAndPasswordEnabled": false,
+  "socialProvidersCount": 1,
+  "environment": "development"
+}
+[2025-09-30T17:25:42.259Z] [INFO] [CONFIG] Added BETTER_AUTH_URL to trusted origins
+  DATA: {
+  "url": "https://inlinkai.com"
+}
+[2025-09-30T17:25:42.260Z] [INFO] [CONFIG] Added development tunneling domains to trusted origins
+[2025-09-30T17:25:42.261Z] [INFO] [CONFIG] Trusted origins configured
+  DATA: {
+  "origins": [
+    "https://inlinkai.com",
+    "https://localhost:3000",
+    "https://inlinkai.com",
+    "https://*.ngrok.io",
+    "https://*.ngrok-free.app",
+    "https://*.ngrok.app",
+    "https://*.loca.lt",
+    "https://*.tunnelto.dev"
+  ],
+  "count": 8,
+  "environment": "development"
+}
+[2025-09-30T17:25:42.264Z] [INFO] [CONFIG] Better Auth initialized successfully
+[2025-09-30T17:25:42.288Z] [INFO] [AUTH] GET request started | endpoint=http://localhost:3000/api/auth/get-session | ip=::1 | userAgent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Sa...
+  DATA: {
+  "pathname": "/api/auth/get-session",
+  "searchParams": {}
+}
+[2025-09-30T17:25:42.292Z] [INFO] [AUTH] GET request completed | endpoint=http://localhost:3000/api/auth/get-session | ip=::1 | userAgent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Sa...
+  DATA: {
+  "pathname": "/api/auth/get-session",
+  "status": 200,
+  "duration": "4ms"
+}
+[2025-09-30T17:25:42.830Z] [INFO] [CONFIG] Configuration LINKEDIN_CLIENT_ID is valid
+  DATA: {
+  "configName": "LINKEDIN_CLIENT_ID",
+  "hasValue": false
+}
+[2025-09-30T17:25:42.831Z] [INFO] [CONFIG] Configuration LINKEDIN_CLIENT_SECRET is valid
+  DATA: {
+  "configName": "LINKEDIN_CLIENT_SECRET",
+  "hasValue": false
+}
+[2025-09-30T17:25:42.832Z] [INFO] [CONFIG] Configuration BETTER_AUTH_SECRET is valid
+  DATA: {
+  "configName": "BETTER_AUTH_SECRET",
+  "hasValue": false
+}
+[2025-09-30T17:25:42.832Z] [INFO] [CONFIG] Configuration BETTER_AUTH_URL is valid
+  DATA: {
+  "configName": "BETTER_AUTH_URL",
+  "hasValue": false
+}
+[2025-09-30T17:25:42.832Z] [INFO] [CONFIG] Social providers configured
+  DATA: {
+  "providers": [
+    "linkedin"
+  ],
+  "linkedinConfigured": true
+}
+[2025-09-30T17:25:42.834Z] [INFO] [DATABASE] Database connection established successfully
+[2025-09-30T17:25:42.834Z] [INFO] [CONFIG] Better Auth configuration starting
+  DATA: {
+  "baseURL": "https://inlinkai.com",
+  "emailAndPasswordEnabled": false,
+  "socialProvidersCount": 1,
+  "environment": "development"
+}
+[2025-09-30T17:25:42.834Z] [INFO] [CONFIG] Added BETTER_AUTH_URL to trusted origins
+  DATA: {
+  "url": "https://inlinkai.com"
+}
+[2025-09-30T17:25:42.835Z] [INFO] [CONFIG] Added development tunneling domains to trusted origins
+[2025-09-30T17:25:42.835Z] [INFO] [CONFIG] Trusted origins configured
+  DATA: {
+  "origins": [
+    "https://inlinkai.com",
+    "https://localhost:3000",
+    "https://inlinkai.com",
+    "https://*.ngrok.io",
+    "https://*.ngrok-free.app",
+    "https://*.ngrok.app",
+    "https://*.loca.lt",
+    "https://*.tunnelto.dev"
+  ],
+  "count": 8,
+  "environment": "development"
+}
+[2025-09-30T17:25:42.837Z] [INFO] [CONFIG] Better Auth initialized successfully
+[2025-09-30T17:25:44.525Z] [INFO] [CONFIG] Configuration LINKEDIN_CLIENT_ID is valid
+  DATA: {
+  "configName": "LINKEDIN_CLIENT_ID",
+  "hasValue": false
+}
+[2025-09-30T17:25:44.526Z] [INFO] [CONFIG] Configuration LINKEDIN_CLIENT_SECRET is valid
+  DATA: {
+  "configName": "LINKEDIN_CLIENT_SECRET",
+  "hasValue": false
+}
+[2025-09-30T17:25:44.526Z] [INFO] [CONFIG] Configuration BETTER_AUTH_SECRET is valid
+  DATA: {
+  "configName": "BETTER_AUTH_SECRET",
+  "hasValue": false
+}
+[2025-09-30T17:25:44.527Z] [INFO] [CONFIG] Configuration BETTER_AUTH_URL is valid
+  DATA: {
+  "configName": "BETTER_AUTH_URL",
+  "hasValue": false
+}
+[2025-09-30T17:25:44.528Z] [INFO] [CONFIG] Social providers configured
+  DATA: {
+  "providers": [
+    "linkedin"
+  ],
+  "linkedinConfigured": true
+}
+[2025-09-30T17:25:44.531Z] [INFO] [DATABASE] Database connection established successfully
+[2025-09-30T17:25:44.531Z] [INFO] [CONFIG] Better Auth configuration starting
+  DATA: {
+  "baseURL": "https://inlinkai.com",
+  "emailAndPasswordEnabled": false,
+  "socialProvidersCount": 1,
+  "environment": "development"
+}
+[2025-09-30T17:25:44.532Z] [INFO] [CONFIG] Added BETTER_AUTH_URL to trusted origins
+  DATA: {
+  "url": "https://inlinkai.com"
+}
+[2025-09-30T17:25:44.533Z] [INFO] [CONFIG] Added development tunneling domains to trusted origins
+[2025-09-30T17:25:44.533Z] [INFO] [CONFIG] Trusted origins configured
+  DATA: {
+  "origins": [
+    "https://inlinkai.com",
+    "https://localhost:3000",
+    "https://inlinkai.com",
+    "https://*.ngrok.io",
+    "https://*.ngrok-free.app",
+    "https://*.ngrok.app",
+    "https://*.loca.lt",
+    "https://*.tunnelto.dev"
+  ],
+  "count": 8,
+  "environment": "development"
+}
+[2025-09-30T17:25:44.536Z] [INFO] [CONFIG] Better Auth initialized successfully
+[2025-09-30T17:25:44.568Z] [INFO] [AUTH] GET request started | endpoint=http://localhost:3000/api/auth/get-session | ip=::1 | userAgent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Sa...
+  DATA: {
+  "pathname": "/api/auth/get-session",
+  "searchParams": {}
+}
+[2025-09-30T17:25:44.572Z] [INFO] [AUTH] GET request completed | endpoint=http://localhost:3000/api/auth/get-session | ip=::1 | userAgent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Sa...
+  DATA: {
+  "pathname": "/api/auth/get-session",
+  "status": 200,
+  "duration": "4ms"
+}
+[2025-09-30T17:25:45.196Z] [INFO] [CONFIG] Configuration LINKEDIN_CLIENT_ID is valid
+  DATA: {
+  "configName": "LINKEDIN_CLIENT_ID",
+  "hasValue": false
+}
+[2025-09-30T17:25:45.198Z] [INFO] [CONFIG] Configuration LINKEDIN_CLIENT_SECRET is valid
+  DATA: {
+  "configName": "LINKEDIN_CLIENT_SECRET",
+  "hasValue": false
+}
+[2025-09-30T17:25:45.198Z] [INFO] [CONFIG] Configuration BETTER_AUTH_SECRET is valid
+  DATA: {
+  "configName": "BETTER_AUTH_SECRET",
+  "hasValue": false
+}
+[2025-09-30T17:25:45.198Z] [INFO] [CONFIG] Configuration BETTER_AUTH_URL is valid
+  DATA: {
+  "configName": "BETTER_AUTH_URL",
+  "hasValue": false
+}
+[2025-09-30T17:25:45.199Z] [INFO] [CONFIG] Social providers configured
+  DATA: {
+  "providers": [
+    "linkedin"
+  ],
+  "linkedinConfigured": true
+}
+[2025-09-30T17:25:45.201Z] [INFO] [DATABASE] Database connection established successfully
+[2025-09-30T17:25:45.201Z] [INFO] [CONFIG] Better Auth configuration starting
+  DATA: {
+  "baseURL": "https://inlinkai.com",
+  "emailAndPasswordEnabled": false,
+  "socialProvidersCount": 1,
+  "environment": "development"
+}
+[2025-09-30T17:25:45.201Z] [INFO] [CONFIG] Added BETTER_AUTH_URL to trusted origins
+  DATA: {
+  "url": "https://inlinkai.com"
+}
+[2025-09-30T17:25:45.201Z] [INFO] [CONFIG] Added development tunneling domains to trusted origins
+[2025-09-30T17:25:45.202Z] [INFO] [CONFIG] Trusted origins configured
+  DATA: {
+  "origins": [
+    "https://inlinkai.com",
+    "https://localhost:3000",
+    "https://inlinkai.com",
+    "https://*.ngrok.io",
+    "https://*.ngrok-free.app",
+    "https://*.ngrok.app",
+    "https://*.loca.lt",
+    "https://*.tunnelto.dev"
+  ],
+  "count": 8,
+  "environment": "development"
+}
+[2025-09-30T17:25:45.204Z] [INFO] [CONFIG] Better Auth initialized successfully
+[2025-09-30T17:26:57.857Z] [INFO] [CONFIG] Configuration LINKEDIN_CLIENT_ID is valid
+  DATA: {
+  "configName": "LINKEDIN_CLIENT_ID",
+  "hasValue": false
+}
+[2025-09-30T17:26:57.857Z] [INFO] [CONFIG] Configuration LINKEDIN_CLIENT_SECRET is valid
+  DATA: {
+  "configName": "LINKEDIN_CLIENT_SECRET",
+  "hasValue": false
+}
+[2025-09-30T17:26:57.858Z] [INFO] [CONFIG] Configuration BETTER_AUTH_SECRET is valid
+  DATA: {
+  "configName": "BETTER_AUTH_SECRET",
+  "hasValue": false
+}
+[2025-09-30T17:26:57.859Z] [INFO] [CONFIG] Configuration BETTER_AUTH_URL is valid
+  DATA: {
+  "configName": "BETTER_AUTH_URL",
+  "hasValue": false
+}
+[2025-09-30T17:26:57.859Z] [INFO] [CONFIG] Social providers configured
+  DATA: {
+  "providers": [
+    "linkedin"
+  ],
+  "linkedinConfigured": true
+}
+[2025-09-30T17:26:57.864Z] [INFO] [DATABASE] Database connection established successfully
+[2025-09-30T17:26:57.864Z] [INFO] [CONFIG] Better Auth configuration starting
+  DATA: {
+  "baseURL": "https://inlinkai.com",
+  "emailAndPasswordEnabled": false,
+  "socialProvidersCount": 1,
+  "environment": "development"
+}
+[2025-09-30T17:26:57.865Z] [INFO] [CONFIG] Added BETTER_AUTH_URL to trusted origins
+  DATA: {
+  "url": "https://inlinkai.com"
+}
+[2025-09-30T17:26:57.866Z] [INFO] [CONFIG] Added development tunneling domains to trusted origins
+[2025-09-30T17:26:57.866Z] [INFO] [CONFIG] Trusted origins configured
+  DATA: {
+  "origins": [
+    "https://inlinkai.com",
+    "https://localhost:3000",
+    "https://inlinkai.com",
+    "https://*.ngrok.io",
+    "https://*.ngrok-free.app",
+    "https://*.ngrok.app",
+    "https://*.loca.lt",
+    "https://*.tunnelto.dev"
+  ],
+  "count": 8,
+  "environment": "development"
+}
+[2025-09-30T17:26:57.869Z] [INFO] [CONFIG] Better Auth initialized successfully
+[2025-09-30T17:26:57.907Z] [INFO] [AUTH] GET request started | endpoint=http://localhost:3000/api/auth/get-session | ip=::1 | userAgent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Sa...
+  DATA: {
+  "pathname": "/api/auth/get-session",
+  "searchParams": {}
+}
+[2025-09-30T17:26:57.912Z] [INFO] [AUTH] GET request completed | endpoint=http://localhost:3000/api/auth/get-session | ip=::1 | userAgent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Sa...
+  DATA: {
+  "pathname": "/api/auth/get-session",
+  "status": 200,
+  "duration": "5ms"
+}
+[2025-09-30T17:26:58.514Z] [INFO] [CONFIG] Configuration LINKEDIN_CLIENT_ID is valid
+  DATA: {
+  "configName": "LINKEDIN_CLIENT_ID",
+  "hasValue": false
+}
+[2025-09-30T17:26:58.516Z] [INFO] [CONFIG] Configuration LINKEDIN_CLIENT_SECRET is valid
+  DATA: {
+  "configName": "LINKEDIN_CLIENT_SECRET",
+  "hasValue": false
+}
+[2025-09-30T17:26:58.516Z] [INFO] [CONFIG] Configuration BETTER_AUTH_SECRET is valid
+  DATA: {
+  "configName": "BETTER_AUTH_SECRET",
+  "hasValue": false
+}
+[2025-09-30T17:26:58.516Z] [INFO] [CONFIG] Configuration BETTER_AUTH_URL is valid
+  DATA: {
+  "configName": "BETTER_AUTH_URL",
+  "hasValue": false
+}
+[2025-09-30T17:26:58.517Z] [INFO] [CONFIG] Social providers configured
+  DATA: {
+  "providers": [
+    "linkedin"
+  ],
+  "linkedinConfigured": true
+}
+[2025-09-30T17:26:58.518Z] [INFO] [DATABASE] Database connection established successfully
+[2025-09-30T17:26:58.518Z] [INFO] [CONFIG] Better Auth configuration starting
+  DATA: {
+  "baseURL": "https://inlinkai.com",
+  "emailAndPasswordEnabled": false,
+  "socialProvidersCount": 1,
+  "environment": "development"
+}
+[2025-09-30T17:26:58.519Z] [INFO] [CONFIG] Added BETTER_AUTH_URL to trusted origins
+  DATA: {
+  "url": "https://inlinkai.com"
+}
+[2025-09-30T17:26:58.519Z] [INFO] [CONFIG] Added development tunneling domains to trusted origins
+[2025-09-30T17:26:58.519Z] [INFO] [CONFIG] Trusted origins configured
+  DATA: {
+  "origins": [
+    "https://inlinkai.com",
+    "https://localhost:3000",
+    "https://inlinkai.com",
+    "https://*.ngrok.io",
+    "https://*.ngrok-free.app",
+    "https://*.ngrok.app",
+    "https://*.loca.lt",
+    "https://*.tunnelto.dev"
+  ],
+  "count": 8,
+  "environment": "development"
+}
+[2025-09-30T17:26:58.521Z] [INFO] [CONFIG] Better Auth initialized successfully
+[2025-09-30T17:27:03.006Z] [INFO] [CONFIG] Configuration LINKEDIN_CLIENT_ID is valid
+  DATA: {
+  "configName": "LINKEDIN_CLIENT_ID",
+  "hasValue": false
+}
+[2025-09-30T17:27:03.007Z] [INFO] [CONFIG] Configuration LINKEDIN_CLIENT_SECRET is valid
+  DATA: {
+  "configName": "LINKEDIN_CLIENT_SECRET",
+  "hasValue": false
+}
+[2025-09-30T17:27:03.007Z] [INFO] [CONFIG] Configuration BETTER_AUTH_SECRET is valid
+  DATA: {
+  "configName": "BETTER_AUTH_SECRET",
+  "hasValue": false
+}
+[2025-09-30T17:27:03.008Z] [INFO] [CONFIG] Configuration BETTER_AUTH_URL is valid
+  DATA: {
+  "configName": "BETTER_AUTH_URL",
+  "hasValue": false
+}
+[2025-09-30T17:27:03.008Z] [INFO] [CONFIG] Social providers configured
+  DATA: {
+  "providers": [
+    "linkedin"
+  ],
+  "linkedinConfigured": true
+}
+[2025-09-30T17:27:03.011Z] [INFO] [DATABASE] Database connection established successfully
+[2025-09-30T17:27:03.011Z] [INFO] [CONFIG] Better Auth configuration starting
+  DATA: {
+  "baseURL": "https://inlinkai.com",
+  "emailAndPasswordEnabled": false,
+  "socialProvidersCount": 1,
+  "environment": "development"
+}
+[2025-09-30T17:27:03.011Z] [INFO] [CONFIG] Added BETTER_AUTH_URL to trusted origins
+  DATA: {
+  "url": "https://inlinkai.com"
+}
+[2025-09-30T17:27:03.012Z] [INFO] [CONFIG] Added development tunneling domains to trusted origins
+[2025-09-30T17:27:03.012Z] [INFO] [CONFIG] Trusted origins configured
+  DATA: {
+  "origins": [
+    "https://inlinkai.com",
+    "https://localhost:3000",
+    "https://inlinkai.com",
+    "https://*.ngrok.io",
+    "https://*.ngrok-free.app",
+    "https://*.ngrok.app",
+    "https://*.loca.lt",
+    "https://*.tunnelto.dev"
+  ],
+  "count": 8,
+  "environment": "development"
+}
+[2025-09-30T17:27:03.014Z] [INFO] [CONFIG] Better Auth initialized successfully
+[2025-09-30T17:27:03.036Z] [INFO] [AUTH] GET request started | endpoint=http://localhost:3000/api/auth/get-session | ip=::1 | userAgent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Sa...
+  DATA: {
+  "pathname": "/api/auth/get-session",
+  "searchParams": {}
+}
+[2025-09-30T17:27:03.038Z] [INFO] [AUTH] GET request completed | endpoint=http://localhost:3000/api/auth/get-session | ip=::1 | userAgent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Sa...
+  DATA: {
+  "pathname": "/api/auth/get-session",
+  "status": 200,
+  "duration": "2ms"
+}
+[2025-09-30T17:27:03.596Z] [INFO] [CONFIG] Configuration LINKEDIN_CLIENT_ID is valid
+  DATA: {
+  "configName": "LINKEDIN_CLIENT_ID",
+  "hasValue": false
+}
+[2025-09-30T17:27:03.598Z] [INFO] [CONFIG] Configuration LINKEDIN_CLIENT_SECRET is valid
+  DATA: {
+  "configName": "LINKEDIN_CLIENT_SECRET",
+  "hasValue": false
+}
+[2025-09-30T17:27:03.598Z] [INFO] [CONFIG] Configuration BETTER_AUTH_SECRET is valid
+  DATA: {
+  "configName": "BETTER_AUTH_SECRET",
+  "hasValue": false
+}
+[2025-09-30T17:27:03.598Z] [INFO] [CONFIG] Configuration BETTER_AUTH_URL is valid
+  DATA: {
+  "configName": "BETTER_AUTH_URL",
+  "hasValue": false
+}
+[2025-09-30T17:27:03.598Z] [INFO] [CONFIG] Social providers configured
+  DATA: {
+  "providers": [
+    "linkedin"
+  ],
+  "linkedinConfigured": true
+}
+[2025-09-30T17:27:03.600Z] [INFO] [DATABASE] Database connection established successfully
+[2025-09-30T17:27:03.600Z] [INFO] [CONFIG] Better Auth configuration starting
+  DATA: {
+  "baseURL": "https://inlinkai.com",
+  "emailAndPasswordEnabled": false,
+  "socialProvidersCount": 1,
+  "environment": "development"
+}
+[2025-09-30T17:27:03.600Z] [INFO] [CONFIG] Added BETTER_AUTH_URL to trusted origins
+  DATA: {
+  "url": "https://inlinkai.com"
+}
+[2025-09-30T17:27:03.600Z] [INFO] [CONFIG] Added development tunneling domains to trusted origins
+[2025-09-30T17:27:03.601Z] [INFO] [CONFIG] Trusted origins configured
+  DATA: {
+  "origins": [
+    "https://inlinkai.com",
+    "https://localhost:3000",
+    "https://inlinkai.com",
+    "https://*.ngrok.io",
+    "https://*.ngrok-free.app",
+    "https://*.ngrok.app",
+    "https://*.loca.lt",
+    "https://*.tunnelto.dev"
+  ],
+  "count": 8,
+  "environment": "development"
+}
+[2025-09-30T17:27:03.603Z] [INFO] [CONFIG] Better Auth initialized successfully
+[2025-09-30T17:27:15.196Z] [INFO] [CONFIG] Configuration LINKEDIN_CLIENT_ID is valid
+  DATA: {
+  "configName": "LINKEDIN_CLIENT_ID",
+  "hasValue": false
+}
+[2025-09-30T17:27:15.197Z] [INFO] [CONFIG] Configuration LINKEDIN_CLIENT_SECRET is valid
+  DATA: {
+  "configName": "LINKEDIN_CLIENT_SECRET",
+  "hasValue": false
+}
+[2025-09-30T17:27:15.197Z] [INFO] [CONFIG] Configuration BETTER_AUTH_SECRET is valid
+  DATA: {
+  "configName": "BETTER_AUTH_SECRET",
+  "hasValue": false
+}
+[2025-09-30T17:27:15.198Z] [INFO] [CONFIG] Configuration BETTER_AUTH_URL is valid
+  DATA: {
+  "configName": "BETTER_AUTH_URL",
+  "hasValue": false
+}
+[2025-09-30T17:27:15.198Z] [INFO] [CONFIG] Social providers configured
+  DATA: {
+  "providers": [
+    "linkedin"
+  ],
+  "linkedinConfigured": true
+}
+[2025-09-30T17:27:15.201Z] [INFO] [DATABASE] Database connection established successfully
+[2025-09-30T17:27:15.202Z] [INFO] [CONFIG] Better Auth configuration starting
+  DATA: {
+  "baseURL": "https://inlinkai.com",
+  "emailAndPasswordEnabled": false,
+  "socialProvidersCount": 1,
+  "environment": "development"
+}
+[2025-09-30T17:27:15.202Z] [INFO] [CONFIG] Added BETTER_AUTH_URL to trusted origins
+  DATA: {
+  "url": "https://inlinkai.com"
+}
+[2025-09-30T17:27:15.202Z] [INFO] [CONFIG] Added development tunneling domains to trusted origins
+[2025-09-30T17:27:15.203Z] [INFO] [CONFIG] Trusted origins configured
+  DATA: {
+  "origins": [
+    "https://inlinkai.com",
+    "https://localhost:3000",
+    "https://inlinkai.com",
+    "https://*.ngrok.io",
+    "https://*.ngrok-free.app",
+    "https://*.ngrok.app",
+    "https://*.loca.lt",
+    "https://*.tunnelto.dev"
+  ],
+  "count": 8,
+  "environment": "development"
+}
+[2025-09-30T17:27:15.205Z] [INFO] [CONFIG] Better Auth initialized successfully
+[2025-09-30T17:27:15.225Z] [INFO] [AUTH] GET request started | endpoint=http://localhost:3000/api/auth/get-session | ip=::1 | userAgent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Sa...
+  DATA: {
+  "pathname": "/api/auth/get-session",
+  "searchParams": {}
+}
+[2025-09-30T17:27:15.228Z] [INFO] [AUTH] GET request completed | endpoint=http://localhost:3000/api/auth/get-session | ip=::1 | userAgent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Sa...
+  DATA: {
+  "pathname": "/api/auth/get-session",
+  "status": 200,
+  "duration": "3ms"
+}
+[2025-09-30T17:27:15.785Z] [INFO] [CONFIG] Configuration LINKEDIN_CLIENT_ID is valid
+  DATA: {
+  "configName": "LINKEDIN_CLIENT_ID",
+  "hasValue": false
+}
+[2025-09-30T17:27:15.786Z] [INFO] [CONFIG] Configuration LINKEDIN_CLIENT_SECRET is valid
+  DATA: {
+  "configName": "LINKEDIN_CLIENT_SECRET",
+  "hasValue": false
+}
+[2025-09-30T17:27:15.787Z] [INFO] [CONFIG] Configuration BETTER_AUTH_SECRET is valid
+  DATA: {
+  "configName": "BETTER_AUTH_SECRET",
+  "hasValue": false
+}
+[2025-09-30T17:27:15.787Z] [INFO] [CONFIG] Configuration BETTER_AUTH_URL is valid
+  DATA: {
+  "configName": "BETTER_AUTH_URL",
+  "hasValue": false
+}
+[2025-09-30T17:27:15.787Z] [INFO] [CONFIG] Social providers configured
+  DATA: {
+  "providers": [
+    "linkedin"
+  ],
+  "linkedinConfigured": true
+}
+[2025-09-30T17:27:15.789Z] [INFO] [DATABASE] Database connection established successfully
+[2025-09-30T17:27:15.789Z] [INFO] [CONFIG] Better Auth configuration starting
+  DATA: {
+  "baseURL": "https://inlinkai.com",
+  "emailAndPasswordEnabled": false,
+  "socialProvidersCount": 1,
+  "environment": "development"
+}
+[2025-09-30T17:27:15.789Z] [INFO] [CONFIG] Added BETTER_AUTH_URL to trusted origins
+  DATA: {
+  "url": "https://inlinkai.com"
+}
+[2025-09-30T17:27:15.790Z] [INFO] [CONFIG] Added development tunneling domains to trusted origins
+[2025-09-30T17:27:15.790Z] [INFO] [CONFIG] Trusted origins configured
+  DATA: {
+  "origins": [
+    "https://inlinkai.com",
+    "https://localhost:3000",
+    "https://inlinkai.com",
+    "https://*.ngrok.io",
+    "https://*.ngrok-free.app",
+    "https://*.ngrok.app",
+    "https://*.loca.lt",
+    "https://*.tunnelto.dev"
+  ],
+  "count": 8,
+  "environment": "development"
+}
+[2025-09-30T17:27:15.792Z] [INFO] [CONFIG] Better Auth initialized successfully
