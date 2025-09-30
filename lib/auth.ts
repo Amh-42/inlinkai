@@ -1,5 +1,12 @@
 import { betterAuth } from "better-auth";
 import { createDatabase } from "./database";
+import { authLogger } from "./auth-logger";
+
+// Validate and log environment variables
+authLogger.configValidation('LINKEDIN_CLIENT_ID', !!process.env.LINKEDIN_CLIENT_ID);
+authLogger.configValidation('LINKEDIN_CLIENT_SECRET', !!process.env.LINKEDIN_CLIENT_SECRET);
+authLogger.configValidation('BETTER_AUTH_SECRET', !!process.env.BETTER_AUTH_SECRET);
+authLogger.configValidation('BETTER_AUTH_URL', !!process.env.BETTER_AUTH_URL);
 
 const socialProvidersConfig = {
   linkedin: {
@@ -9,17 +16,22 @@ const socialProvidersConfig = {
   },
 };
 
+authLogger.info('CONFIG', 'Social providers configured', { 
+  providers: Object.keys(socialProvidersConfig),
+  linkedinConfigured: !!process.env.LINKEDIN_CLIENT_ID && !!process.env.LINKEDIN_CLIENT_SECRET
+});
+
 // Build trusted origins list
 const getTrustedOrigins = () => {
   const origins = [
-    "http://localhost:3000",
-    "http://localhost:3000",
+    "https://inlinkai.com",
     "https://localhost:3000",
   ];
   
   // Add environment URL if provided
   if (process.env.BETTER_AUTH_URL) {
     origins.push(process.env.BETTER_AUTH_URL);
+    authLogger.info('CONFIG', 'Added BETTER_AUTH_URL to trusted origins', { url: process.env.BETTER_AUTH_URL });
   }
   
   // In development, allow common ngrok domains
@@ -27,6 +39,7 @@ const getTrustedOrigins = () => {
     // Add specific ngrok domain if provided via environment variable
     if (process.env.NGROK_URL) {
       origins.push(process.env.NGROK_URL);
+      authLogger.info('CONFIG', 'Added NGROK_URL to trusted origins', { url: process.env.NGROK_URL });
     }
     
     // Add common development URLs
@@ -37,31 +50,102 @@ const getTrustedOrigins = () => {
       "https://*.loca.lt",
       "https://*.tunnelto.dev"
     );
+    authLogger.info('CONFIG', 'Added development tunneling domains to trusted origins');
   }
+  
+  authLogger.info('CONFIG', 'Trusted origins configured', { 
+    origins: origins,
+    count: origins.length,
+    environment: process.env.NODE_ENV
+  });
   
   return origins;
 };
 
 
+// Initialize database with logging
+let database;
+try {
+  database = createDatabase();
+  authLogger.databaseConnection(true);
+} catch (error) {
+  authLogger.databaseConnection(false, error);
+  throw error;
+}
+
+authLogger.info('CONFIG', 'Better Auth configuration starting', {
+  baseURL: process.env.BETTER_AUTH_URL || "https://inlinkai.com",
+  emailAndPasswordEnabled: false,
+  socialProvidersCount: Object.keys(socialProvidersConfig).length,
+  environment: process.env.NODE_ENV
+});
+
 export const auth = betterAuth({
-  database: createDatabase(), // MySQL (Convex temporarily disabled due to webpack issues)
+  database,
   secret: process.env.BETTER_AUTH_SECRET || "development-secret-change-in-production",
-  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  baseURL: process.env.BETTER_AUTH_URL || "https://inlinkai.com",
   emailAndPassword: {
     enabled: false, // Disabled - LinkedIn only
   },
   socialProviders: socialProvidersConfig,
   trustedOrigins: getTrustedOrigins(),
-  // Add proper redirect handling
+  // Add comprehensive logging to callbacks
   callbacks: {
-    async signIn({ user, account }: { user: any; account: any }) {
-      console.log('🎯 Better Auth signIn callback:', { userId: user.id, provider: account?.provider });
-      return true; // Allow sign in
+    async signIn({ user, account, request }: { user: any; account: any; request?: Request }) {
+      try {
+        authLogger.socialSignInSuccess(
+          account?.provider || 'unknown',
+          user.id,
+          user.email,
+          request?.url
+        );
+        
+        authLogger.info('AUTH', 'Better Auth signIn callback executed', {
+          userId: user.id,
+          userEmail: user.email,
+          provider: account?.provider,
+          accountId: account?.id
+        });
+        
+        return true; // Allow sign in
+      } catch (error) {
+        authLogger.error('AUTH', 'Error in signIn callback', error, {
+          userId: user?.id,
+          provider: account?.provider
+        });
+        throw error;
+      }
     },
-    async redirect({ url, baseURL }: { url: string; baseURL: string }) {
-      console.log('🔄 Better Auth redirect callback:', { url, baseURL });
-      // Always redirect to login page after OAuth, let the frontend handle the rest
-      return `${baseURL}/login`;
+    async redirect({ url, baseURL, request }: { url: string; baseURL: string; request?: Request }) {
+      try {
+        const redirectUrl = `${baseURL}/login`;
+        
+        authLogger.info('AUTH', 'Better Auth redirect callback executed', {
+          originalUrl: url,
+          baseURL,
+          redirectUrl,
+          userAgent: request?.headers.get('user-agent')
+        });
+        
+        return redirectUrl;
+      } catch (error) {
+        authLogger.error('AUTH', 'Error in redirect callback', error, {
+          url,
+          baseURL
+        });
+        throw error;
+      }
     },
   },
+  // Add error handling
+  onError: (error: any, request?: Request) => {
+    authLogger.error('AUTH', 'Better Auth error occurred', error, {
+      endpoint: request?.url,
+      method: request?.method,
+      userAgent: request?.headers.get('user-agent'),
+      ip: request?.headers.get('x-forwarded-for') || request?.headers.get('x-real-ip')
+    });
+  }
 });
+
+authLogger.info('CONFIG', 'Better Auth initialized successfully');
