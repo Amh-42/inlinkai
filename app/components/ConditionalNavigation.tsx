@@ -6,8 +6,8 @@ import { Navigation } from './Navigation';
 export function ConditionalNavigation() {
   const pathname = usePathname();
   
-  // Don't show main navigation on dashboard pages or onboarding pages
-  if (pathname?.startsWith('/dashboard') || pathname?.startsWith('/onboarding')) {
+  // Don't show main navigation on dashboard pages
+  if (pathname?.startsWith('/dashboard')) {
     return null;
   }
   

@@ -29,8 +29,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     
     console.log('📈 Fetching recent activity for user:', session.user.email, 'with LinkedIn username:', linkedinUsername);
 
-    // Fetch data from localhost:5000/in/{username}/recent-activity/all/
-    const response = await fetch(`http://localhost:5000/in/${linkedinUsername}/recent-activity/all/`, {
+    // Fetch data from localhost:8000/in/{username}/recent-activity/all/
+    const response = await fetch(`http://localhost:8000/in/${linkedinUsername}/recent-activity/all/`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

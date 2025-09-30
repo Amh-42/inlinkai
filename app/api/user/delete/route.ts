@@ -29,22 +29,22 @@ export async function DELETE(request: NextRequest) {
     
     try {
       // Start a transaction to ensure all deletions happen atomically
-      await pool.query('BEGIN');
+      await pool.execute('START TRANSACTION');
 
       // Delete user sessions first (foreign key constraint)
-      await pool.query('DELETE FROM "session" WHERE "userId" = $1', [session.user.id]);
+      await pool.execute('DELETE FROM `session` WHERE `userId` = ?', [session.user.id]);
       console.log('✅ Deleted user sessions');
 
       // Delete user accounts (OAuth connections)
-      await pool.query('DELETE FROM "account" WHERE "userId" = $1', [session.user.id]);
+      await pool.execute('DELETE FROM `account` WHERE `userId` = ?', [session.user.id]);
       console.log('✅ Deleted user accounts');
 
       // Delete the user record
-      const deleteResult = await pool.query('DELETE FROM "user" WHERE "id" = $1', [session.user.id]);
-      console.log('✅ Deleted user record, affected rows:', deleteResult.rowCount);
+      const [deleteResult] = await pool.execute('DELETE FROM `user` WHERE `id` = ?', [session.user.id]);
+      console.log('✅ Deleted user record, affected rows:', (deleteResult as any).affectedRows);
 
       // Commit the transaction
-      await pool.query('COMMIT');
+      await pool.execute('COMMIT');
 
       console.log('✅ Account deleted successfully for:', session.user.email);
 
@@ -55,7 +55,7 @@ export async function DELETE(request: NextRequest) {
 
     } catch (dbError: any) {
       // Rollback the transaction on error
-      await pool.query('ROLLBACK');
+      await pool.execute('ROLLBACK');
       console.error('❌ Error deleting user from database:', dbError);
       throw dbError;
     } finally {

@@ -5,20 +5,20 @@
 ### 1. **Forgot Password Error Fix**
 **Issue**: `TypeError: c.prepare is not a function`
 
-**Root Cause**: The forgot password and reset password routes were using SQLite syntax (`db.prepare()`) but the app is using PostgreSQL.
+**Root Cause**: The forgot password and reset password routes were using SQLite syntax (`db.prepare()`) but the app is now using MySQL.
 
 **Fix Applied**:
-- Updated `app/api/auth/forgot-password/route.ts` to use PostgreSQL syntax
-- Updated `app/api/auth/reset-password/route.ts` to use PostgreSQL syntax
+- Updated `app/api/auth/forgot-password/route.ts` to use MySQL syntax
+- Updated `app/api/auth/reset-password/route.ts` to use MySQL syntax
 
 **Key Changes**:
 ```typescript
 // BEFORE (SQLite syntax):
 const user = db.prepare(`SELECT id, email, name FROM user WHERE email = ?`).get(email);
 
-// AFTER (PostgreSQL syntax):
-const userResult = await pool.query(`SELECT id, email, name FROM "user" WHERE email = $1`, [email]);
-const user = userResult.rows[0];
+// AFTER (MySQL syntax):
+const [userResult] = await pool.execute(`SELECT id, email, name FROM \`user\` WHERE email = ?`, [email]);
+const user = (userResult as any[])[0];
 ```
 
 ### 2. **Reverted to Default Better Auth Session Management**
@@ -54,12 +54,12 @@ export const auth = betterAuth({
 
 ## 🔍 **Technical Details**
 
-### PostgreSQL Syntax Changes:
-1. **Query Parameters**: Changed from `?` to `$1, $2, $3...`
-2. **Table Names**: Added quotes around table names (`"user"`, `"account"`)
-3. **Column Names**: Added quotes around column names (`"userId"`, `"providerId"`)
-4. **Result Handling**: Changed from `.get()` to `.query()` with `.rows[0]`
-5. **Row Count**: Changed from `.changes` to `.rowCount`
+### MySQL Syntax Changes:
+1. **Query Parameters**: Using `?` placeholders for parameters
+2. **Table Names**: Added backticks around table names (\`user\`, \`account\`)
+3. **Column Names**: Added backticks around column names (\`userId\`, \`providerId\`)
+4. **Result Handling**: Changed from `.get()` to `.execute()` with destructured results
+5. **Row Count**: Changed from `.changes` to `.affectedRows`
 
 ### Session Management:
 - **Removed**: All custom cookie configurations
@@ -72,7 +72,7 @@ export const auth = betterAuth({
 ### Forgot Password:
 - ✅ No more `c.prepare is not a function` errors
 - ✅ Password reset emails should send successfully
-- ✅ Reset tokens stored properly in PostgreSQL database
+- ✅ Reset tokens stored properly in MySQL database
 
 ### Session Management:
 - ✅ Users stay logged in after authentication

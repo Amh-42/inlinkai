@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTheme } from './ThemeProvider';
-import { clearOnboardingData } from '@/lib/onboarding-utils';
 
 export function Navigation() {
   const { data: session } = useSession();
@@ -16,9 +15,6 @@ export function Navigation() {
   const handleSignOut = async () => {
     try {
       console.log('🚪 Navigation: Starting logout process...');
-      
-      // Clear onboarding data first
-      clearOnboardingData();
       
       // Clear any cached session data
       if (typeof window !== 'undefined') {

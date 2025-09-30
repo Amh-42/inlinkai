@@ -44,7 +44,7 @@ const getTrustedOrigins = () => {
 
 
 export const auth = betterAuth({
-  database: createDatabase(), // PostgreSQL (Convex temporarily disabled due to webpack issues)
+  database: createDatabase(), // MySQL (Convex temporarily disabled due to webpack issues)
   secret: process.env.BETTER_AUTH_SECRET || "development-secret-change-in-production",
   baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
   emailAndPassword: {

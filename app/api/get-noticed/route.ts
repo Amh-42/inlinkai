@@ -25,10 +25,10 @@ export async function POST(request: NextRequest) {
 
     console.log('🎯 Optimizing profile for user:', username);
 
-    // Fetch user profile data from localhost:5000/in/username
+    // Fetch user profile data from localhost:8000/in/username
     let profileData;
     try {
-      const response = await fetch(`http://localhost:5000/in/${username}`, {
+      const response = await fetch(`http://localhost:8000/in/${username}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

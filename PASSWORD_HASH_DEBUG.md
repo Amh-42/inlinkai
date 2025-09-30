@@ -24,7 +24,7 @@ The mixed success/failure pattern suggests:
 
 ### 2. **Possible Causes**
 1. **Database Migration Issues**: 
-   - Old SQLite password hashes incompatible with PostgreSQL
+   - Old SQLite password hashes incompatible with MySQL
    - Password format changed during migration
 
 2. **Better Auth Password Handling**:
@@ -40,7 +40,7 @@ The mixed success/failure pattern suggests:
 
 ### Scenario A: Database Migration Issue
 - Users created in SQLite have password hashes in one format
-- PostgreSQL migration didn't preserve hash compatibility
+- MySQL migration didn't preserve hash compatibility
 - Better Auth can't validate old password hashes
 
 ### Scenario B: Custom Password Hashing Conflict
@@ -91,11 +91,11 @@ In database, run:
 SELECT 
   u.email,
   a.provider,
-  a."providerId",
+  a.\`providerId\`,
   LENGTH(a.password) as password_length,
   a.password IS NOT NULL as has_password
-FROM "user" u
-LEFT JOIN account a ON a."userId" = u.id
+FROM \`user\` u
+LEFT JOIN account a ON a.\`userId\` = u.id
 WHERE u.email = 'failing-user@example.com';
 ```
 

@@ -3,7 +3,6 @@
 import { useSession, signIn, signOut } from '@/lib/auth-client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { isOnboardingCompletSync, syncOnboardingStatus } from '@/lib/onboarding-utils';
 import { sendWelcomeEmailToUser, shouldSendWelcomeEmail, markWelcomeEmailSent, hasWelcomeEmailBeenSent } from '@/lib/welcome-email-utils';
 
 export default function LoginPage() {
@@ -12,12 +11,13 @@ export default function LoginPage() {
   const [hasRedirected, setHasRedirected] = useState(false);
   const router = useRouter();
 
-  // Auto-redirect based on login status and onboarding completion
+  // Auto-redirect authenticated users to dashboard
   useEffect(() => {
-    const checkOnboardingAndRedirect = async () => {
+    const checkAndRedirect = async () => {
       if (!isPending && session?.user && !hasRedirected) {
-        console.log('🔄 Login page: User authenticated, checking onboarding status...');
+        console.log('🔄 Login page: User authenticated, redirecting to dashboard...');
         setHasRedirected(true); // Prevent multiple redirects
+        
         // Check if this is a new user who needs a welcome email (for OAuth signups)
         if (shouldSendWelcomeEmail(session) && !hasWelcomeEmailBeenSent(session.user.id)) {
           console.log('🎉 New LinkedIn user detected, sending welcome email...');
@@ -37,20 +37,13 @@ export default function LoginPage() {
           });
         }
         
-        // Sync onboarding status from database
-        const isComplete = await syncOnboardingStatus();
-        
-        console.log('🎯 Redirecting user:', { isComplete, userId: session.user.id });
-        
-        if (isComplete) {
-          router.push('/dashboard');
-        } else {
-          router.push('/onboarding/discovery');
-        }
+        // Redirect authenticated users directly to dashboard
+        console.log('🎯 Redirecting user to dashboard:', { userId: session.user.id });
+        router.push('/dashboard');
       }
     };
 
-    checkOnboardingAndRedirect();
+    checkAndRedirect();
   }, [session, isPending, router, hasRedirected]);
 
   const handleLinkedInSignIn = async () => {
@@ -75,7 +68,7 @@ export default function LoginPage() {
       if (typeof window !== 'undefined') {
         // Clear all auth-related localStorage
         Object.keys(localStorage).forEach(key => {
-          if (key.includes('auth') || key.includes('session') || key.includes('token') || key.includes('onboarding')) {
+          if (key.includes('auth') || key.includes('session') || key.includes('token')) {
             localStorage.removeItem(key);
           }
         });

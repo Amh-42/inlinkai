@@ -141,9 +141,7 @@ To enable Google authentication:
 
 ## Database
 
-This project uses SQLite by default with Better Auth's built-in adapter. The database file `sqlite.db` will be created automatically when you run migrations.
-
-For production, consider switching to PostgreSQL or MySQL by updating the database configuration in `lib/auth.ts`.
+This project uses MySQL with Better Auth's built-in adapter. The database configuration is in `lib/auth.ts`.
 
 ## Security Notes
 
