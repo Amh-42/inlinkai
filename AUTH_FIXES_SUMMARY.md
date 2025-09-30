@@ -44,7 +44,7 @@ export const auth = betterAuth({
 export const auth = betterAuth({
   database: createDatabase(),
   secret: process.env.BETTER_AUTH_SECRET || "development-secret-change-in-production",
-  baseURL: process.env.BETTER_AUTH_URL || "https://inlinkai.com",
+  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
   emailAndPassword: { enabled: true },
   socialProviders: socialProvidersConfig,
   trustedOrigins: getTrustedOrigins(),

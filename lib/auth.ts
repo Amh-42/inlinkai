@@ -12,8 +12,8 @@ const socialProvidersConfig = {
 // Build trusted origins list
 const getTrustedOrigins = () => {
   const origins = [
-    "https://inlinkai.com",
-    "https://inlinkai.com",
+    "http://localhost:3000",
+    "http://localhost:3000",
     "https://localhost:3000",
   ];
   
@@ -46,7 +46,7 @@ const getTrustedOrigins = () => {
 export const auth = betterAuth({
   database: createDatabase(), // MySQL (Convex temporarily disabled due to webpack issues)
   secret: process.env.BETTER_AUTH_SECRET || "development-secret-change-in-production",
-  baseURL: process.env.BETTER_AUTH_URL || "https://inlinkai.com",
+  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
   emailAndPassword: {
     enabled: false, // Disabled - LinkedIn only
   },
