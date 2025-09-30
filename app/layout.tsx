@@ -80,7 +80,7 @@ export default function RootLayout({
         <link rel="icon" type="image/png" href="/images/favicon.ico" sizes="32x32" />
         
         {/* Preload key resources */}
-        <link rel="preload" href="/images/logo.png" as="image" />
+        <link rel="preload" href="/images/logo.svg" as="image" />
       </head>
       <body className="font-inter">
         <AutumnProvider>

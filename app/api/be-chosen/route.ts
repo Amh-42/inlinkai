@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
+import { isProUser, checkFeatureUsage, incrementUsage } from '@/lib/usage-tracking';
 import OpenAI from 'openai';
 
 const openai = process.env.OPENAI_API_KEY ? new OpenAI({
@@ -15,6 +16,23 @@ export async function POST(request: NextRequest) {
 
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Check if user is Pro - if so, skip usage checks entirely
+    const userIsPro = await isProUser(session.user.id);
+    let usageInfo = null;
+    
+    if (!userIsPro) {
+      // Only check usage for free users
+      usageInfo = await checkFeatureUsage(session.user.id);
+      if (!usageInfo.canUseFeature) {
+        return NextResponse.json({ 
+          error: 'Usage limit reached',
+          message: `You've reached your monthly limit of ${usageInfo.limit} feature uses. Upgrade to Pro for unlimited access.`,
+          usageInfo,
+          requiresUpgrade: true
+        }, { status: 403 });
+      }
     }
 
     const { username } = await request.json();
@@ -275,6 +293,12 @@ export async function POST(request: NextRequest) {
 
     console.log('✅ Successfully built CRM and generated outreach messages');
 
+    // Increment usage counter only for free users
+    let updatedUsageInfo = null;
+    if (!userIsPro) {
+      updatedUsageInfo = await incrementUsage(session.user.id);
+    }
+
     return NextResponse.json({
       success: true,
       data: {
@@ -284,7 +308,8 @@ export async function POST(request: NextRequest) {
         outreachMessages: outreachMessages,
         recentActivity: recentActivity,
         timestamp: new Date().toISOString()
-      }
+      },
+      ...(updatedUsageInfo && { usageInfo: updatedUsageInfo })
     });
 
   } catch (error) {

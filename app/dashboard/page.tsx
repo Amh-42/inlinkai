@@ -7,10 +7,20 @@ import { useTheme } from '../components/ThemeProvider';
 import { isAdmin } from '@/lib/admin-utils';
 import { sendWelcomeEmailToUser, shouldSendWelcomeEmail, markWelcomeEmailSent, hasWelcomeEmailBeenSent } from '@/lib/welcome-email-utils';
 import VapiWidget from '../components/VapiWidget';
+import UpgradeModal from '../components/UpgradeModal';
+import UsageIndicator from '../components/UsageIndicator';
 import { useCustomer } from "autumn-js/react";
 
 // Get Noticed Section Component
-function GetNoticedSection({ linkedinUsername, setActiveSection }: { linkedinUsername: string, setActiveSection: (section: string) => void }) {
+function GetNoticedSection({ 
+  linkedinUsername, 
+  setActiveSection, 
+  onUpgradeRequired 
+}: { 
+  linkedinUsername: string, 
+  setActiveSection: (section: string) => void,
+  onUpgradeRequired: (usageInfo: any, featureName: string) => void
+}) {
   const [isLoading, setIsLoading] = useState(false);
   const [optimizationResult, setOptimizationResult] = useState<any>(null);
 
@@ -28,6 +38,8 @@ function GetNoticedSection({ linkedinUsername, setActiveSection }: { linkedinUse
       const result = await response.json();
       if (result.success) {
         setOptimizationResult(result.data);
+      } else if (result.requiresUpgrade) {
+        onUpgradeRequired(result.usageInfo, 'Get Noticed');
       }
     } catch (error) {
       console.error('Error optimizing profile:', error);
@@ -127,7 +139,7 @@ function GetNoticedSection({ linkedinUsername, setActiveSection }: { linkedinUse
 }
 
 // Stay Relevant Section Component
-function StayRelevantSection() {
+function StayRelevantSection({ onUpgradeRequired }: { onUpgradeRequired: (usageInfo: any, featureName: string) => void }) {
   const [sources, setSources] = useState(['']);
   const [isLoading, setIsLoading] = useState(false);
   const [contentResult, setContentResult] = useState<any>(null);
@@ -155,6 +167,8 @@ function StayRelevantSection() {
       const result = await response.json();
       if (result.success) {
         setContentResult(result.data);
+      } else if (result.requiresUpgrade) {
+        onUpgradeRequired(result.usageInfo, 'Stay Relevant');
       }
     } catch (error) {
       console.error('Error generating content:', error);
@@ -266,7 +280,15 @@ function StayRelevantSection() {
 }
 
 // Be Chosen Section Component
-function BeChosenSection({ linkedinUsername, setActiveSection }: { linkedinUsername: string, setActiveSection: (section: string) => void }) {
+function BeChosenSection({ 
+  linkedinUsername, 
+  setActiveSection, 
+  onUpgradeRequired 
+}: { 
+  linkedinUsername: string, 
+  setActiveSection: (section: string) => void,
+  onUpgradeRequired: (usageInfo: any, featureName: string) => void
+}) {
   const [isLoading, setIsLoading] = useState(false);
   const [crmResult, setCrmResult] = useState<any>(null);
   const [selectedContact, setSelectedContact] = useState<any>(null);
@@ -287,6 +309,8 @@ function BeChosenSection({ linkedinUsername, setActiveSection }: { linkedinUsern
       const result = await response.json();
       if (result.success) {
         setCrmResult(result.data);
+      } else if (result.requiresUpgrade) {
+        onUpgradeRequired(result.usageInfo, 'Be Chosen');
       }
     } catch (error) {
       console.error('Error building CRM:', error);
@@ -504,6 +528,8 @@ export default function Dashboard() {
   }
   const [activeSection, setActiveSection] = useState('overview');
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [upgradeModalData, setUpgradeModalData] = useState<{usageInfo: any, featureName: string} | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [overviewData, setOverviewData] = useState<any>(null);
@@ -729,6 +755,11 @@ export default function Dashboard() {
         window.location.href = '/';
       }
     }
+  };
+
+  const handleUpgradeRequired = (usageInfo: any, featureName: string) => {
+    setUpgradeModalData({ usageInfo, featureName });
+    setShowUpgradeModal(true);
   };
 
   const confirmLogout = () => {
@@ -1117,9 +1148,8 @@ export default function Dashboard() {
                 </li>
               ))}
             </ul>
-
-            
-            
+            {/* Usage Indicator */}
+            <UsageIndicator />
 
             {/* Admin-only Marketing Section */}
             {isAdmin(session?.user?.email) && (
@@ -1516,17 +1546,25 @@ export default function Dashboard() {
 
             {/* Get Noticed Section */}
             {activeSection === 'profile' && (
-              <GetNoticedSection linkedinUsername={linkedinUsername} setActiveSection={setActiveSection} />
+              <GetNoticedSection 
+                linkedinUsername={linkedinUsername} 
+                setActiveSection={setActiveSection}
+                onUpgradeRequired={handleUpgradeRequired}
+              />
             )}
 
             {/* Stay Relevant Section */}
             {activeSection === 'content' && (
-              <StayRelevantSection />
+              <StayRelevantSection onUpgradeRequired={handleUpgradeRequired} />
             )}
 
             {/* Be Chosen Section */}
             {activeSection === 'prospects' && (
-              <BeChosenSection linkedinUsername={linkedinUsername} setActiveSection={setActiveSection} />
+              <BeChosenSection 
+                linkedinUsername={linkedinUsername} 
+                setActiveSection={setActiveSection}
+                onUpgradeRequired={handleUpgradeRequired}
+              />
             )}
 
             {/* Settings Section */}
@@ -1976,6 +2014,14 @@ export default function Dashboard() {
           </div>
         </div>
       )}
+
+      {/* Upgrade Modal */}
+      <UpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        usageInfo={upgradeModalData?.usageInfo}
+        featureName={upgradeModalData?.featureName}
+      />
     </div>
   );
 }
