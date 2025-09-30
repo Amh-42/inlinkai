@@ -50,4 +50,5 @@ sqlite.db
 
 # OS
 Thumbs.db
-.env.localinlinkai-final.zip
+.env.local
+inlinkai-final.zip
