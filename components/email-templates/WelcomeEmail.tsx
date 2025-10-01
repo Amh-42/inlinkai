@@ -128,7 +128,7 @@ export function WelcomeEmail({ firstName, userEmail }: WelcomeEmailProps) {
         {/* CTA Button */}
         <div style={{ textAlign: 'center' as const, margin: '40px 0' }}>
           <a
-            href="https://inlinkai.com/dashboard"
+            href="http://localhost:3000/dashboard"
             style={{
               display: 'inline-block',
               background: 'linear-gradient(135deg, #0084ff 0%, #44bcf0 100%)',

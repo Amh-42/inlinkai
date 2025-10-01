@@ -1,21 +1,22 @@
 'use client';
 
-import { useSession, signIn, signOut } from '@/lib/auth-client';
+import { useSession, signIn, signUp } from '@/lib/auth-client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const { data: session, isPending } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [hasRedirected, setHasRedirected] = useState(false);
   const router = useRouter();
 
   // Auto-redirect authenticated users to dashboard
   useEffect(() => {
     if (!isPending && session?.user && !hasRedirected) {
-      console.log('🔄 Login page: User authenticated, redirecting to dashboard...');
+      console.log('🔄 Register page: User authenticated, redirecting to dashboard...');
       setHasRedirected(true);
       router.push('/dashboard');
     }
@@ -25,73 +26,59 @@ export default function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
+    setSuccess(null);
 
     const formData = new FormData(e.currentTarget);
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
+    const confirmPassword = formData.get('confirmPassword') as string;
+    const name = formData.get('name') as string;
 
-    if (!email || !password) {
-      setError('Email and password are required');
+    // Basic validation
+    if (!email || !password || !name) {
+      setError('All fields are required');
+      setIsLoading(false);
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      setIsLoading(false);
+      return;
+    }
+
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters long');
       setIsLoading(false);
       return;
     }
 
     try {
-      const result = await signIn.email({
+      // Use Better Auth signUp method
+      const result = await signUp.email({
         email,
         password,
+        name,
         callbackURL: '/dashboard'
       });
 
       if (result.error) {
-        setError(result.error.message || 'Login failed');
+        setError(result.error.message || 'Registration failed');
+      } else {
+        setSuccess('Registration successful! Redirecting...');
+        // The user will be automatically redirected by the session effect
       }
-      // Success will be handled by the session effect
     } catch (error: any) {
-      console.error('Login error:', error);
-      setError(error.message || 'Login failed. Please try again.');
+      console.error('Registration error:', error);
+      setError(error.message || 'Registration failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleSignOut = async () => {
-    try {
-      console.log('🚪 Login page: Starting logout process...');
-      
-      // Clear any cached session data
-      if (typeof window !== 'undefined') {
-        // Clear all auth-related localStorage
-        Object.keys(localStorage).forEach(key => {
-          if (key.includes('auth') || key.includes('session') || key.includes('token')) {
-            localStorage.removeItem(key);
-          }
-        });
-      }
-      
-      // Call Better Auth signOut
-      await signOut({
-        fetchOptions: {
-          credentials: 'include',
-        }
-      });
-      
-      console.log('✅ Login page: Logout successful, redirecting...');
-      
-      // Force a hard redirect to clear any cached state
-      window.location.href = '/';
-    } catch (error) {
-      console.error('❌ Login page: Sign-out error:', error);
-      // Even if signOut fails, clear local data and redirect
-      if (typeof window !== 'undefined') {
-        window.location.href = '/';
-      }
-    }
-  };
-
   if (isPending) {
     return (
-      <section className="hero" id="login">
+      <section className="hero" id="register">
         <div className="hero-container">
           <div className="login-card">
             <div className="login-header">
@@ -106,22 +93,18 @@ export default function LoginPage() {
 
   if (session?.user) {
     return (
-      <section className="hero" id="login">
+      <section className="hero" id="register">
         <div className="hero-container">
           <div className="login-card">
             <div className="login-header">
-              <h2>Welcome back!</h2>
+              <h2>Already Registered!</h2>
               <p>You're already signed in as {session.user.email}</p>
             </div>
             
             <div className="login-form">
-              <button 
-                onClick={handleSignOut}
-                className="logout-button"
-                disabled={isLoading}
-              >
-                {isLoading ? 'Signing out...' : 'Sign Out'}
-              </button>
+              <Link href="/dashboard" className="btn btn-primary">
+                Go to Dashboard
+              </Link>
             </div>
           </div>
         </div>
@@ -176,14 +159,14 @@ export default function LoginPage() {
             lineHeight: '1.2',
             letterSpacing: '-0.02em',
             margin: '0 0 0.75rem 0'
-          }}>Welcome Back</h2>
+          }}>Create Account</h2>
           <p style={{
             color: '#cbd5e1',
             fontSize: '1rem',
             margin: '0',
             lineHeight: '1.5',
             opacity: '0.9'
-          }}>Sign in to your InLinkAI account</p>
+          }}>Sign up to get started with InLinkAI</p>
         </div>
         
         <form onSubmit={handleSubmit} style={{ margin: '2rem 0', width: '100%' }}>
@@ -206,6 +189,71 @@ export default function LoginPage() {
               {error}
             </div>
           )}
+          
+          {success && (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              padding: '1rem 1.25rem',
+              margin: '1rem 0',
+              borderRadius: '8px',
+              fontSize: '0.9rem',
+              fontWeight: '500',
+              lineHeight: '1.4',
+              background: 'rgba(34, 197, 94, 0.1)',
+              border: '1px solid rgba(34, 197, 94, 0.3)',
+              color: '#4ade80'
+            }}>
+              <i className="fas fa-check-circle" style={{ color: '#4ade80', fontSize: '1.1rem' }}></i>
+              {success}
+            </div>
+          )}
+
+          <div style={{ marginBottom: '1.5rem', width: '100%' }}>
+            <label htmlFor="name" style={{
+              display: 'block',
+              marginBottom: '0.5rem',
+              color: '#f8fafc',
+              fontWeight: '600',
+              fontSize: '0.875rem',
+              lineHeight: '1.4'
+            }}>Full Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              required
+              placeholder="Enter your full name"
+              disabled={isLoading}
+              style={{
+                width: '100%',
+                padding: '0.875rem 1rem',
+                border: '2px solid rgba(59, 130, 246, 0.3)',
+                borderRadius: '8px',
+                fontSize: '1rem',
+                color: '#f8fafc',
+                background: 'rgba(15, 23, 42, 0.8)',
+                transition: 'all 0.3s ease',
+                boxSizing: 'border-box',
+                fontFamily: 'inherit',
+                lineHeight: '1.5',
+                outline: 'none'
+              }}
+              onFocus={(e) => {
+                const target = e.target as HTMLInputElement;
+                target.style.borderColor = '#3b82f6';
+                target.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
+                target.style.transform = 'translateY(-1px)';
+              }}
+              onBlur={(e) => {
+                const target = e.target as HTMLInputElement;
+                target.style.borderColor = 'rgba(59, 130, 246, 0.3)';
+                target.style.boxShadow = 'none';
+                target.style.transform = 'translateY(0)';
+              }}
+            />
+          </div>
 
           <div style={{ marginBottom: '1.5rem', width: '100%' }}>
             <label htmlFor="email" style={{
@@ -266,7 +314,54 @@ export default function LoginPage() {
               id="password"
               name="password"
               required
-              placeholder="Enter your password"
+              placeholder="Create a password"
+              minLength={6}
+              disabled={isLoading}
+              style={{
+                width: '100%',
+                padding: '0.875rem 1rem',
+                border: '2px solid rgba(59, 130, 246, 0.3)',
+                borderRadius: '8px',
+                fontSize: '1rem',
+                color: '#f8fafc',
+                background: 'rgba(15, 23, 42, 0.8)',
+                transition: 'all 0.3s ease',
+                boxSizing: 'border-box',
+                fontFamily: 'inherit',
+                lineHeight: '1.5',
+                outline: 'none'
+              }}
+              onFocus={(e) => {
+                const target = e.target as HTMLInputElement;
+                target.style.borderColor = '#3b82f6';
+                target.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
+                target.style.transform = 'translateY(-1px)';
+              }}
+              onBlur={(e) => {
+                const target = e.target as HTMLInputElement;
+                target.style.borderColor = 'rgba(59, 130, 246, 0.3)';
+                target.style.boxShadow = 'none';
+                target.style.transform = 'translateY(0)';
+              }}
+            />
+          </div>
+
+          <div style={{ marginBottom: '1.5rem', width: '100%' }}>
+            <label htmlFor="confirmPassword" style={{
+              display: 'block',
+              marginBottom: '0.5rem',
+              color: '#f8fafc',
+              fontWeight: '600',
+              fontSize: '0.875rem',
+              lineHeight: '1.4'
+            }}>Confirm Password</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              required
+              placeholder="Confirm your password"
+              minLength={6}
               disabled={isLoading}
               style={{
                 width: '100%',
@@ -341,7 +436,7 @@ export default function LoginPage() {
               }
             }}
           >
-            {isLoading ? 'Signing In...' : 'Sign In'}
+            {isLoading ? 'Creating Account...' : 'Create Account'}
           </button>
         </form>
         
@@ -357,8 +452,8 @@ export default function LoginPage() {
             marginBottom: '1rem',
             lineHeight: '1.5'
           }}>
-            Don't have an account?{' '}
-            <Link href="/register" style={{
+            Already have an account?{' '}
+            <Link href="/login" style={{
               color: '#3b82f6',
               textDecoration: 'none',
               fontWeight: '500',
@@ -374,7 +469,7 @@ export default function LoginPage() {
               target.style.color = '#3b82f6';
               target.style.textDecoration = 'none';
             }}>
-              Create one here
+              Sign in here
             </Link>
           </p>
           <p style={{

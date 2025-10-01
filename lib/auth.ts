@@ -3,28 +3,17 @@ import { createDatabase } from "./database";
 import { authLogger } from "./auth-logger";
 
 // Validate and log environment variables
-authLogger.configValidation('LINKEDIN_CLIENT_ID', !!process.env.LINKEDIN_CLIENT_ID);
-authLogger.configValidation('LINKEDIN_CLIENT_SECRET', !!process.env.LINKEDIN_CLIENT_SECRET);
 authLogger.configValidation('BETTER_AUTH_SECRET', !!process.env.BETTER_AUTH_SECRET);
 authLogger.configValidation('BETTER_AUTH_URL', !!process.env.BETTER_AUTH_URL);
 
-const socialProvidersConfig = {
-  linkedin: {
-    clientId: process.env.LINKEDIN_CLIENT_ID as string,
-    clientSecret: process.env.LINKEDIN_CLIENT_SECRET as string,
-    scope: ["profile", "email", "openid"], // Explicit scopes as per LinkedIn docs
-  },
-};
-
-authLogger.info('CONFIG', 'Social providers configured', { 
-  providers: Object.keys(socialProvidersConfig),
-  linkedinConfigured: !!process.env.LINKEDIN_CLIENT_ID && !!process.env.LINKEDIN_CLIENT_SECRET
+authLogger.info('CONFIG', 'Email/password authentication enabled', { 
+  emailAndPasswordEnabled: true
 });
 
 // Build trusted origins list
 const getTrustedOrigins = () => {
   const origins = [
-    "https://inlinkai.com",
+    "http://localhost:3000",
     "https://localhost:3000",
   ];
   
@@ -74,36 +63,29 @@ try {
 }
 
 authLogger.info('CONFIG', 'Better Auth configuration starting', {
-  baseURL: process.env.BETTER_AUTH_URL || "https://inlinkai.com",
-  emailAndPasswordEnabled: false,
-  socialProvidersCount: Object.keys(socialProvidersConfig).length,
+  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  emailAndPasswordEnabled: true,
+  socialProvidersCount: 0,
   environment: process.env.NODE_ENV
 });
 
 export const auth = betterAuth({
   database,
   secret: process.env.BETTER_AUTH_SECRET || "development-secret-change-in-production",
-  baseURL: process.env.BETTER_AUTH_URL || "https://inlinkai.com",
+  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
   emailAndPassword: {
-    enabled: false, // Disabled - LinkedIn only
+    enabled: true,
+    requireEmailVerification: false, // Set to true in production
   },
-  socialProviders: socialProvidersConfig,
   trustedOrigins: getTrustedOrigins(),
   // Add comprehensive logging to callbacks
   callbacks: {
     async signIn({ user, account, request }: { user: any; account: any; request?: Request }) {
       try {
-        authLogger.socialSignInSuccess(
-          account?.provider || 'unknown',
-          user.id,
-          user.email,
-          request?.url
-        );
-        
         authLogger.info('AUTH', 'Better Auth signIn callback executed', {
           userId: user.id,
           userEmail: user.email,
-          provider: account?.provider,
+          provider: account?.provider || 'email',
           accountId: account?.id
         });
         
@@ -111,7 +93,7 @@ export const auth = betterAuth({
       } catch (error) {
         authLogger.error('AUTH', 'Error in signIn callback', error, {
           userId: user?.id,
-          provider: account?.provider
+          provider: account?.provider || 'email'
         });
         throw error;
       }

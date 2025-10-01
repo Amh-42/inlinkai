@@ -195,23 +195,7 @@ html.dashboard-active {
   background-color: #c23321;
 }
 
-.btn {
-  display: inline-block;
-  padding: 10px 20px;
-  background-color: #0084FF;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  width: 100%;
-  margin-bottom: 10px;
-  transition: all 0.3s ease;
-}
-
-.btn:hover {
-  background-color: #0066CC;
-}
+/* Legacy button styles removed - using new form system above */
 
 .user-info {
   text-align: center;
@@ -429,24 +413,33 @@ html.dashboard-active {
   }
 }
 
-/* Enhanced login form styles */
+/* ===============================
+   FORM STYLING SYSTEM
+   =============================== */
+
+/* Form container */
 .login-form {
   margin: 2rem 0;
+  width: 100%;
 }
 
+/* Form groups */
 .form-group {
   margin-bottom: 1.5rem;
+  width: 100%;
 }
 
-.form-label {
+.form-group label {
   display: block;
   margin-bottom: 0.5rem;
   color: var(--text-primary);
   font-weight: 600;
   font-size: 0.875rem;
+  line-height: 1.4;
 }
 
-.form-input {
+/* Input styling */
+.form-group input {
   width: 100%;
   padding: 0.875rem 1rem;
   border: 2px solid var(--border-color);
@@ -456,21 +449,113 @@ html.dashboard-active {
   background: var(--bg-primary);
   transition: all 0.3s ease;
   box-sizing: border-box;
+  font-family: inherit;
+  line-height: 1.5;
 }
 
-.form-input:focus {
+.form-group input:focus {
   outline: none;
   border-color: var(--accent-primary);
   box-shadow: 0 0 0 3px rgba(0, 132, 255, 0.1);
+  transform: translateY(-1px);
 }
 
-.form-input:disabled {
+.form-group input:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  background: var(--bg-secondary);
 }
 
-.form-input::placeholder {
+.form-group input::placeholder {
   color: var(--text-muted);
+  opacity: 0.7;
+}
+
+/* Button styling */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  font-family: inherit;
+  line-height: 1.5;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.btn-primary {
+  background: var(--accent-primary);
+  color: white;
+  border: 2px solid var(--accent-primary);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-secondary);
+  border-color: var(--accent-secondary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 132, 255, 0.3);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 132, 255, 0.2);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Link styling */
+.link {
+  color: var(--accent-primary) !important;
+  text-decoration: none !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+}
+
+.link:hover {
+  color: var(--accent-secondary) !important;
+  text-decoration: underline !important;
+}
+
+/* ===============================
+   HEADER STYLING SYSTEM
+   =============================== */
+
+.login-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.login-header h2 {
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+  font-size: 1.875rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.login-header p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  margin: 0;
+  line-height: 1.5;
+  opacity: 0.9;
 }
 
 .alert {
@@ -531,12 +616,36 @@ html.dashboard-active {
   }
 }
 
-/* Enhanced Login Footer Styling */
+/* ===============================
+   FOOTER STYLING SYSTEM
+   =============================== */
+
 .login-footer {
   margin-top: 2.5rem;
   padding-top: 2rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--border-color);
   text-align: center;
+}
+
+.login-footer p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.login-footer .secured-text {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+  opacity: 0.8;
+}
+
+.login-footer .secured-text i {
+  color: var(--accent-primary);
+  margin-right: 0.5rem;
 }
 
 .footer-text {
@@ -728,15 +837,7 @@ html.dashboard-active {
   gap: 0.5rem !important; /* Space between icon and text */
 }
 
-/* Fix social login buttons */
-.btn {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 0.5rem !important; /* Add space between icon and text */
-}
-
-/* Remove any existing margins from icons since we use gap */
+/* Button icon spacing - using gap instead of margins */
 .cta-button i, 
 .login-button i, 
 .secondary-button i,
@@ -803,6 +904,65 @@ html.dashboard-active {
   border: 1px solid rgba(220, 38, 38, 0.3) !important;
   color: #dc2626 !important;
   animation: shake 0.3s ease-in-out !important;
+}
+
+/* ===============================
+   MESSAGE STYLING SYSTEM
+   =============================== */
+
+.error-message,
+.success-message {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  margin: 1rem 0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.4;
+  border: 1px solid;
+  box-sizing: border-box;
+}
+
+.error-message {
+  background: rgba(220, 38, 38, 0.08);
+  border-color: rgba(220, 38, 38, 0.2);
+  color: #dc2626;
+  animation: shake 0.3s ease-in-out;
+}
+
+.success-message {
+  background: rgba(34, 197, 94, 0.08);
+  border-color: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+}
+
+.error-message i,
+.success-message i {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.error-message i {
+  color: #dc2626;
+}
+
+.success-message i {
+  color: #22c55e;
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] .error-message {
+  background: rgba(220, 38, 38, 0.12);
+  border-color: rgba(220, 38, 38, 0.3);
+  color: #ff6b6b;
+}
+
+[data-theme="dark"] .success-message {
+  background: rgba(34, 197, 94, 0.12);
+  border-color: rgba(34, 197, 94, 0.3);
+  color: #4ade80;
 }
 
 .alert.success {
@@ -965,10 +1125,34 @@ html.dashboard-active {
   
       /* Login Card Mobile Responsiveness */
       .login-card {
-        padding: 2.5rem !important;
+        padding: 2rem !important;
         margin: 1rem !important;
         max-width: calc(100vw - 2rem) !important;
         width: calc(100vw - 2rem) !important;
+      }
+      
+      /* Mobile form improvements */
+      .form-group {
+        margin-bottom: 1.25rem;
+      }
+      
+      .form-group input {
+        padding: 1rem 1.25rem;
+        font-size: 1rem;
+      }
+      
+      .btn {
+        padding: 1rem 1.5rem;
+        font-size: 1rem;
+      }
+      
+      .login-header h2 {
+        font-size: 1.5rem;
+      }
+      
+      .login-header {
+        margin-bottom: 2rem;
+        padding-bottom: 1.25rem;
       }
       
       #login {

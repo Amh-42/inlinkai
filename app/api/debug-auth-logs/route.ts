@@ -68,8 +68,9 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('Error fetching auth logs:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { error: 'Failed to fetch auth logs', details: error.message },
+      { error: 'Failed to fetch auth logs', details: errorMessage },
       { status: 500 }
     );
   }
@@ -95,7 +96,7 @@ export async function POST(request: NextRequest) {
 
     if (action === 'test') {
       // Add a test log entry
-      authLogger.info('DEBUG', message || 'Test log entry from debug endpoint', data);
+      authLogger.info('AUTH', message || 'Test log entry from debug endpoint', data);
       return NextResponse.json({ message: 'Test log entry added' });
     }
 
@@ -111,8 +112,9 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Error managing auth logs:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { error: 'Failed to manage auth logs', details: error.message },
+      { error: 'Failed to manage auth logs', details: errorMessage },
       { status: 500 }
     );
   }

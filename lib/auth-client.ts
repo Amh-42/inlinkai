@@ -33,7 +33,7 @@ const getBaseURL = () => {
     return baseURL;
   }
   // Fallback for server-side rendering
-  const baseURL = process.env.BETTER_AUTH_URL || "https://inlinkai.com";
+  const baseURL = process.env.BETTER_AUTH_URL || "http://localhost:3000";
   clientLog('info', 'Auth client using SSR fallback', { baseURL });
   return baseURL;
 };

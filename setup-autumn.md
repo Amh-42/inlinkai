@@ -11,9 +11,9 @@ If you want to get the app working without billing:
 ```tsx
 // Temporarily disable Autumn
 <<<<<<< HEAD
-// <AutumnProvider backendUrl="https://inlinkai.com/api/autumn">
+// <AutumnProvider backendUrl="http://localhost:3000/api/autumn">
 =======
-// <AutumnProvider backendUrl="https://inlinkai.com/api/autumn">
+// <AutumnProvider backendUrl="http://localhost:3000/api/autumn">
 >>>>>>> 4cd94d94b2807a5c8d4d20db89a3047bfe4e3de9
 //   {children}
 // </AutumnProvider>
@@ -66,9 +66,9 @@ I've created a fallback products endpoint that will work even without Autumn con
 1. **Check Products API**:
    ```
 <<<<<<< HEAD
-   GET https://inlinkai.com/api/autumn/products
+   GET http://localhost:3000/api/autumn/products
 =======
-   GET https://inlinkai.com/api/autumn/products
+   GET http://localhost:3000/api/autumn/products
 >>>>>>> 4cd94d94b2807a5c8d4d20db89a3047bfe4e3de9
    ```
    Should return products even without Autumn configured.
